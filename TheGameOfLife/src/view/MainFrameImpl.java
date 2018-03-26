@@ -3,12 +3,14 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 import java.util.Objects;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import controller.GameController;
+import model.ConwayCell;
 import view.ImageLoader.GameImage;
 
 /**
@@ -24,7 +26,7 @@ public class MainFrameImpl implements MainFrame {
 	private GameController controller;
 	
 	private JFrame frame;
-	private MatrixDrawPanel matrixPanel;
+	private CellMapDrawPanel cellMapPanel;
 	private MenuPanel menuPanel;
 	
 	/**
@@ -50,12 +52,12 @@ public class MainFrameImpl implements MainFrame {
 		this.frame.setResizable(false);
 		
 		// Sets the panels
-		this.matrixPanel = new MatrixDrawPanel(this.controller);
+		this.cellMapPanel = new CellMapDrawPanel(this.controller);
 		this.menuPanel = new MenuPanel(this.controller);
 		
 		// Sets the layout
 		final JPanel mainPanel = new JPanel(new BorderLayout());
-		mainPanel.add(this.matrixPanel, BorderLayout.CENTER);
+		mainPanel.add(this.cellMapPanel, BorderLayout.CENTER);
 		mainPanel.add(this.menuPanel, BorderLayout.EAST);
 		
 		this.frame.add(mainPanel);
@@ -95,15 +97,14 @@ public class MainFrameImpl implements MainFrame {
     @Override
     public void showView() {
         checkInitialization();
-        update();
         this.frame.setVisible(true);
     }
     
     @Override
-    public void update() {
-        checkInitialization();
-        this.matrixPanel.repaint();
-    }
+	public void drawCells(List<ConwayCell> cells) {
+    	checkInitialization();
+        this.cellMapPanel.repaint();
+	}
     
     @Override
     public void closeView() {
@@ -119,4 +120,6 @@ public class MainFrameImpl implements MainFrame {
             throw new IllegalStateException("Main frame not initialized");
         }
     }
+
+	
 }

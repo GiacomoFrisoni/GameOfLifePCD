@@ -1,11 +1,11 @@
 package controller;
 
+import java.awt.Dimension;
+
 public interface GameController {
 	/**
-	 * This method returns the side's size of the matrix.
-	 * @return the size of the matrix.
+	 * This method returns the dimension of the cell map.
+	 * @return the dimension of the cell map.
 	 */
-	int getMatrixSize();
-	
-	//getMatrix
+	Dimension getCellMapDimension();
 }

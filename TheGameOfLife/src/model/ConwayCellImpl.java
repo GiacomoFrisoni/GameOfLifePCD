@@ -1,13 +1,22 @@
 package model;
 
+import java.awt.Point;
+
 public class ConwayCellImpl implements ConwayCell {
 
+	private Point position;
 	private boolean state;
 	private short onNeighborCount;
 	
-	public ConwayCellImpl() {
+	public ConwayCellImpl(final int x, final int y) {
+		this.position = new Point(x, y);
 		this.state = false;
 		this.onNeighborCount = 0;
+	}
+	
+	@Override
+	public Point getPosition() {
+		return this.position;
 	}
 	
 	@Override

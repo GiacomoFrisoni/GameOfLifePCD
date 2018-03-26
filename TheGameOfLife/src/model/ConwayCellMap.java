@@ -1,15 +1,17 @@
 package model;
 
 import java.awt.Dimension;
+import java.awt.Point;
+import java.util.List;
 
 public interface ConwayCellMap {
+
+	Dimension getCellMapDimension();
 	
-	ConwayCell[][] getGrid();
+	List<ConwayCell> getLastCellUpdated();
 	
-	Dimension getGridDimension();
+	List<ConwayCell> getCellsInRange(Point startPoint, int rangeDimension);
 	
-	void update();
-	
-	void clear();
+	void nextGeneration();
 	
 }

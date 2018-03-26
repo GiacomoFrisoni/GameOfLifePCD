@@ -15,7 +15,7 @@ import controller.GameController;
  * It draws the live cells.
  *
  */
-public class MatrixDrawPanel extends JPanel {
+public class CellMapDrawPanel extends JPanel {
 	
 	/**
      * Auto-generated UID.
@@ -33,7 +33,7 @@ public class MatrixDrawPanel extends JPanel {
      * Creates a new SimulatorPanel.
      * 
      */
-    public MatrixDrawPanel(final GameController controller) {
+    public CellMapDrawPanel(final GameController controller) {
         this.controller = controller;
         initialize();
     }

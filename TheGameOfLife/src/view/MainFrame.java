@@ -1,6 +1,9 @@
 package view;
 
+import java.util.List;
+
 import controller.GameController;
+import model.ConwayCell;
 
 public interface MainFrame {
 	/**
@@ -18,11 +21,6 @@ public interface MainFrame {
     void initView();
     
     /**
-     * @return the size of a tile.
-     */
-    int getTileSize();
-    
-    /**
      * Shows the user interface on the screen.
      */
     void showView();
@@ -30,7 +28,7 @@ public interface MainFrame {
     /**
      * Updates the view and repaints the game panel.
      */
-    void update();
+    void drawCells(List<ConwayCell> cells);
     
     /**
      * Closes the game frame.
