@@ -35,31 +35,31 @@ public class CellMapDrawPanel extends JPanel {
      */
     public CellMapDrawPanel(final GameController controller) {
         this.controller = controller;
-        initialize();
+        //initialize();
     }
     
     /**
      * Initializes the game panel.
      * Loads the resources according to the level's size and clears the collections
      * for the view-animations.
-     */
+     *
     public final void initialize() {
         /*
          * Calculates the tile size according to the screen resolution
          * and the map's side (number of tiles in height/width).
-         */
-        this.cellSize = calculateCellSize(SCALE, this.controller.getMatrixSize());
+         *
+        this.cellSize = calculateCellSize(SCALE, this.controller.getCellMapDimension());
         
         /*
          * Sets the preferred size of the panel. 
-         */
+         *
         this.setPreferredSize(new Dimension(this.controller.getMatrixSize() * this.cellSize, this.controller.getMatrixSize() * this.cellSize));
         final Container c = this.getTopLevelAncestor();
         if (c instanceof JFrame) {
             final JFrame f = (JFrame) c;
             f.pack();
         }
-    }
+    }*/
 
     /**
      * Draws all graphical components.

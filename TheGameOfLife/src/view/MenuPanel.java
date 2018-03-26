@@ -1,10 +1,12 @@
 package view;
 
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.util.Objects;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import controller.GameController;
 
@@ -20,7 +22,10 @@ public class MenuPanel extends JPanel {
 	private final GameController controller;
 	
 	private final JButton start;
-	private final JButton end;
+	private final JButton stop;
+	
+	//private final JTextField mapDimension;
+	//private final JTextField previewDimension;
 	
 	private MenuObserver observer;
 	
@@ -28,35 +33,21 @@ public class MenuPanel extends JPanel {
 		this.controller = Objects.requireNonNull(controller);
 
         final GUIFactory factory = new GUIFactory.Standard();
-        this.setLayout(new GridLayout(0, 2));
-        this.setBackground(BG_COLOR);
-
-        // Sets the panel containing the time and the score
-        final JPanel infoPanel = new JPanel();
-        infoPanel.setLayout(new GridLayout(0, 2));
-        infoPanel.setOpaque(false);
-        this.time = factory.createLabel(factory.getDescriptionFont(), Color.WHITE);
-        this.time.setHorizontalAlignment(SwingConstants.CENTER);
-        updateTime(0L);
-        infoPanel.add(this.time);
-        this.score = factory.createLabel(factory.getDescriptionFont(), Color.WHITE);
-        infoPanel.add(this.score);
-        this.add(infoPanel);
-
-        // Sets the panel containing the statistics of the hero
-        final JPanel statsPanel = new JPanel();
-        statsPanel.setLayout(new GridLayout(0, NUM_STATS));
-        statsPanel.setOpaque(false);
-        this.life = factory.createLabel(factory.getDescriptionFont(), Color.WHITE);
-        this.attack = factory.createLabel(factory.getDescriptionFont(), Color.WHITE);
-        this.bombs = factory.createLabel(factory.getDescriptionFont(), Color.WHITE);
-        this.range = factory.createLabel(factory.getDescriptionFont(), Color.WHITE);
-        statsPanel.add(factory.createImageWithLabelPanel(ImageLoader.createImage(GameImage.LIFE_INFO), this.life));
-        statsPanel.add(factory.createImageWithLabelPanel(ImageLoader.createImage(GameImage.ATTACK_INFO), this.attack));
-        statsPanel.add(factory.createImageWithLabelPanel(ImageLoader.createImage(GameImage.BOMBS_INFO), this.bombs));
-        statsPanel.add(factory.createImageWithLabelPanel(ImageLoader.createImage(GameImage.RANGE_INFO), this.range));
-        this.add(statsPanel);
-        */
+        this.setLayout(new GridLayout(2, 0));
+        
+        //Creating buttons for START / STOP
+        final JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(0, 2));
+        
+        this.start = factory.createButton("Start");
+        this.stop = factory.createButton("Stop");
+        
+        buttonPanel.add(this.start);
+        buttonPanel.add(this.stop);
+        
+        this.add(buttonPanel);
+        
+        //Creating more settings
 	}
 	
 	@Override
