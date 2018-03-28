@@ -47,6 +47,11 @@ public class ConwayCellImpl implements ConwayCell {
 	public short getOnNeighborCount() {
 		return this.onNeighborCount;
 	}
+	
+	@Override
+	public void resetOnNeighborCount() {
+		this.onNeighborCount = 0;
+	}
 
 	@Override
 	public void incOnNeighborCount() {

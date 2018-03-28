@@ -3,8 +3,8 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -17,7 +17,7 @@ import view.ImageLoader.GameImage;
  * A view for the rendering of the main screen.
  *
  */
-public class MainFrameImpl implements MainFrame {
+public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 
 	private static final String FRAME_NAME = "The Game Of Life";
 	
@@ -32,7 +32,7 @@ public class MainFrameImpl implements MainFrame {
 	/**
 	 * Creates a new frame for the game rendering.
 	 */
-	public MainFrameImpl() {
+	public GameOfLifeFrameImpl() {
 		this.initialized = false;
 	}
 	
@@ -101,7 +101,7 @@ public class MainFrameImpl implements MainFrame {
     }
     
     @Override
-	public void drawCells(List<ConwayCell> cells) {
+	public void drawCells(Set<ConwayCell> cells) {
     	checkInitialization();
         this.cellMapPanel.repaint();
 	}

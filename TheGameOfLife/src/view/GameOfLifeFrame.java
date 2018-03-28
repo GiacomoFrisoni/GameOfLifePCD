@@ -1,11 +1,12 @@
 package view;
 
-import java.util.List;
+import java.util.Set;
 
 import controller.GameController;
 import model.ConwayCell;
 
-public interface MainFrame {
+public interface GameOfLifeFrame {
+	
 	/**
      * Sets an observer of the game frame.
      * 
@@ -26,12 +27,13 @@ public interface MainFrame {
     void showView();
 
     /**
-     * Updates the view and repaints the game panel.
+     * Updates the view and repaints the cell map panel.
      */
-    void drawCells(List<ConwayCell> cells);
+    void drawCells(Set<ConwayCell> cells);
     
     /**
      * Closes the game frame.
      */
     void closeView();
+    
 }

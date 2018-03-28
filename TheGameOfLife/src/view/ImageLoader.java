@@ -52,7 +52,7 @@ public final class ImageLoader {
      * @return the specified ImageIcon
      */
     public static ImageIcon createImageIcon(final GameImage img) {
-        final java.net.URL imgURL = MainFrame.class.getClassLoader().getResource(img.getPath());
+        final java.net.URL imgURL = GameOfLifeFrame.class.getClassLoader().getResource(img.getPath());
         if (imgURL != null) {
             return new ImageIcon(imgURL);
         }
