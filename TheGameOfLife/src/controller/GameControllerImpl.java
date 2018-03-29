@@ -1,9 +1,11 @@
 package controller;
 
+import java.awt.Dimension;
+
 import model.ConwayCellMap;
 import view.GameOfLifeFrame;
 
-public class GameControllerImpl {
+public class GameControllerImpl implements GameController {
 	
 	private final ConwayCellMap model;
 	private final GameOfLifeFrame view;
@@ -21,5 +23,11 @@ public class GameControllerImpl {
 	
 	public void stop() {
 		stopFlag.setOn();
+	}
+
+	@Override
+	public Dimension getCellMapDimension() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

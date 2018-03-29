@@ -2,11 +2,16 @@ package view;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.util.Objects;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 import controller.GameController;
 
@@ -17,7 +22,7 @@ public class MenuPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = -3478859524085262735L;
 
-	private static final int PANEL_WIDTH = 100;
+	private static final int PANEL_WIDTH = 250;
 	
 	private final GameController controller;
 	
@@ -26,6 +31,10 @@ public class MenuPanel extends JPanel {
 	
 	//private final JTextField mapDimension;
 	//private final JTextField previewDimension;
+	
+	private final JLabel currentGeneration;
+	private final JLabel timeElapsed;
+	private final JLabel liveCells;
 	
 	private MenuObserver observer;
 	
@@ -37,7 +46,7 @@ public class MenuPanel extends JPanel {
         
         //Creating buttons for START / STOP
         final JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(0, 2));
+        buttonPanel.setLayout(new GridLayout(0, 2, 5, 5));
         
         this.start = factory.createButton("Start");
         this.stop = factory.createButton("Stop");
@@ -45,7 +54,32 @@ public class MenuPanel extends JPanel {
         buttonPanel.add(this.start);
         buttonPanel.add(this.stop);
         
+        
+        //Creating additional panel for additional info
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        panel.setBorder(new EmptyBorder(new Insets(40, 0, 0, 0)));
+        
+        currentGeneration = new JLabel();
+        timeElapsed = new JLabel();
+        liveCells = new JLabel();
+
+        panel.add(new JLabel("Current generation"));
+        panel.add(currentGeneration);
+        panel.add(Box.createRigidArea(new Dimension(0, 5)));
+        panel.add(new JLabel("Time elapsed"));
+        panel.add(timeElapsed);
+        panel.add(Box.createRigidArea(new Dimension(0, 5)));
+        panel.add(new JLabel("Live cells"));
+        panel.add(liveCells);
+        
+        
+        setCurrentGenerationInfo("0");
+        setTimeElapsedInfo("0");
+        
         this.add(buttonPanel);
+        this.add(panel);
         
         //Creating more settings
 	}
@@ -81,5 +115,17 @@ public class MenuPanel extends JPanel {
          * Show the scores of the player.
          */
         void stop();
+    }
+    
+    public void setCurrentGenerationInfo(String text) {
+    	this.currentGeneration.setText(text);
+    }
+    
+    public void setTimeElapsedInfo(String text) {
+    	this.timeElapsed.setText(text);
+    }
+    
+    public void setLiveCellsInfo(String text) {
+    	this.liveCells.setText(text);
     }
 }
