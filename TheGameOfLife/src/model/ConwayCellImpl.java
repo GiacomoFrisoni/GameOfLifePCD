@@ -67,17 +67,15 @@ public class ConwayCellImpl implements ConwayCell {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + onNeighborCount;
 		result = prime * result + ((position == null) ? 0 : position.hashCode());
-		result = prime * result + (state ? 1231 : 1237);
 		return result;
 	}
 
 	@Override
 	public boolean equals(final Object obj) {
 		return obj instanceof ConwayCellImpl
-				&& this.position.getX() == ((ConwayCellImpl)obj).getPosition().getX()
-				&& this.position.getY() == ((ConwayCellImpl)obj).getPosition().getY();
+				&& this.position.x == ((ConwayCellImpl)obj).getPosition().x
+				&& this.position.y == ((ConwayCellImpl)obj).getPosition().y;
 	}
 	
 	@Override

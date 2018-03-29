@@ -28,13 +28,25 @@ public class GameOfLifeService extends Thread {
 			}
 			
 			final int poolSize = Runtime.getRuntime().availableProcessors() + 1;
+
+			final Master master = new Master(model, poolSize, stopFlag);
+			
+			final Chrono cron = new Chrono();
+			int liveCells;
 			
 			while (!stopFlag.isOn()) {
-				Thread.sleep(50);
+				//Thread.sleep(50);
 				
-				final Master master = new Master(model, poolSize, stopFlag);
-				master.compute();
-				view.drawCells(this.model.getLastUpdatedCellsInRegion(new Point(0, 0), new Dimension(250, 250)));
+				
+				cron.start();
+				liveCells = master.compute();
+				cron.stop();
+				System.out.println("Generation: " + this.model.getGenerationNumber() + ". Time elapsed: " + cron.getTime() + " ms.");
+				System.out.println("Live cells: " + liveCells);
+				
+				this.model.nextGeneration();
+				
+				//view.drawCells(this.model.getLastUpdatedCellsInRegion(new Point(0, 0), new Dimension(250, 250)));
 				
 				if (stopFlag.isOn()) {
 					// view.changeState("Interrupted. Cell live: " + result.size());

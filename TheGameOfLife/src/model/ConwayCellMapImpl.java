@@ -98,7 +98,7 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 	
 	@Override
 	public Set<ConwayCell> getCellsToEvaluate() {
-		return this.cellsToEvaluate;
+		return new HashSet<>(this.cellsToEvaluate);
 	}
 	
 	/*

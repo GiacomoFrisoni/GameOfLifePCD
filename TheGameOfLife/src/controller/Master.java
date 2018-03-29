@@ -1,6 +1,5 @@
 package controller;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -25,7 +24,7 @@ public class Master {
 	
 	public int compute() throws InterruptedException, ExecutionException {
 		int cellsAlive = 0;
-		final Set<ConwayCell> cellsToEvaluate = new HashSet<>(this.model.getCellsToEvaluate());
+		final Set<ConwayCell> cellsToEvaluate = this.model.getCellsToEvaluate();
 		for (final ConwayCell cell : cellsToEvaluate) {
 			if (this.stopFlag.isOn())
 				break;
