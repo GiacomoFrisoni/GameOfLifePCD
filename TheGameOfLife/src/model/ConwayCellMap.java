@@ -57,6 +57,11 @@ public interface ConwayCellMap {
 	boolean nextGeneration();
 	
 	/**
+	 * @return the cells updated in the last generation.
+	 */
+	Set<ConwayCell> getLastUpdatedCells();
+	
+	/**
 	 * Gets the cells updated in the last generation that are in a specified range region.
 	 * 
 	 * @param startPoint
