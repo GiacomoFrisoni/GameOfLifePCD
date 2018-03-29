@@ -28,8 +28,8 @@ public class CellMapDrawPanel extends JComponent {
      * Auto-generated UID.
      */
     private static final long serialVersionUID = -6689261673710076779L;
-    BufferedImage bufferedImage  = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
-    Graphics2D g2d;
+    private BufferedImage bufferedImage  = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+
 
 
     @Override
@@ -38,15 +38,13 @@ public class CellMapDrawPanel extends JComponent {
         
         if (bufferedImage != null) {
         	g.drawImage(bufferedImage, 0, 0, null);
-        }
-        
-
+        }      
     }
     
     
     public void setCellsToPaint(Set<ConwayCell> cells) {
     	
-    	g2d = bufferedImage.createGraphics();
+        Graphics2D g2d = bufferedImage.createGraphics();
     	
     	g2d.setStroke(new BasicStroke(1));
         g2d.setColor(Color.BLACK);

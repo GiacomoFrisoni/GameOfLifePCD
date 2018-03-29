@@ -41,7 +41,5 @@ public final class GameOfLife {
         		view.showView();
             }
         });
-
-		controller.start();
 	}
 }

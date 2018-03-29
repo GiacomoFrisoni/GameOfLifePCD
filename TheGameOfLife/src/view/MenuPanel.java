@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
@@ -42,29 +43,37 @@ public class MenuPanel extends JPanel {
 		this.controller = Objects.requireNonNull(controller);
 
         final GUIFactory factory = new GUIFactory.Standard();
-        this.setLayout(new GridLayout(2, 0));
+        this.setLayout(new GridLayout(1, 1));
         
         //Creating buttons for START / STOP
-        final JPanel buttonPanel = new JPanel();
+        /*final JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(0, 2, 5, 5));
         
         this.start = factory.createButton("Start");
         this.stop = factory.createButton("Stop");
         
         buttonPanel.add(this.start);
-        buttonPanel.add(this.stop);
+        buttonPanel.add(this.stop);*/
         
         
         //Creating additional panel for additional info
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-        panel.setBorder(new EmptyBorder(new Insets(40, 0, 0, 0)));
+        panel.setBackground(Color.LIGHT_GRAY);
+        panel.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
         
-        currentGeneration = new JLabel();
-        timeElapsed = new JLabel();
-        liveCells = new JLabel();
-
+        this.start = factory.createButton("Start");
+        this.stop = factory.createButton("Stop");
+        
+        this.currentGeneration = factory.createLabel("0");
+        this.timeElapsed = factory.createLabel("0");
+        this.liveCells = factory.createLabel("0");
+        
+        panel.add(this.start);
+        panel.add(Box.createRigidArea(new Dimension(0, 5)));
+        panel.add(this.stop);
+        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        
         panel.add(new JLabel("Current generation"));
         panel.add(currentGeneration);
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
@@ -74,11 +83,18 @@ public class MenuPanel extends JPanel {
         panel.add(new JLabel("Live cells"));
         panel.add(liveCells);
         
-        
         setCurrentGenerationInfo("0");
         setTimeElapsedInfo("0");
         
-        this.add(buttonPanel);
+        this.start.addActionListener(e -> {
+        	controller.start();
+        });
+        
+        this.stop.addActionListener(e -> {
+        	controller.stop();
+        });
+        
+        //this.add(buttonPanel);
         this.add(panel);
         
         //Creating more settings
