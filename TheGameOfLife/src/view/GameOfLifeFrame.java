@@ -36,4 +36,9 @@ public interface GameOfLifeFrame {
      */
     void closeView();
     
+    void setCurrentGenerationInfo(String text);
+    void setTimeElapsedInfo(String text);
+    void setLiveCellsInfo(String text);
+    
+    
 }

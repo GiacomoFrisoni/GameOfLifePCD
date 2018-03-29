@@ -43,6 +43,9 @@ public class GameOfLifeService extends Thread {
 				cron.stop();
 				System.out.println("Generation: " + this.model.getGenerationNumber() + ". Time elapsed: " + cron.getTime() + " ms.");
 				System.out.println("Live cells: " + liveCells);
+				view.setCurrentGenerationInfo("" + this.model.getGenerationNumber());
+				view.setTimeElapsedInfo("" + cron.getTime() + " ms");
+				view.setLiveCellsInfo("" + liveCells);
 				
 				this.model.nextGeneration();
 				
