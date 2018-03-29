@@ -5,7 +5,7 @@ import java.awt.Point;
 /**
  * Implementation of {@link ConwayCell}.
  */
-public class ConwayCellImpl implements ConwayCell {
+public class ConwayCellImpl implements ConwayCell, Cloneable {
 
 	private final Point position;
 	private boolean state;
@@ -21,6 +21,18 @@ public class ConwayCellImpl implements ConwayCell {
 		this.position = position;
 		this.state = false;
 		this.onNeighborCount = 0;
+	}
+	
+	/**
+	 * Constructor for deep copy.
+	 * 
+	 * @param cellToCopy
+	 * 		the cell to copy
+	 */
+	public ConwayCellImpl(final ConwayCell cellToCopy) {
+		this.position = new Point(cellToCopy.getPosition().x, cellToCopy.getPosition().y);
+		this.state = cellToCopy.isAlive();
+		this.onNeighborCount = cellToCopy.getOnNeighborCount();
 	}
 	
 	@Override
@@ -44,7 +56,7 @@ public class ConwayCellImpl implements ConwayCell {
 	}
 	
 	@Override
-	public short getOnNeighborCount() {
+	public byte getOnNeighborCount() {
 		return this.onNeighborCount;
 	}
 	
@@ -60,7 +72,7 @@ public class ConwayCellImpl implements ConwayCell {
 	
 	@Override
 	public void decOnNeighborCount() {
-		this.onNeighborCount--;
+		this.onNeighborCount = (byte) Math.max(this.onNeighborCount - 1, 0);
 	}
 
 	@Override
@@ -80,7 +92,7 @@ public class ConwayCellImpl implements ConwayCell {
 	
 	@Override
 	public String toString() {
-		return "Cell at (" + this.position.getX() + ", " + this.position.getY() + ") with "
-				+ this.onNeighborCount + " neighbor" + (this.onNeighborCount == 1 ? "" : "s");
+		return "Cell " + (this.state ? "alive" : "death") + " at (" + this.position.getX() + ", "
+				+ this.position.getY() + ") with " + this.onNeighborCount + " neighbor" + (this.onNeighborCount == 1 ? "" : "s");
 	}
 }

@@ -1,7 +1,10 @@
 package controller;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,15 +25,19 @@ public class Master {
 		this.stopFlag = stopFlag;
 	}
 	
-	public int compute() throws InterruptedException, ExecutionException {
-		int cellsAlive = 0;
+	public long compute() throws InterruptedException, ExecutionException {
+		long cellsAlive = 0;
 		final Set<ConwayCell> cellsToEvaluate = this.model.getCellsToEvaluate();
+		final Set<Callable<Optional<Boolean>>> tasks = new HashSet<>();
 		for (final ConwayCell cell : cellsToEvaluate) {
 			if (this.stopFlag.isOn())
 				break;
-			final Future<Optional<Boolean>> res = this.executor.submit(new ComputeTask(model, cell));
-			if (res.get().isPresent()) {
-				if (res.get().get()) {
+			tasks.add(new ComputeTask(model, cell));
+		}
+		final List<Future<Optional<Boolean>>> res = this.executor.invokeAll(tasks);
+		for (Future<Optional<Boolean>> f : res) {
+			if (f.get().isPresent()) {
+				if (f.get().get()) {
 					cellsAlive++;
 				}
 			}

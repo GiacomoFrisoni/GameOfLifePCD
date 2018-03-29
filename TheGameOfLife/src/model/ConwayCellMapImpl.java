@@ -48,14 +48,11 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 		
 		// Creates the cell map
 		this.cells = new ArrayList<>(width * height);
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
-				cells.add(i * width + j, new ConwayCellImpl(new Point(i, j)));
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				cells.add(i * height + j, new ConwayCellImpl(new Point(j, i)));
 			}
 		}
-		
-		// Creates an unaltered version of the cell map from which to work
-		this.nextCells = new ArrayList<>(this.cells);
 		
 		// Creates a set with the cells updated in the last generation
 		this.lastUpdatedCells = new HashSet<>();
@@ -171,7 +168,7 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 			final short count = cell.getOnNeighborCount();
 			if (cell.isAlive()) {
 				// Cell is on; turns it off if it doesn't have 2 or 3 neighbors
-				if ((count < 2) && (count > 3)) {
+				if ((count < 2) || (count > 3)) {
 					setCellStateOff(cell.getPosition());
 					this.lastUpdatedCells.add(cell);
 					nextStatus = false;
@@ -190,13 +187,26 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 		return Optional.empty();
 	}
 	
+	/*
+	 * Swaps the content of two lists.
+	 */
+	private static <T> void swapLists(List<T> firstList, List<T> secondList) {
+		final List<T> tmpList = new ArrayList<T>(firstList);
+		firstList.clear();
+		firstList.addAll(secondList);
+		secondList.clear();
+		secondList.addAll(tmpList);
+	}
+	
 	@Override
 	public boolean nextGeneration() {
 		if (this.cellsToEvaluate.isEmpty()) {
 			// Swaps cell map references for next generation
-			final List<ConwayCell> tmp = this.nextCells;
-			this.nextCells = this.cells;
-			this.cells = tmp;
+			//swapLists(this.cells, this.nextCells);
+			this.cells.clear();
+			for (final ConwayCell cell : this.nextCells) {
+				this.cells.add(new ConwayCellImpl(cell));
+			}
 			// Clears last updated cells
 			this.lastUpdatedCells.clear();
 			// Calculate cells to evaluate in the new generation
@@ -213,7 +223,11 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 	 */
 	private void clear() {
 		this.cells.forEach(c -> { c.setStateOff(); c.resetOnNeighborCount(); });
-		this.nextCells = new ArrayList<>(this.cells);
+		// Creates an unaltered version of the cell map from which to work
+		this.nextCells = new ArrayList<>(this.mapDimension.width * this.mapDimension.height);
+		for (final ConwayCell cell : this.cells) {
+			this.nextCells.add(new ConwayCellImpl(cell));
+		}
 		this.cellsToEvaluate.clear();
 		this.lastUpdatedCells.clear();
 		this.generation = 0;
@@ -230,11 +244,16 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 			x = ThreadLocalRandom.current().nextInt(0, this.mapDimension.width);
 			y = ThreadLocalRandom.current().nextInt(0, this.mapDimension.height);
 			final ConwayCell cell = getCellByPosition(this.cells, x, y).get();
-			if (!cell.isAlive()) {
+			if (!getCellByPosition(this.nextCells, x, y).get().isAlive()) {
 				setCellStateOn(cell.getPosition());
 				this.lastUpdatedCells.add(cell);
 			}
 		} while (--initLength > 0);
+		// At the beginning set current cell map = next cell map
+		this.cells.clear();
+		for (final ConwayCell cell : this.nextCells) {
+			this.cells.add(new ConwayCellImpl(cell));
+		}
 		// Calculates the cells to evaluate at start
 		calculateCellsToEvaluate();
 	}
@@ -254,5 +273,14 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 			}
 		}
 		return getLastUpdatedCellsInRegion;
+	}
+	
+	public void print() {
+		for (int i = 0; i < this.mapDimension.height; i++) {
+			for (int j = 0; j < this.mapDimension.width; j++) {
+				System.out.print(" " + (getCellByPosition(this.cells, j, i).get().isAlive() ? "O" : "X"));
+			}
+			System.out.println();
+		}
 	}
 }

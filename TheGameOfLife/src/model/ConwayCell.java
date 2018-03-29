@@ -31,7 +31,7 @@ public interface ConwayCell {
 	/**
 	 * @return the number of alive neighbors.
 	 */
-	short getOnNeighborCount();
+	byte getOnNeighborCount();
 	
 	/**
 	 * Resets the number of alive neighbors.

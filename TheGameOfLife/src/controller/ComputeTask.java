@@ -15,6 +15,7 @@ public class ComputeTask implements Callable<Optional<Boolean>> {
 		this.model = model;
 		this.cell = cell;
 	}
+	
 	@Override
 	public Optional<Boolean> call() {
 		return this.model.computeCell(this.cell);

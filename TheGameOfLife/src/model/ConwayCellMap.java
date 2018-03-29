@@ -67,4 +67,5 @@ public interface ConwayCellMap {
 	 */
 	Set<ConwayCell> getLastUpdatedCellsInRegion(Point startPoint, Dimension regionDimension);
 	
+	void print();
 }

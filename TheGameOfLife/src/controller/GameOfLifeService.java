@@ -32,17 +32,18 @@ public class GameOfLifeService extends Thread {
 			final Master master = new Master(model, poolSize, stopFlag);
 			
 			final Chrono cron = new Chrono();
-			int liveCells;
+			long liveCells = 0;
 			
 			while (!stopFlag.isOn()) {
-				//Thread.sleep(50);
+				Thread.sleep(3000);
 				
+				System.out.println("Generation: " + this.model.getGenerationNumber() + ". Time elapsed: " + cron.getTime() + " ms.");
+				System.out.println("Live cells: " + liveCells);
+				this.model.print();
 				
 				cron.start();
 				liveCells = master.compute();
 				cron.stop();
-				System.out.println("Generation: " + this.model.getGenerationNumber() + ". Time elapsed: " + cron.getTime() + " ms.");
-				System.out.println("Live cells: " + liveCells);
 				
 				this.model.nextGeneration();
 				
