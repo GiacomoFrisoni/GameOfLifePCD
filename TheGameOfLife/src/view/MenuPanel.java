@@ -51,7 +51,6 @@ public class MenuPanel extends JPanel {
         //Creating additional panel for additional info
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        //panel.setBackground(Color.LIGHT_GRAY);
         panel.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
         
         this.start = factory.createButton("Start");
