@@ -34,6 +34,7 @@ public interface GUIFactory {
 			final JButton button = new JButton(text);
             button.setForeground(COLOR_FONT);
             button.setBackground(COLOR_BUTTON);
+            button.setPreferredSize(new Dimension(45, 45));
             button.setOpaque(true);
             return button;
 		}

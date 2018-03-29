@@ -29,6 +29,7 @@ public class MenuPanel extends JPanel {
 	
 	private final JButton start;
 	private final JButton stop;
+	private final JButton reset;
 	
 	private final JTextField mapDimension;
 	private final JTextField previewDimension;
@@ -36,6 +37,7 @@ public class MenuPanel extends JPanel {
 	private final JLabel currentGeneration;
 	private final JLabel timeElapsed;
 	private final JLabel liveCells;
+	private final JLabel currentPosition;
 	
 	private MenuObserver observer;
 	
@@ -44,16 +46,6 @@ public class MenuPanel extends JPanel {
 
         final GUIFactory factory = new GUIFactory.Standard();
         this.setLayout(new GridLayout(1, 1));
-        
-        //Creating buttons for START / STOP
-        /*final JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(0, 2, 5, 5));
-        
-        this.start = factory.createButton("Start");
-        this.stop = factory.createButton("Stop");
-        
-        buttonPanel.add(this.start);
-        buttonPanel.add(this.stop);*/
         
         
         //Creating additional panel for additional info
@@ -64,10 +56,12 @@ public class MenuPanel extends JPanel {
         
         this.start = factory.createButton("Start");
         this.stop = factory.createButton("Stop");
+        this.reset = factory.createButton("Reset");
         
         this.currentGeneration = factory.createLabel("0");
         this.timeElapsed = factory.createLabel("0");
         this.liveCells = factory.createLabel("0");
+        this.currentPosition = factory.createLabel("1:1");
         
         this.mapDimension = factory.createTextField(true, "100");
         this.previewDimension = factory.createTextField(true, "500");
@@ -75,8 +69,12 @@ public class MenuPanel extends JPanel {
         panel.add(this.start);
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
         panel.add(this.stop);
+        panel.add(Box.createRigidArea(new Dimension(0, 5)));
+        panel.add(this.reset);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
         
+        panel.add(factory.createLabel("Current map position"));
+        panel.add(currentPosition);
         panel.add(factory.createLabel("Current generation"));
         panel.add(currentGeneration);
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
@@ -106,10 +104,16 @@ public class MenuPanel extends JPanel {
         	controller.stop();
         });
         
-        //this.add(buttonPanel);
+        this.reset.addActionListener(e -> {
+        	controller.stop();
+        });
+        
         this.add(panel);
         
-        //Creating more settings
+        Dimension d = new Dimension(300, 25);
+        this.start.setMaximumSize(d);
+        this.stop.setMaximumSize(d);
+        this.reset.setMaximumSize(d);
 	}
 	
 	@Override
