@@ -50,9 +50,7 @@ public interface GUIFactory {
 		@Override
 		public JLabel createTitleLabel(String text) {
 			final JLabel title = createLabel(text);
-            title.setHorizontalAlignment(SwingConstants.CENTER);
-            title.setAlignmentX(Component.CENTER_ALIGNMENT);
-            title.setFont(new Font("Serif", Font.PLAIN, 16));
+            title.setFont(new Font(title.getFont().getFontName(), Font.PLAIN, 16));
             return title;
 		}
 

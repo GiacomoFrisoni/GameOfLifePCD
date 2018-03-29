@@ -58,10 +58,10 @@ public class MenuPanel extends JPanel {
         this.stop = factory.createButton("Stop");
         this.reset = factory.createButton("Reset");
         
-        this.currentGeneration = factory.createLabel("0");
-        this.timeElapsed = factory.createLabel("0");
-        this.liveCells = factory.createLabel("0");
-        this.currentPosition = factory.createLabel("1:1");
+        this.currentGeneration = factory.createTitleLabel("0");
+        this.timeElapsed = factory.createTitleLabel("0");
+        this.liveCells = factory.createTitleLabel("0");
+        this.currentPosition = factory.createTitleLabel("1:1");
         
         this.mapDimension = factory.createTextField(true, "100");
         this.previewDimension = factory.createTextField(true, "500");
@@ -75,6 +75,7 @@ public class MenuPanel extends JPanel {
         
         panel.add(factory.createLabel("Current map position"));
         panel.add(currentPosition);
+        panel.add(Box.createRigidArea(new Dimension(0, 20)));
         panel.add(factory.createLabel("Current generation"));
         panel.add(currentGeneration);
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
