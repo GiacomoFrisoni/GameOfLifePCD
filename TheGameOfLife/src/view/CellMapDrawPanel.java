@@ -8,7 +8,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.util.Collections;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -28,7 +30,7 @@ public class CellMapDrawPanel extends JComponent {
      * Auto-generated UID.
      */
     private static final long serialVersionUID = -6689261673710076779L;
-    private BufferedImage bufferedImage  = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+    private BufferedImage bufferedImage  = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_ARGB);
 
 
 
@@ -48,9 +50,10 @@ public class CellMapDrawPanel extends JComponent {
     	
     	g2d.setStroke(new BasicStroke(1));
         g2d.setColor(Color.BLACK);
-        
+             
         
     	for (ConwayCell c : cells) {
+    		//System.out.println("" + c.getPosition().x * 4 + "|" + c.getPosition().y * 4);
         	g2d.fillRect(c.getPosition().x * 4, c.getPosition().y * 4, 3, 3);
     	}
     	
