@@ -62,7 +62,7 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 		
 		// Sets the layout
 		final JPanel mainPanel = new JPanel(new BorderLayout());
-		mainPanel.add(this.cellMapPanel, BorderLayout.CENTER);
+		mainPanel.add(new CellMapViewer(this.cellMapPanel, this.controller), BorderLayout.CENTER);
 		mainPanel.add(this.menuPanel, BorderLayout.EAST);
 	
 		
@@ -70,6 +70,7 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 		this.frame.setLocationByPlatform(true);
 		this.frame.setFocusable(true);
 		this.frame.pack();
+		setStopped();
 		this.initialized = true;
 	}
 	
@@ -142,6 +143,26 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 	@Override
 	public void setLiveCellsInfo(String text) {
 		menuPanel.setLiveCellsInfo(text);
+	}
+
+	@Override
+	public String getMapDimension() {
+		return this.menuPanel.getMapDimension();
+	}
+
+	@Override
+	public String getPreviewDimension() {
+		return this.menuPanel.getPreviewDimension();
+	}
+
+	@Override
+	public void setStarted() {
+		this.menuPanel.setStarted();
+	}
+
+	@Override
+	public void setStopped() {
+		this.menuPanel.setStopped();
 	}
 
 	

@@ -40,5 +40,10 @@ public interface GameOfLifeFrame {
     void setTimeElapsedInfo(String text);
     void setLiveCellsInfo(String text);
     
+    void setStarted();
+    void setStopped();
     
+    String getMapDimension();
+    String getPreviewDimension();
+     
 }

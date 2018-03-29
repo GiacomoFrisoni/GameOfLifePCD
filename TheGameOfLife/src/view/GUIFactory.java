@@ -14,12 +14,14 @@ import javax.swing.SwingConstants;
 public interface GUIFactory {
 
 	JButton createButton(String text);
-	
+
 	JLabel createLabel(String text);
 	
 	JLabel createTitleLabel(String text);
 	
 	JTextField createTextField(boolean isEditable);
+	
+	JTextField createTextField(boolean isEditable, String text);
 	
 	
 	class Standard implements GUIFactory {
@@ -40,6 +42,7 @@ public interface GUIFactory {
 		public JLabel createLabel(String text) {
 			final JLabel label = new JLabel();
             label.setForeground(COLOR_FONT);
+            label.setText(text);
             return label;
 		}
 
@@ -54,9 +57,16 @@ public interface GUIFactory {
 
 		@Override
 		public JTextField createTextField(boolean isEditable) {
+			return createTextField(isEditable, "");
+		}
+		
+		@Override
+		public JTextField createTextField(boolean isEditable, String text) {
 			final JTextField field = new JTextField();           
-            field.setHorizontalAlignment(JTextField.CENTER);
+            field.setHorizontalAlignment(JTextField.LEFT);
             field.setEditable(isEditable);
+            field.setMaximumSize(new Dimension(1000, 25));
+            field.setText(text);
             return field;
 		}
 		

@@ -30,8 +30,8 @@ public class MenuPanel extends JPanel {
 	private final JButton start;
 	private final JButton stop;
 	
-	//private final JTextField mapDimension;
-	//private final JTextField previewDimension;
+	private final JTextField mapDimension;
+	private final JTextField previewDimension;
 	
 	private final JLabel currentGeneration;
 	private final JLabel timeElapsed;
@@ -69,19 +69,31 @@ public class MenuPanel extends JPanel {
         this.timeElapsed = factory.createLabel("0");
         this.liveCells = factory.createLabel("0");
         
+        this.mapDimension = factory.createTextField(true, "100");
+        this.previewDimension = factory.createTextField(true, "500");
+       
         panel.add(this.start);
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
         panel.add(this.stop);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
         
-        panel.add(new JLabel("Current generation"));
+        panel.add(factory.createLabel("Current generation"));
         panel.add(currentGeneration);
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
-        panel.add(new JLabel("Time elapsed"));
+        panel.add(factory.createLabel("Time elapsed"));
         panel.add(timeElapsed);
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
-        panel.add(new JLabel("Live cells"));
+        panel.add(factory.createLabel("Live cells"));
         panel.add(liveCells);
+        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        
+        panel.add(factory.createLabel("Map dimension (X & Y)"));
+        panel.add(this.mapDimension);
+        panel.add(Box.createRigidArea(new Dimension(0, 5)));
+        panel.add(factory.createLabel("Preview dimension (X & Y)"));
+        panel.add(this.previewDimension);
+        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        
         
         setCurrentGenerationInfo("0");
         setTimeElapsedInfo("0");
@@ -144,4 +156,22 @@ public class MenuPanel extends JPanel {
     public void setLiveCellsInfo(String text) {
     	this.liveCells.setText(text);
     }
+    
+	public String getMapDimension() {
+		return this.mapDimension.getText();
+	}
+
+	public String getPreviewDimension() {
+		return this.previewDimension.getText();
+	}
+	
+	public void setStarted() {
+		this.start.setEnabled(false);
+		this.stop.setEnabled(true);
+	}
+
+	public void setStopped() {
+		this.start.setEnabled(true);
+		this.stop.setEnabled(false);
+	}
 }
