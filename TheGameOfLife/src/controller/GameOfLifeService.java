@@ -49,7 +49,8 @@ public class GameOfLifeService extends Thread {
 				
 				this.model.nextGeneration();
 				
-				//view.drawCells(this.model.getLastUpdatedCellsInRegion(new Point(0, 0), new Dimension(250, 250)));
+				view.drawCells(this.model.getCellMap());
+				//Thread.sleep(2000);
 				
 				if (stopFlag.isOn()) {
 					// view.changeState("Interrupted. Cell live: " + result.size());

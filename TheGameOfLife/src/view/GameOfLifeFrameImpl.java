@@ -57,13 +57,14 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 		this.frame.setResizable(false);
 		
 		// Sets the panels
-		this.cellMapPanel = new CellMapDrawPanel(this.controller);
+		this.cellMapPanel = new CellMapDrawPanel();
 		this.menuPanel = new MenuPanel(this.controller);
 		
 		// Sets the layout
 		final JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.add(this.cellMapPanel, BorderLayout.CENTER);
 		mainPanel.add(this.menuPanel, BorderLayout.EAST);
+	
 		
 		this.frame.add(mainPanel);
 		this.frame.setLocationByPlatform(true);
@@ -108,7 +109,9 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
     @Override
 	public void drawCells(Set<ConwayCell> cells) {
     	checkInitialization();
+    	this.cellMapPanel.setCellsToPaint(cells);
         this.cellMapPanel.repaint();
+    	this.cellMapPanel.revalidate();
 	}
     
     @Override
