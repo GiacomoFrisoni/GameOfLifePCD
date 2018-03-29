@@ -49,12 +49,19 @@ public class CellMapDrawPanel extends JComponent {
         Graphics2D g2d = bufferedImage.createGraphics();
     	
     	g2d.setStroke(new BasicStroke(1));
-        g2d.setColor(Color.BLACK);
+
              
         
     	for (ConwayCell c : cells) {
-    		//System.out.println("" + c.getPosition().x * 4 + "|" + c.getPosition().y * 4);
-        	g2d.fillRect(c.getPosition().x * 4, c.getPosition().y * 4, 3, 3);
+    		if (c.isAlive()) {
+    	        g2d.setColor(Color.BLACK);
+    		}
+    		else {
+    	        g2d.setColor(Color.WHITE);
+    		}
+    		
+    		//System.out.println(c.isAlive() + "|" + c.getPosition().x * 9 + "|" + c.getPosition().y * 9);      		
+        	g2d.fillRect(c.getPosition().x * 10, c.getPosition().y * 10, 9, 9);
     	}
     	
     	g2d.dispose();
