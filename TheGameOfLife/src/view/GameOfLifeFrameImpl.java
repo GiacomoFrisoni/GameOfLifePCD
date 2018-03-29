@@ -21,7 +21,7 @@ import view.ImageLoader.GameImage;
 public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 
 	private static final String FRAME_NAME = "The Game Of Life";
-	private static final int FRAME_WIDTH = 800;
+	private static final int FRAME_WIDTH = 900;
 	private static final int FRAME_HEIGHT = 800;
 	
 	
