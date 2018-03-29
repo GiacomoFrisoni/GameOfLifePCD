@@ -1,13 +1,16 @@
 package controller;
 
+import java.awt.Dimension;
+
 import model.ConwayCellMap;
 import view.GameOfLifeFrame;
 
-public class GameControllerImpl {
+public class GameControllerImpl implements GameController {
 	
 	private final ConwayCellMap model;
 	private final GameOfLifeFrame view;
 	private Flag stopFlag;
+	private boolean isStarted = false;
 	
 	public GameControllerImpl(final ConwayCellMap model, final GameOfLifeFrame view) {
 		this.model = model;
@@ -15,11 +18,23 @@ public class GameControllerImpl {
 	}
 	
 	public void start() {
-		stopFlag = new Flag();
-		new GameOfLifeService(model, view, stopFlag).start();
+		if (!isStarted) {
+			stopFlag = new Flag();
+			new GameOfLifeService(model, view, stopFlag).start();		
+			isStarted = true;
+			view.setStarted();
+		}
 	}
 	
 	public void stop() {
 		stopFlag.setOn();
+		isStarted = false;
+		view.setStopped();
+	}
+
+	@Override
+	public Dimension getCellMapDimension() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

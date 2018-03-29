@@ -8,4 +8,8 @@ public interface GameController {
 	 * @return the dimension of the cell map.
 	 */
 	Dimension getCellMapDimension();
+	
+	void start();
+	
+	void stop();
 }

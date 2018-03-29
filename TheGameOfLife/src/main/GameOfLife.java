@@ -1,5 +1,8 @@
 package main;
 
+import javax.swing.SwingUtilities;
+
+import controller.GameController;
 import controller.GameControllerImpl;
 import model.ConwayCellMap;
 import model.ConwayCellMapImpl;
@@ -25,6 +28,18 @@ public final class GameOfLife {
 	public static void main(final String... args) {
 		final ConwayCellMap model = new ConwayCellMapImpl(CELLMAP_WIDTH, CELLMAP_HEIGHT);
 		final GameOfLifeFrame view = new GameOfLifeFrameImpl();
-		new GameControllerImpl(model, view).start();
+		
+		//new GameControllerImpl(model, view).start();
+		
+		final GameController controller = new GameControllerImpl(model, view);
+		view.setObserver(controller);
+		view.initView();
+		
+		SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+        		view.showView();
+            }
+        });
 	}
 }

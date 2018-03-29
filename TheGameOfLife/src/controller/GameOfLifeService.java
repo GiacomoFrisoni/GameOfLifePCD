@@ -44,10 +44,17 @@ public class GameOfLifeService extends Thread {
 				cron.start();
 				liveCells = master.compute();
 				cron.stop();
+
+				System.out.println("Generation: " + this.model.getGenerationNumber() + ". Time elapsed: " + cron.getTime() + " ms.");
+				System.out.println("Live cells: " + liveCells);
+				view.setCurrentGenerationInfo("" + this.model.getGenerationNumber());
+				view.setTimeElapsedInfo("" + cron.getTime() + " ms");
+				view.setLiveCellsInfo("" + liveCells);
 				
 				this.model.nextGeneration();
 				
-				//view.drawCells(this.model.getLastUpdatedCellsInRegion(new Point(0, 0), new Dimension(250, 250)));
+				view.drawCells(this.model.getCellMap());
+				//Thread.sleep(2000);
 				
 				if (stopFlag.isOn()) {
 					// view.changeState("Interrupted. Cell live: " + result.size());
