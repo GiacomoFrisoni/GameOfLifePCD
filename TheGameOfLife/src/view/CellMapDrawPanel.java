@@ -49,8 +49,7 @@ public class CellMapDrawPanel extends JComponent {
         Graphics2D g2d = bufferedImage.createGraphics();
     	
     	g2d.setStroke(new BasicStroke(1));
-
-             
+         
         
     	for (ConwayCell c : cells) {
     		if (c.isAlive()) {
