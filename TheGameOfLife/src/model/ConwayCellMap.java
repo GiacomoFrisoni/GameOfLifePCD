@@ -14,7 +14,7 @@ public interface ConwayCellMap {
 	/**
 	 * Randomly initializes the status of the cells in the map.
 	 */
-	void randomInit();
+	void randomInitCell();
 	
 	/**
 	 * @return the dimension (width and height) of the cell map.

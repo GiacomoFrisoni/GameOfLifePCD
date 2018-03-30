@@ -67,8 +67,8 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 		// Initializes number of generations
 		this.generation = 0;
 		
-		// Randomly sets cell status in the map and makes initialization
-		randomInit();
+		// Clear data for status initialization
+		clear();
 	}
 	
 	@Override
@@ -233,21 +233,13 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 	}
 	
 	@Override
-	public void randomInit() {
-		int x;
-		int y;
-		int initLength = (this.mapDimension.height * this.mapDimension.width) / 2;
-		clear();
-		// Randomly initializes the cell map to about 50% on-cells
-		do {
-			x = ThreadLocalRandom.current().nextInt(0, this.mapDimension.width);
-			y = ThreadLocalRandom.current().nextInt(0, this.mapDimension.height);
-			final ConwayCell cell = getCellByPosition(this.cells, x, y).get();
-			if (!getCellByPosition(this.nextCells, x, y).get().isAlive()) {
-				setCellStateOn(cell.getPosition());
-			}
-		} while (--initLength > 0);
-		nextGeneration();
+	public void randomInitCell() {
+		int x = ThreadLocalRandom.current().nextInt(0, this.mapDimension.width);
+		int y = ThreadLocalRandom.current().nextInt(0, this.mapDimension.height);
+		final ConwayCell cell = getCellByPosition(this.cells, x, y).get();
+		if (!getCellByPosition(this.nextCells, x, y).get().isAlive()) {
+			setCellStateOn(cell.getPosition());
+		}
 	}
 	
 	@Override
