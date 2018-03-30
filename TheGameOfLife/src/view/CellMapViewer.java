@@ -83,6 +83,8 @@ public class CellMapViewer extends JPanel {
 			this.mapYcurrentPosition = mapYcurrentPosition >= mapYLimit ? mapYLimit : mapYcurrentPosition + 1;
 			updateMenuState();
 		});
+		
+		this.setBackground(factory.getBackgroundColor());
 	}
 	
 	private void updateMenuState() {

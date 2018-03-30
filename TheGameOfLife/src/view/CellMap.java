@@ -26,8 +26,9 @@ public class CellMap extends JComponent {
 	private static final int CELL_SIZE = 9;
 	private static final int CELL_OFFSET = CELL_SIZE + 1;
 	
-	private CellMapViewer container;
+	private final CellMapViewer container;
 	
+	private final GUIFactory factory;
     private BufferedImage bufferedImage;  
     private int actualWidth, actualHeight;   
     private Set<ConwayCell> cells;
@@ -41,19 +42,20 @@ public class CellMap extends JComponent {
      */
     public CellMap(final CellMapViewer container) {
     	this.container = container;
+    	this.factory = new GUIFactory.Standard();
     }  
 
     /**
      * Initializes the component.
      */
     public void initialize() {
-    	actualWidth = CELL_OFFSET * ((int)(this.getWidth()/CELL_OFFSET));
-    	actualHeight = CELL_OFFSET * ((int)(this.getHeight()/CELL_OFFSET));
+    	actualWidth = CELL_OFFSET * ((int)(this.getWidth() / CELL_OFFSET));
+    	actualHeight = CELL_OFFSET * ((int)(this.getHeight() / CELL_OFFSET));
     	bufferedImage = new BufferedImage(actualWidth, actualHeight, BufferedImage.TYPE_INT_ARGB);
     }
         
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(final Graphics g) {
         super.paintComponent(g);
         
         if (bufferedImage != null) {
@@ -68,9 +70,9 @@ public class CellMap extends JComponent {
     	SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-		    	Graphics2D g2d = bufferedImage.createGraphics();   	
+		    	final Graphics2D g2d = bufferedImage.createGraphics();   	
 		    	g2d.setStroke(new BasicStroke(1));
-		    	g2d.setColor(UIManager.getColor("Panel.background"));
+		    	g2d.setColor(factory.getBackgroundColor());
 		    	g2d.fillRect(0, 0, actualWidth, actualHeight);
 		    	g2d.dispose();
 		        repaint();
@@ -115,9 +117,9 @@ public class CellMap extends JComponent {
 		            		//If the cell is inside my current limit
 		            		if (checkXlimit(c) && checkYlimit(c)) {
 		            			if (c.isAlive()) {
-		                	        g2d.setColor(Color.BLACK);
+		                	        g2d.setColor(factory.getAliveCellColor());
 		                		} else {
-		                	        g2d.setColor(Color.WHITE);
+		                	        g2d.setColor(factory.getDeadCellColor());
 		                		}
 		            			
 		            			// Draw
@@ -152,7 +154,7 @@ public class CellMap extends JComponent {
     }
     
     /*
-     * Checks if the point stay in current limit (X)
+     * Checks if the point stay in current limit (X).
      */
     private boolean checkXlimit(final ConwayCell c) {
     	final int min = this.container.getXcurrentPosition() * getDrawableXCellsNumber();
@@ -166,7 +168,7 @@ public class CellMap extends JComponent {
     }
     
     /*
-     * Checks if the point stay in current limit (Y)
+     * Checks if the point stay in current limit (Y).
      */
     private boolean checkYlimit(final ConwayCell c) {
     	final int min = this.container.getYcurrentPosition() * getDrawableYCellsNumber();

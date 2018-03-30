@@ -21,7 +21,7 @@ import model.ConwayCell;
  */
 public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 
-	private static final String FRAME_NAME = "The Game Of Life";
+	private static final String FRAME_NAME = "The Game Of Life - Giacomo Frisoni & Marcin Pabich";
 	private static final int FRAME_SCALE = 70;
 	
 	private boolean initialized;

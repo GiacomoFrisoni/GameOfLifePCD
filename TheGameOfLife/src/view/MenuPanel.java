@@ -63,7 +63,12 @@ public class MenuPanel extends JPanel {
 	private final JLabel previewDimension;
 	
 	
-	
+	/**
+	 * Creates a new menu panel.
+	 * 
+	 * @param controller
+	 * 		the game of life controller
+	 */
 	public MenuPanel(final GameController controller) {
 		this.controller = Objects.requireNonNull(controller);
 
@@ -71,7 +76,7 @@ public class MenuPanel extends JPanel {
         this.setLayout(new GridLayout(1, 1));
         
         //Creating additional panel for additional info
-        JPanel panel = new JPanel();
+        JPanel panel = factory.createPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(new EmptyBorder(new Insets(PANEL_INSETS, PANEL_INSETS, PANEL_INSETS, PANEL_INSETS)));
         
@@ -155,10 +160,11 @@ public class MenuPanel extends JPanel {
 	
     
 	/**
-	 * Set text to inform about current generation
-	 * @param text - representing the number of generation
+	 * Sets text to inform about current generation.
+	 * @param text
+	 * 		the number of generation
 	 */
-    public void setCurrentGenerationInfo(String text) {
+    public void setCurrentGenerationInfo(final String text) {
     	SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -168,10 +174,11 @@ public class MenuPanel extends JPanel {
     }
     
     /**
-     * Set text to inform about time elapsed during last computation
-     * @param text - representing the time elapsed during last computation
+     * Sets text to inform about time elapsed during last computation.
+     * @param text
+     * 		the time elapsed during last computation
      */
-    public void setTimeElapsedInfo(String text) { 	
+    public void setTimeElapsedInfo(final String text) { 	
     	SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -181,10 +188,11 @@ public class MenuPanel extends JPanel {
     }
     
     /**
-     * Set text to inform about how many cells are still alive
-     * @param text - representing how many cells are still alive
+     * Sets text to inform about how many cells are still alive.
+     * @param text
+     * 		how many cells are still alive
      */
-    public void setLiveCellsInfo(String text) {
+    public void setLiveCellsInfo(final String text) {
     	SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -194,9 +202,11 @@ public class MenuPanel extends JPanel {
     }
     
     /**
-     * Set text to inform about what's the current position on the general map
-     * @param x - width (x) position of the map
-     * @param y - height (y) position of the map
+     * Sets text to inform about what's the current position on the general map.
+     * @param x
+     * 		width (x) position of the map
+     * @param y
+     * 		height (y) position of the map
      */
     public void setCurrentPosition(String x, String y) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -208,9 +218,11 @@ public class MenuPanel extends JPanel {
     }
     
     /**
-     * Set text to inform how big is preview area
-     * @param x - squares in width
-     * @param y - squares in height
+     * Sets text to inform how big is preview area.
+     * @param x
+     * 		squares in width
+     * @param y
+     * 		squares in height
      */
     public void setPreviewDimensionInfo(int x, int y) {
     	SwingUtilities.invokeLater(new Runnable() {
@@ -222,8 +234,8 @@ public class MenuPanel extends JPanel {
     }
     
     /**
-     * Takes the user input of how big should be the map
-     * @return DIMENSION if input was correct, NULL otherwise
+     * Takes the user input of how big should be the map.
+     * @return {@link Dimension} if input was correct, null otherwise
      */
 	public Dimension getMapDimension() {
 		try {
@@ -240,7 +252,7 @@ public class MenuPanel extends JPanel {
 	}
 	
 	/**
-	 * Set the current state of the view as STARTED
+	 * Sets the current state of the view as started.
 	 */
 	public void setStarted() {
 		this.start.setEnabled(false);
@@ -250,7 +262,7 @@ public class MenuPanel extends JPanel {
 	}
 
 	/**
-	 * Set the current state of the view as STOPPED
+	 * Sets the current state of the view as stopped.
 	 */
 	public void setStopped() {
 		this.start.setEnabled(true);
@@ -258,7 +270,7 @@ public class MenuPanel extends JPanel {
 	}
 	
 	/**
-	 * RESET all the view
+	 * Resets all the view.
 	 */
 	public void reset() {
 		this.start.setEnabled(true);
