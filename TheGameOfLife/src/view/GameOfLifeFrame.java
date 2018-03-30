@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Dimension;
 import java.util.Set;
 
 import controller.GameController;
@@ -42,8 +43,8 @@ public interface GameOfLifeFrame {
     
     void setStarted();
     void setStopped();
+    void reset();
     
-    String getMapDimension();
-    String getPreviewDimension();
+    Dimension getMapDimension();
      
 }

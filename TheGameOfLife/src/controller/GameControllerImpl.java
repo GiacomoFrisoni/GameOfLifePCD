@@ -43,13 +43,6 @@ public class GameControllerImpl implements GameController {
 		this.queue = new ArrayBlockingQueue<>(BUFFER_SIZE);
 	}
 	
-	@Override
-	public void reset() {
-		stopFlag.setOff();
-		this.queue.clear();
-		initCellMap();
-	}
-	
 	private void initCellMap() {
 		// Initializes the cell map
 		this.model.clear();
@@ -86,6 +79,15 @@ public class GameControllerImpl implements GameController {
 		view.setStopped();
 	}
 
+	@Override
+	public void reset() {
+		stopFlag.setOn();
+		isStarted = false;
+		this.queue.clear();
+		initCellMap();
+		view.reset();
+	}
+	
 	@Override
 	public Dimension getCellMapDimension() {
 		return this.model.getCellMapDimension();

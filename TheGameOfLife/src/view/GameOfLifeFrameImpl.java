@@ -2,6 +2,8 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Objects;
@@ -21,8 +23,7 @@ import view.ImageLoader.GameImage;
 public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 
 	private static final String FRAME_NAME = "The Game Of Life";
-	private static final int FRAME_WIDTH = 900;
-	private static final int FRAME_HEIGHT = 800;
+	private static final int FRAME_SCALE = 70;
 	
 	
 	private boolean initialized;
@@ -31,6 +32,7 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 	
 	private JFrame frame;
 	private CellMapDrawPanel cellMapPanel;
+	private CellMapViewer cellMapViewer;
 	private MenuPanel menuPanel;
 	
 	/**
@@ -45,8 +47,8 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 		// Sets the frame
 		this.frame = new JFrame();
 		this.frame.setTitle(FRAME_NAME);
-		this.frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
-		this.frame.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
+		setWindowSize();
+
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.frame.addWindowListener(new WindowAdapter() {
             @Override
@@ -54,15 +56,15 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
                 exitProcedure();
             }
         });
-		this.frame.setResizable(false);
 		
 		// Sets the panels
 		this.cellMapPanel = new CellMapDrawPanel();
 		this.menuPanel = new MenuPanel(this.controller);
+		this.cellMapViewer = new CellMapViewer(this.cellMapPanel, this.menuPanel);
 		
 		// Sets the layout
 		final JPanel mainPanel = new JPanel(new BorderLayout());
-		mainPanel.add(new CellMapViewer(this.cellMapPanel, this.controller), BorderLayout.CENTER);
+		mainPanel.add(cellMapViewer, BorderLayout.CENTER);
 		mainPanel.add(this.menuPanel, BorderLayout.EAST);
 	
 		
@@ -105,6 +107,10 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
     public void showView() {
         checkInitialization();
         this.frame.setVisible(true);
+        
+        //Update sizes of views
+        this.cellMapPanel.initialize();
+        this.menuPanel.setPreviewDimensionInfo(this.cellMapPanel.getDrawableXCellsNumber(), this.cellMapPanel.getDrawableYCellsNumber());
     }
     
     @Override
@@ -129,6 +135,17 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
             throw new IllegalStateException("Main frame not initialized");
         }
     }
+    
+    private void setWindowSize() {
+    	GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+    	int width = (gd.getDisplayMode().getWidth() * FRAME_SCALE) / 100;
+    	int height = (gd.getDisplayMode().getHeight() * FRAME_SCALE) / 100;
+    	
+    	this.frame.setSize(width, height);
+		this.frame.setPreferredSize(new Dimension(width, height));
+		this.frame.setResizable(false);
+    }
+    
 
 	@Override
 	public void setCurrentGenerationInfo(String text) {
@@ -146,13 +163,8 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 	}
 
 	@Override
-	public String getMapDimension() {
+	public Dimension getMapDimension() {
 		return this.menuPanel.getMapDimension();
-	}
-
-	@Override
-	public String getPreviewDimension() {
-		return this.menuPanel.getPreviewDimension();
 	}
 
 	@Override
@@ -163,6 +175,13 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 	@Override
 	public void setStopped() {
 		this.menuPanel.setStopped();
+	}
+	
+	@Override
+	public void reset() {
+		this.menuPanel.reset();
+		this.cellMapPanel.clear();
+		this.menuPanel.reset();
 	}
 
 	

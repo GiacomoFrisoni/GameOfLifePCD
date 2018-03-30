@@ -15,6 +15,8 @@ public interface GUIFactory {
 
 	JButton createButton(String text);
 
+	JLabel createErrorLabel(String text);
+
 	JLabel createLabel(String text);
 	
 	JLabel createTitleLabel(String text);
@@ -53,6 +55,15 @@ public interface GUIFactory {
             title.setFont(new Font(title.getFont().getFontName(), Font.PLAIN, 16));
             return title;
 		}
+		
+		@Override
+		public JLabel createErrorLabel(String text) {
+			final JLabel error = createLabel(text);
+            error.setForeground(Color.RED);
+            error.setFont(new Font(error.getFont().getFontName(), Font.ITALIC, 10));
+            return error;
+		}
+		
 
 		@Override
 		public JTextField createTextField(boolean isEditable) {

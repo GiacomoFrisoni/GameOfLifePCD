@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import controller.GameController;
@@ -31,13 +32,16 @@ public class MenuPanel extends JPanel {
 	private final JButton stop;
 	private final JButton reset;
 	
-	private final JTextField mapDimension;
-	private final JTextField previewDimension;
+	private final JTextField mapDimensionX;
+	private final JTextField mapDimensionY;
+	private final JLabel inputError;
 	
 	private final JLabel currentGeneration;
 	private final JLabel timeElapsed;
 	private final JLabel liveCells;
 	private final JLabel currentPosition;
+	
+	private final JLabel previewDimension;
 	
 	private MenuObserver observer;
 	
@@ -53,6 +57,10 @@ public class MenuPanel extends JPanel {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
         
+        this.mapDimensionX = factory.createTextField(true, "1000");
+        this.mapDimensionY = factory.createTextField(true, "1000");
+        this.inputError = factory.createErrorLabel("Inserire valori numerici!");
+        
         this.start = factory.createButton("Start");
         this.stop = factory.createButton("Stop");
         this.reset = factory.createButton("Reset");
@@ -60,11 +68,19 @@ public class MenuPanel extends JPanel {
         this.currentGeneration = factory.createTitleLabel("0");
         this.timeElapsed = factory.createTitleLabel("0");
         this.liveCells = factory.createTitleLabel("0");
-        this.currentPosition = factory.createTitleLabel("1:1");
+        this.currentPosition = factory.createTitleLabel("0:0");
+        this.previewDimension = factory.createLabel("-");
         
-        this.mapDimension = factory.createTextField(true, "100");
-        this.previewDimension = factory.createTextField(true, "500");
-       
+
+        panel.add(factory.createLabel("Map width (X)"));
+        panel.add(this.mapDimensionX); 
+        panel.add(Box.createRigidArea(new Dimension(0, 5)));
+        panel.add(factory.createLabel("Map width (X)"));
+        panel.add(this.mapDimensionY);
+        panel.add(Box.createRigidArea(new Dimension(0, 5)));
+        panel.add(this.inputError);
+        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        
         panel.add(this.start);
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
         panel.add(this.stop);
@@ -85,10 +101,9 @@ public class MenuPanel extends JPanel {
         panel.add(liveCells);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
         
-        panel.add(factory.createLabel("Map dimension (X & Y)"));
-        panel.add(this.mapDimension);
+
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
-        panel.add(factory.createLabel("Preview dimension (X & Y)"));
+        panel.add(factory.createLabel("Preview squares"));
         panel.add(this.previewDimension);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
         
@@ -105,7 +120,7 @@ public class MenuPanel extends JPanel {
         });
         
         this.reset.addActionListener(e -> {
-        	controller.stop();
+        	controller.reset();
         });
         
         this.add(panel);
@@ -114,6 +129,7 @@ public class MenuPanel extends JPanel {
         this.start.setMaximumSize(d);
         this.stop.setMaximumSize(d);
         this.reset.setMaximumSize(d);
+        this.inputError.setVisible(false);
 	}
 	
 	@Override
@@ -150,32 +166,86 @@ public class MenuPanel extends JPanel {
     }
     
     public void setCurrentGenerationInfo(String text) {
-    	this.currentGeneration.setText(text);
+    	SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+            	currentGeneration.setText(text);
+            }
+        }); 	
     }
     
-    public void setTimeElapsedInfo(String text) {
-    	this.timeElapsed.setText(text);
+    public void setTimeElapsedInfo(String text) { 	
+    	SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+            	timeElapsed.setText(text);
+            }
+        }); 
     }
     
     public void setLiveCellsInfo(String text) {
-    	this.liveCells.setText(text);
+    	SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+            	liveCells.setText(text);
+            }
+        });
     }
     
-	public String getMapDimension() {
-		return this.mapDimension.getText();
-	}
-
-	public String getPreviewDimension() {
-		return this.previewDimension.getText();
+    public void setCurrentPosition(String x, String y) {
+    	SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+            	currentPosition.setText(x + ";" + y);
+            }
+        });
+    }
+    
+    
+    public void setPreviewDimensionInfo(int x, int y) {
+    	SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+            	previewDimension.setText("W: " + x + " H: " + y);
+            }
+        });
+    }
+    
+	public Dimension getMapDimension() {
+		try {
+			this.inputError.setVisible(false);
+			int x = Integer.parseInt(this.mapDimensionX.getText());
+			int y = Integer.parseInt(this.mapDimensionY.getText());
+			
+			return new Dimension(x,y);
+		}
+		catch (Exception e) {
+			this.inputError.setVisible(true);
+			return null;
+		}
 	}
 	
 	public void setStarted() {
 		this.start.setEnabled(false);
 		this.stop.setEnabled(true);
+		this.mapDimensionX.setEnabled(false);
+		this.mapDimensionY.setEnabled(false);
 	}
 
 	public void setStopped() {
 		this.start.setEnabled(true);
 		this.stop.setEnabled(false);
+	}
+	
+	public void reset() {
+		this.start.setEnabled(true);
+		this.stop.setEnabled(false);
+		this.mapDimensionX.setEnabled(true);
+		this.mapDimensionY.setEnabled(true);
+		
+		setCurrentGenerationInfo("-");
+		setTimeElapsedInfo("-");
+		setLiveCellsInfo("-");
+		setCurrentPosition("0", "0");
 	}
 }
