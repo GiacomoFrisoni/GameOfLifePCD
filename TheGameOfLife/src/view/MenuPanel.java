@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -235,18 +236,17 @@ public class MenuPanel extends JPanel {
      * Takes the user input of how big should be the map
      * @return DIMENSION if input was correct, NULL otherwise
      */
-	public Dimension getMapDimension() {
-		try {
-			this.inputError.setVisible(false);
-			int x = Integer.parseInt(this.mapDimensionX.getText());
-			int y = Integer.parseInt(this.mapDimensionY.getText());
-			
-			return new Dimension(x,y);
-		}
-		catch (Exception e) {
+	public Optional<Dimension> getMapDimension() {
+		this.inputError.setVisible(false);
+		
+		if (this.mapDimensionX.getText().chars().allMatch(Character::isDigit) &&
+				this.mapDimensionY.getText().chars().allMatch(Character::isDigit)) {
+			return Optional.of(new Dimension(Integer.parseInt(this.mapDimensionX.getText()), Integer.parseInt(this.mapDimensionY.getText())));
+		} else {
 			this.inputError.setVisible(true);
-			return null;
+			return Optional.empty();
 		}
+
 	}
 	
 	/**

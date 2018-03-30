@@ -15,7 +15,7 @@ public class MiniatureCellMap extends JComponent {
 
 	private static final long serialVersionUID = -8086980349925960260L;
 	
-	private static final int CELL_SIZE = 13;
+	private static final int CELL_SIZE = 9;
 	private static final int CELL_OFFSET = CELL_SIZE + 1;
 	
 	private BufferedImage bufferedImage;  
@@ -86,19 +86,6 @@ public class MiniatureCellMap extends JComponent {
     @Override
     public Dimension getMinimumSize() {
     	return new Dimension(0, 0);
-    }
-    
-    /*@Override
-    public Dimension getPreferredSize() {
-    	return new Dimension(this.panelSize, this.panelSize);
-    }
-    
-    
-    
-    @Override
-    public Dimension getMinimumSize() {
-    	return new Dimension(this.panelSize, this.panelSize);
-    }*/
-   
+    }   
 
 }

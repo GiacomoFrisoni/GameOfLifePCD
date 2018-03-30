@@ -2,6 +2,7 @@ package controller;
 
 import java.awt.Dimension;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -10,6 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import model.ConwayCellMap;
+import model.ConwayCellMapImpl;
 import model.GenerationResult;
 import view.GameOfLifeFrame;
 
@@ -17,7 +19,8 @@ public class GameControllerImpl implements GameController {
 
 	private static final int BUFFER_SIZE = 100;
 	
-	private final ConwayCellMap model;
+	//private final ConwayCellMap model;
+	private ConwayCellMap model;
 	private final GameOfLifeFrame view;
 	private final BlockingQueue<GenerationResult> queue;
 	private final ExecutorService executor;
@@ -25,8 +28,9 @@ public class GameControllerImpl implements GameController {
 	private boolean isStarted;
 	private boolean isInitialized;
 	
-	public GameControllerImpl(final ConwayCellMap model, final GameOfLifeFrame view) {
-		this.model = model;
+	//public GameControllerImpl(final ConwayCellMap model, final GameOfLifeFrame view) {
+	public GameControllerImpl(final GameOfLifeFrame view) {
+		//this.model = model;
 		this.view = view;
 		this.isStarted = false;
 		this.isInitialized = false;
@@ -64,11 +68,18 @@ public class GameControllerImpl implements GameController {
 	
 	@Override
 	public void start() {
-		if (this.isInitialized && !this.isStarted) {
-			stopFlag.setOff();
-			new GameOfLifeService(this.queue, this.executor, this.model, this.view, this.stopFlag).start();
-			isStarted = true;
-			view.setStarted();
+		if (init()) {
+			initCellMap();
+			reset();
+			
+			if (this.isInitialized && !this.isStarted) {
+				stopFlag.setOff();
+				new GameOfLifeService(this.queue, this.executor, this.model, this.view, this.stopFlag).start();
+				isStarted = true;
+				view.setStarted();
+			}
+		} else {
+			System.out.println("Failed to init controller");
 		}
 	}
 	
@@ -85,12 +96,20 @@ public class GameControllerImpl implements GameController {
 		isStarted = false;
 		this.queue.clear();
 		initCellMap();
-		//view.reset();
+		view.reset();
 	}
 	
 	@Override
 	public Dimension getCellMapDimension() {
-		//TODO take this value from MODEL!
 		return this.model.getCellMapDimension();
+	}
+	
+	private boolean init() {
+		Optional<Dimension> d = view.getMapDimension();
+		
+		if (d.isPresent()) 
+			this.model = new ConwayCellMapImpl(d.get().width, d.get().height);
+		
+		return d.isPresent();
 	}
 }
