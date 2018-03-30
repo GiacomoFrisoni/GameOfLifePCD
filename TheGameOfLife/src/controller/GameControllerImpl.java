@@ -31,10 +31,15 @@ public class GameControllerImpl implements GameController {
 		isStarted = false;
 		view.setStopped();
 	}
+	
+	public void reset() {
+		stopFlag.setOn();
+		isStarted = false;
+		view.reset();
+	}
 
 	@Override
 	public Dimension getCellMapDimension() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.model.getCellMapDimension();
 	}
 }
