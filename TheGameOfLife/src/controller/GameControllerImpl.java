@@ -85,7 +85,7 @@ public class GameControllerImpl implements GameController {
 		isStarted = false;
 		this.queue.clear();
 		initCellMap();
-		view.reset();
+		//view.reset();
 	}
 	
 	@Override
