@@ -20,7 +20,7 @@ public class GameControllerImpl implements GameController {
 	public void start() {
 		if (!isStarted) {
 			stopFlag = new Flag();
-			new GameOfLifeService(model, view, stopFlag).start();		
+			new GameOfLifeService(model, view, stopFlag).start();
 			isStarted = true;
 			view.setStarted();
 		}

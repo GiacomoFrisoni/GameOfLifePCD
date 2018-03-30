@@ -23,7 +23,7 @@ public class GameOfLifeConsumer extends Thread {
 		while (!stopFlag.isOn()) {
 			try {
 				// Waits for minimum view updating frequency
-				Thread.sleep(1000);
+				Thread.sleep(2000);
 				// Retrieves a generation result, waiting if necessary until an element becomes available.
 				res = queue.take();
 				// Updates view

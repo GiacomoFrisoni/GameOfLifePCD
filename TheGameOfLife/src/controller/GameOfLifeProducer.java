@@ -46,8 +46,6 @@ public class GameOfLifeProducer extends Thread {
 				final Set<ConwayCell> cellsToEvaluate = this.model.getCellsToEvaluate();
 				final Set<Callable<Optional<Boolean>>> tasks = new HashSet<>();
 				for (final ConwayCell cell : cellsToEvaluate) {
-					if (this.stopFlag.isOn())
-						break;
 					tasks.add(new ComputeTask(model, cell));
 				}
 				final List<Future<Optional<Boolean>>> res = this.executor.invokeAll(tasks);
