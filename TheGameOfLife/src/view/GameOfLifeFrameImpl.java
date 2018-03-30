@@ -106,6 +106,7 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
         
         //Update sizes of views
         this.cellMapViewer.getCellMap().initialize();
+        this.cellMapViewer.calculateMapLimits();
         this.menuPanel.setPreviewDimensionInfo(this.cellMapViewer.getCellMap().getDrawableXCellsNumber(), this.cellMapViewer.getCellMap().getDrawableYCellsNumber());
     }
     

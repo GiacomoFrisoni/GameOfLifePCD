@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import controller.GameController;
 
@@ -50,7 +49,7 @@ public class CellMapViewer extends JPanel {
 		this.add(this.down, BorderLayout.SOUTH);
 		
 		//Calculate offsets and limits
-		calculateMapLimits();
+		//calculateMapLimits();
 		
 		//Action listeners
 		this.left.addActionListener(e -> {
@@ -88,8 +87,8 @@ public class CellMapViewer extends JPanel {
 	}
 	
 	public void calculateMapLimits() {
-		mapXLimit = 1;
-		mapYLimit = 1;
+		mapXLimit = (controller.getCellMapDimension().width / map.getDrawableXCellsNumber());
+		mapYLimit = (controller.getCellMapDimension().height / map.getDrawableYCellsNumber());
 	}
 	
 	public int getXcurrentPosition() {
