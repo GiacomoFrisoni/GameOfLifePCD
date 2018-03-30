@@ -11,6 +11,12 @@ import controller.GameController;
 public class CellMapViewer extends JPanel {
 	
 	private static final long serialVersionUID = 4900611774904891447L;
+	
+	private static final String LEFT_SHIFT_INFO = "◀";
+	private static final String UP_SHIFT_INFO = "▲";
+	private static final String RIGHT_SHIFT_INFO = "▶";
+	private static final String DOWN_SHIFT_INFO = "▼";
+	
 	private final GameController controller;
 	private final GameOfLifeFrameImpl container;
 	
@@ -26,21 +32,29 @@ public class CellMapViewer extends JPanel {
 	private int mapXLimit = 1;
 	private int mapYLimit = 1;
 
+	/**
+	 * Constructs a cell map viewer.
+	 * 
+	 * @param controller
+	 * 		the game of life controller
+	 * @param container
+	 * 		the frame container
+	 */
 	public CellMapViewer(final GameController controller, final GameOfLifeFrameImpl container) {
-		//Take reference
+		// Takes references
 		this.controller = controller;
 		this.container = container;	
 		
-		//Prepare buttons
+		// Prepares buttons
         final GUIFactory factory = new GUIFactory.Standard();
-		this.left = factory.createButton("<");
-		this.up = factory.createButton("^");
-		this.right = factory.createButton(">");
-		this.down = factory.createButton("v");
+		this.left = factory.createButton(LEFT_SHIFT_INFO);
+		this.up = factory.createButton(UP_SHIFT_INFO);
+		this.right = factory.createButton(RIGHT_SHIFT_INFO);
+		this.down = factory.createButton(DOWN_SHIFT_INFO);
 		
-		//Prepare the map
+		// Prepares the map
 		this.map = new CellMap(this);
-			
+		
 		// Sets the layout
 		this.setLayout(new BorderLayout());
 		this.add(this.map, BorderLayout.CENTER);
@@ -49,61 +63,73 @@ public class CellMapViewer extends JPanel {
 		this.add(this.right, BorderLayout.EAST);
 		this.add(this.down, BorderLayout.SOUTH);
 		
-		//Calculate offsets and limits
-		//calculateMapLimits();
-		
 		//Action listeners
 		this.left.addActionListener(e -> {
-			mapXcurrentPosition = mapXcurrentPosition <= 0 ? 0 : mapXcurrentPosition - 1;
+			this.mapXcurrentPosition = mapXcurrentPosition <= 0 ? 0 : mapXcurrentPosition - 1;
 			updateMenuState();
 		});
 		
 		this.up.addActionListener(e -> {
-			mapYcurrentPosition = mapYcurrentPosition <= 0 ? 0 : mapYcurrentPosition - 1;
+			this.mapYcurrentPosition = mapYcurrentPosition <= 0 ? 0 : mapYcurrentPosition - 1;
 			updateMenuState();
 		});
 		
 		this.right.addActionListener(e -> {
-			mapXcurrentPosition = mapXcurrentPosition >= mapXLimit ? mapXLimit : mapXcurrentPosition + 1;
+			this.mapXcurrentPosition = mapXcurrentPosition >= mapXLimit ? mapXLimit : mapXcurrentPosition + 1;
 			updateMenuState();
 		});
 		
 		this.down.addActionListener(e -> {
-			mapYcurrentPosition = mapYcurrentPosition >= mapYLimit ? mapYLimit : mapYcurrentPosition + 1;
+			this.mapYcurrentPosition = mapYcurrentPosition >= mapYLimit ? mapYLimit : mapYcurrentPosition + 1;
 			updateMenuState();
 		});
-		
 	}
-	
 	
 	private void updateMenuState() {
 		container.getMenuPanel().setCurrentPosition(mapXcurrentPosition, mapYcurrentPosition);
 		map.draw(true);
 	}
 	
+	/**
+	 * Resets the cell map viewer.
+	 * Back to default position.
+	 */
 	public void reset() {
-		mapXcurrentPosition = 0;
-		mapYcurrentPosition = 0;
+		this.mapXcurrentPosition = 0;
+		this.mapYcurrentPosition = 0;
 		calculateMapLimits();
 	}
 	
+	/**
+	 * Calculates the x and y limit for the cell map rendering.
+	 */
 	public void calculateMapLimits() {
-		mapXLimit = (controller.getCellMapDimension().width / map.getDrawableXCellsNumber());
-		mapYLimit = (controller.getCellMapDimension().height / map.getDrawableYCellsNumber());
+		final Dimension mapDimension = controller.getCellMapDimension();
+		this.mapXLimit = (mapDimension.width / map.getDrawableXCellsNumber());
+		this.mapYLimit = (mapDimension.height / map.getDrawableYCellsNumber());
 	}
 	
 	public Dimension getMapLimits() {
 		return new Dimension(mapXLimit, mapYLimit);
 	}
 	
+	/**
+	 * @return the x-coordinate of the current region reference position.
+	 */
 	public int getXcurrentPosition() {
 		return this.mapXcurrentPosition;
 	}
 	
+	/**
+	 * @return the y-coordinate of the current region reference position.
+	 */
 	public int getYcurrentPosition() {
 		return this.mapYcurrentPosition;
 	}
 	
+	/**
+	 * @return the represented map component.
+	 */
 	public CellMap getCellMap() {
 		return this.map;
 	}
