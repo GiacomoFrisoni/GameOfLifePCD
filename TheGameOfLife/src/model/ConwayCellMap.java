@@ -71,6 +71,4 @@ public interface ConwayCellMap {
 	 * @return the last updated cells in the region.
 	 */
 	Set<ConwayCell> getLastUpdatedCellsInRegion(Point startPoint, Dimension regionDimension);
-	
-	void print();
 }
