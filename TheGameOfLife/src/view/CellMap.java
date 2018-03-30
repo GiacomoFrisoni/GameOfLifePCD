@@ -32,17 +32,26 @@ public class CellMap extends JComponent {
     private int actualWidth, actualHeight;   
     private Set<ConwayCell> cells;
     
+    
+    /**
+     * Constructs a new cell map component.
+     * 
+     * @param container
+     * 		the cell map viewer container
+     */
     public CellMap(final CellMapViewer container) {
     	this.container = container;
     }  
 
+    /**
+     * Initializes the component.
+     */
     public void initialize() {
     	actualWidth = CELL_OFFSET * ((int)(this.getWidth()/CELL_OFFSET));
     	actualHeight = CELL_OFFSET * ((int)(this.getHeight()/CELL_OFFSET));
     	bufferedImage = new BufferedImage(actualWidth, actualHeight, BufferedImage.TYPE_INT_ARGB);
     }
         
-    
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -52,6 +61,9 @@ public class CellMap extends JComponent {
         }      
     }
     
+    /**
+     * Clears the cell map rendering.
+     */
     public void clear() {
     	SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -66,42 +78,49 @@ public class CellMap extends JComponent {
     	});
     }
     
-    public void setCellsToPaint(Set<ConwayCell> cellsToDraw) {
+    /**
+     * Paints a cell.
+     * 
+     * @param cellsToDraw
+     * 		the cells to draw
+     */
+    public void setCellsToPaint(final Set<ConwayCell> cellsToDraw) {
     	this.cells = cellsToDraw;  
     	draw(false);
     }
     
-    public void draw(boolean clear) {
+    /**
+     * Draw the matrix.
+     * 
+     * @param clear
+     * 		true if the matrix need to be cleared (preview shifts), false otherwise.
+     */
+    public void draw(final boolean clear) {
     	if (clear) {
     		clear();
     	}
     	
-    	//If i have something to draw
+    	// If i have something to draw
     	if (cells != null) {
 	    	if (!cells.isEmpty()) {
-	    		//Just draw it!
+	    		// Just draw it!
 		    	SwingUtilities.invokeLater(new Runnable() {
 		            @Override
 		            public void run() {
-		            	Graphics2D g2d = bufferedImage.createGraphics();   	
+		            	final Graphics2D g2d = bufferedImage.createGraphics();   	
 		            	g2d.setStroke(new BasicStroke(1));
 		            	
-		            	//Foreach cell I have
+		            	// For each cell I have
 		            	cells.forEach(c -> {
 		            		//If the cell is inside my current limit
 		            		if (checkXlimit(c) && checkYlimit(c)) {
-		            			
-		            			//BLACK = alive
 		            			if (c.isAlive()) {
 		                	        g2d.setColor(Color.BLACK);
-		                		}
-		            			
-		            			//WHITE = dead
-		                		else {
+		                		} else {
 		                	        g2d.setColor(Color.WHITE);
 		                		}
 		            			
-		            			//Draw
+		            			// Draw
 		            			g2d.fillRect(
 		            					(c.getPosition().x - (container.getXcurrentPosition() * getDrawableXCellsNumber())) * CELL_OFFSET, 
 		            					(c.getPosition().y - (container.getYcurrentPosition() * getDrawableYCellsNumber())) * CELL_OFFSET, 
@@ -116,26 +135,28 @@ public class CellMap extends JComponent {
 		        });
 	    	}
     	}
-    	
-    	
     }
     
-    
+    /**
+     * @return the number of drawable cells in width.
+     */
     public int getDrawableXCellsNumber() {
-    	return (int)(this.getWidth()/CELL_OFFSET);
+    	return (int)(this.getWidth() / CELL_OFFSET);
     }
     
+    /**
+     * @return the number of drawable cells in height.
+     */
     public int getDrawableYCellsNumber() {
-    	return (int)(this.getHeight()/CELL_OFFSET);
+    	return (int)(this.getHeight() / CELL_OFFSET);
     }
     
-
-
-    
-    //Check if the point stay in current limit (X)
-    private boolean checkXlimit(ConwayCell c) {
-    	int min = this.container.getXcurrentPosition() * getDrawableXCellsNumber();
-    	int max = (this.container.getXcurrentPosition() + 1) * getDrawableXCellsNumber();
+    /*
+     * Checks if the point stay in current limit (X)
+     */
+    private boolean checkXlimit(final ConwayCell c) {
+    	final int min = this.container.getXcurrentPosition() * getDrawableXCellsNumber();
+    	final int max = (this.container.getXcurrentPosition() + 1) * getDrawableXCellsNumber();
     		
     	if (c.getPosition().x >= min && c.getPosition().x <= max) {
     		return true;
@@ -144,10 +165,12 @@ public class CellMap extends JComponent {
     	return false;
     }
     
-    //Check if the point stay in current limit (Y)
-    private boolean checkYlimit(ConwayCell c) {
-    	int min = this.container.getYcurrentPosition() * getDrawableYCellsNumber();
-    	int max = (this.container.getYcurrentPosition() + 1) * getDrawableYCellsNumber();
+    /*
+     * Checks if the point stay in current limit (Y)
+     */
+    private boolean checkYlimit(final ConwayCell c) {
+    	final int min = this.container.getYcurrentPosition() * getDrawableYCellsNumber();
+    	final int max = (this.container.getYcurrentPosition() + 1) * getDrawableYCellsNumber();
     		
     	if (c.getPosition().y >= min && c.getPosition().y <= max)
     		return true;
