@@ -7,6 +7,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.swing.JFrame;
@@ -102,19 +103,15 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
     @Override
     public void showView() {
         checkInitialization();
-        this.frame.setVisible(true);
-        
-        //Update sizes of views
+        this.frame.setVisible(true);  
         this.cellMapViewer.getCellMap().initialize();
-        this.cellMapViewer.calculateMapLimits();
         this.menuPanel.setPreviewDimensionInfo(this.cellMapViewer.getCellMap().getDrawableXCellsNumber(), this.cellMapViewer.getCellMap().getDrawableYCellsNumber());
     }
     
     @Override
 	public void drawCells(Set<ConwayCell> cells) {
     	checkInitialization();
-    	this.cellMapViewer.getCellMap().setCellsToPaint(cells);
-    	//this.cellMapViewer.getCellMap().revalidate();
+    	this.cellMapViewer.getCellMap().setCellsToPaint(cells);   	
 	}
     
     @Override
@@ -142,13 +139,17 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 	}
 
 	@Override
-	public Dimension getMapDimension() {
+	public Optional<Dimension> getMapDimension() {
 		return this.menuPanel.getMapDimension();
 	}
 
 	@Override
 	public void setStarted() {
 		this.menuPanel.setStarted();
+		
+		//Update sizes of views
+        this.cellMapViewer.calculateMapLimits();       
+        this.menuPanel.setMiniatureMapSize(this.cellMapViewer.getMapLimits());
 	}
 
 	@Override
@@ -159,8 +160,7 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 	@Override
 	public void reset() {
 		this.menuPanel.reset();
-		//this.cellMapPanel.clear();
-		this.menuPanel.reset();
+		this.cellMapViewer.reset();
 	}
 
 	

@@ -88,8 +88,8 @@ public class CellMapViewer extends JPanel {
 	}
 	
 	private void updateMenuState() {
-		this.container.getMenuPanel().setCurrentPosition("" + mapXcurrentPosition, "" + mapYcurrentPosition);
-		this.map.draw(true);
+		container.getMenuPanel().setCurrentPosition(mapXcurrentPosition, mapYcurrentPosition);
+		map.draw(true);
 	}
 	
 	/**
@@ -109,6 +109,10 @@ public class CellMapViewer extends JPanel {
 		final Dimension mapDimension = controller.getCellMapDimension();
 		this.mapXLimit = (mapDimension.width / map.getDrawableXCellsNumber());
 		this.mapYLimit = (mapDimension.height / map.getDrawableYCellsNumber());
+	}
+	
+	public Dimension getMapLimits() {
+		return new Dimension(mapXLimit, mapYLimit);
 	}
 	
 	/**

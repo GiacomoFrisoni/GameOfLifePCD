@@ -14,9 +14,6 @@ import view.GameOfLifeFrameImpl;
  */
 public final class GameOfLife {
 
-	private static final int CELLMAP_WIDTH = 400;
-	private static final int CELLMAP_HEIGHT = 400;
-
 	private GameOfLife() { }
 	
 	/**
@@ -26,11 +23,10 @@ public final class GameOfLife {
 	 * 		not used
 	 */
 	public static void main(final String... args) {
-		final ConwayCellMap model = new ConwayCellMapImpl(CELLMAP_WIDTH, CELLMAP_HEIGHT);
 		final GameOfLifeFrame view = new GameOfLifeFrameImpl();
 		
-		final GameController controller = new GameControllerImpl(model, view);
-		controller.reset();
+		//final GameController controller = new GameControllerImpl(model, view);
+		final GameController controller = new GameControllerImpl(view);
 		view.setObserver(controller);
 		view.initView();
 		
