@@ -11,8 +11,7 @@ public interface GameOfLifeFrame {
 	/**
      * Sets an observer of the game frame.
      * 
-     * @param observer
-     *          the controller to attach
+     * @param observer - the controller to attach
      */
     void setObserver(GameController observer);
     
@@ -36,6 +35,7 @@ public interface GameOfLifeFrame {
      * Closes the game frame.
      */
     void closeView();
+    
     
     void setCurrentGenerationInfo(String text);
     void setTimeElapsedInfo(String text);

@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 
 import controller.GameController;
 import model.ConwayCell;
-import view.ImageLoader.GameImage;
 
 /**
  * A view for the rendering of the main screen.
@@ -25,13 +24,11 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 	private static final String FRAME_NAME = "The Game Of Life";
 	private static final int FRAME_SCALE = 70;
 	
-	
 	private boolean initialized;
 	
 	private GameController controller;
 	
 	private JFrame frame;
-	private CellMapDrawPanel cellMapPanel;
 	private CellMapViewer cellMapViewer;
 	private MenuPanel menuPanel;
 	
@@ -47,6 +44,8 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 		// Sets the frame
 		this.frame = new JFrame();
 		this.frame.setTitle(FRAME_NAME);
+		this.frame.setLocationByPlatform(true);
+		this.frame.setFocusable(true);
 		setWindowSize();
 
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -58,19 +57,16 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
         });
 		
 		// Sets the panels
-		this.cellMapPanel = new CellMapDrawPanel();
-		this.menuPanel = new MenuPanel(this.controller);
-		this.cellMapViewer = new CellMapViewer(this.cellMapPanel, this.menuPanel);
+		this.menuPanel = new MenuPanel(this.controller, this);
+		this.cellMapViewer = new CellMapViewer(this.controller, this);
 		
-		// Sets the layout
+		// Sets the layout and add panels
 		final JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.add(cellMapViewer, BorderLayout.CENTER);
 		mainPanel.add(this.menuPanel, BorderLayout.EAST);
 	
-		
+		//Add all panels to the frame
 		this.frame.add(mainPanel);
-		this.frame.setLocationByPlatform(true);
-		this.frame.setFocusable(true);
 		this.frame.pack();
 		setStopped();
 		this.initialized = true;
@@ -109,16 +105,15 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
         this.frame.setVisible(true);
         
         //Update sizes of views
-        this.cellMapPanel.initialize();
-        this.menuPanel.setPreviewDimensionInfo(this.cellMapPanel.getDrawableXCellsNumber(), this.cellMapPanel.getDrawableYCellsNumber());
+        this.cellMapViewer.getCellMap().initialize();
+        this.menuPanel.setPreviewDimensionInfo(this.cellMapViewer.getCellMap().getDrawableXCellsNumber(), this.cellMapViewer.getCellMap().getDrawableYCellsNumber());
     }
     
     @Override
 	public void drawCells(Set<ConwayCell> cells) {
     	checkInitialization();
-    	this.cellMapPanel.setCellsToPaint(cells);
-        this.cellMapPanel.repaint();
-    	this.cellMapPanel.revalidate();
+    	this.cellMapViewer.getCellMap().setCellsToPaint(cells);
+    	//this.cellMapViewer.getCellMap().revalidate();
 	}
     
     @Override
@@ -127,24 +122,7 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
         this.frame.dispose();
     }
     
-    /*
-     * Throws a {link IllegalStateException} when a method is called without first initializing the frame.
-     */
-    private void checkInitialization() {
-        if (!this.initialized) {
-            throw new IllegalStateException("Main frame not initialized");
-        }
-    }
-    
-    private void setWindowSize() {
-    	GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-    	int width = (gd.getDisplayMode().getWidth() * FRAME_SCALE) / 100;
-    	int height = (gd.getDisplayMode().getHeight() * FRAME_SCALE) / 100;
-    	
-    	this.frame.setSize(width, height);
-		this.frame.setPreferredSize(new Dimension(width, height));
-		this.frame.setResizable(false);
-    }
+
     
 
 	@Override
@@ -180,9 +158,38 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 	@Override
 	public void reset() {
 		this.menuPanel.reset();
-		this.cellMapPanel.clear();
+		//this.cellMapPanel.clear();
 		this.menuPanel.reset();
 	}
 
 	
+	MenuPanel getMenuPanel() {
+		return this.menuPanel;
+	}
+	
+	CellMapViewer getCellMapViewer() {
+		return this.cellMapViewer;
+	}
+	
+	
+	
+	
+    /*
+     * Throws a {link IllegalStateException} when a method is called without first initializing the frame.
+     */
+    private void checkInitialization() {
+        if (!this.initialized) {
+            throw new IllegalStateException("Main frame not initialized");
+        }
+    }
+    
+    private void setWindowSize() {
+    	GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+    	int width = (gd.getDisplayMode().getWidth() * FRAME_SCALE) / 100;
+    	int height = (gd.getDisplayMode().getHeight() * FRAME_SCALE) / 100;
+    	
+    	this.frame.setSize(width, height);
+		this.frame.setPreferredSize(new Dimension(width, height));
+		this.frame.setResizable(false);
+    }
 }

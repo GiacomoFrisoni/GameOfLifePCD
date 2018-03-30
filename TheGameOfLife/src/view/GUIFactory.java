@@ -15,6 +15,8 @@ public interface GUIFactory {
 
 	JButton createButton(String text);
 
+	JButton createPanelButton(String text);
+
 	JLabel createErrorLabel(String text);
 
 	JLabel createLabel(String text);
@@ -38,6 +40,13 @@ public interface GUIFactory {
             button.setBackground(COLOR_BUTTON);
             button.setPreferredSize(new Dimension(45, 45));
             button.setOpaque(true);
+            return button;
+		}
+		
+		@Override
+		public JButton createPanelButton(String text) {
+			final JButton button = createButton(text);
+			button.setMaximumSize(new Dimension(300, 25));
             return button;
 		}
 

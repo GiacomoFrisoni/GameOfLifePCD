@@ -11,28 +11,35 @@ import controller.GameController;
 public class CellMapViewer extends JPanel {
 	
 	private static final long serialVersionUID = 4900611774904891447L;
-	private final CellMapDrawPanel map;
-	private final MenuPanel menuPanel;
+	private final GameController controller;
+	private final GameOfLifeFrameImpl container;
+	
+	private final CellMap map;
 	
 	private final JButton left;
 	private final JButton up;
 	private final JButton right;
 	private final JButton down;
 	
-	private int xPosition = 0;
-	private int yPosition = 0;
+	private int mapXcurrentPosition = 0;
+	private int mapYcurrentPosition = 0;
 	private int mapXLimit = 1;
 	private int mapYLimit = 1;
 
-	public CellMapViewer(CellMapDrawPanel map, MenuPanel menuPanel) {
-		this.map = map;
-		this.menuPanel = menuPanel;
+	public CellMapViewer(final GameController controller, final GameOfLifeFrameImpl container) {
+		//Take reference
+		this.controller = controller;
+		this.container = container;	
 		
+		//Prepare buttons
         final GUIFactory factory = new GUIFactory.Standard();
 		this.left = factory.createButton("<");
 		this.up = factory.createButton("^");
 		this.right = factory.createButton(">");
 		this.down = factory.createButton("v");
+		
+		//Prepare the map
+		this.map = new CellMap(this);
 			
 		// Sets the layout
 		this.setLayout(new BorderLayout());
@@ -42,25 +49,27 @@ public class CellMapViewer extends JPanel {
 		this.add(this.right, BorderLayout.EAST);
 		this.add(this.down, BorderLayout.SOUTH);
 		
+		//Calculate offsets and limits
 		calculateMapLimits();
 		
+		//Action listeners
 		this.left.addActionListener(e -> {
-			xPosition = xPosition <= 0 ? 0 : xPosition - 1;
+			mapXcurrentPosition = mapXcurrentPosition <= 0 ? 0 : mapXcurrentPosition - 1;
 			updateMenuState();
 		});
 		
 		this.up.addActionListener(e -> {
-			yPosition = yPosition <= 0 ? 0 : yPosition - 1;
+			mapYcurrentPosition = mapYcurrentPosition <= 0 ? 0 : mapYcurrentPosition - 1;
 			updateMenuState();
 		});
 		
 		this.right.addActionListener(e -> {
-			xPosition = xPosition >= mapXLimit ? mapXLimit : xPosition + 1;
+			mapXcurrentPosition = mapXcurrentPosition >= mapXLimit ? mapXLimit : mapXcurrentPosition + 1;
 			updateMenuState();
 		});
 		
 		this.down.addActionListener(e -> {
-			yPosition = yPosition >= mapYLimit ? mapYLimit : yPosition + 1;
+			mapYcurrentPosition = mapYcurrentPosition >= mapYLimit ? mapYLimit : mapYcurrentPosition + 1;
 			updateMenuState();
 		});
 		
@@ -68,18 +77,31 @@ public class CellMapViewer extends JPanel {
 	
 	
 	private void updateMenuState() {
-		menuPanel.setCurrentPosition("" + xPosition, "" + yPosition);
+		container.getMenuPanel().setCurrentPosition("" + mapXcurrentPosition, "" + mapYcurrentPosition);
+		map.draw(true);
 	}
 	
 	public void reset() {
-		xPosition = 0;
-		yPosition = 0;
+		mapXcurrentPosition = 0;
+		mapYcurrentPosition = 0;
 		calculateMapLimits();
 	}
 	
 	public void calculateMapLimits() {
 		mapXLimit = 1;
 		mapYLimit = 1;
+	}
+	
+	public int getXcurrentPosition() {
+		return this.mapXcurrentPosition;
+	}
+	
+	public int getYcurrentPosition() {
+		return this.mapYcurrentPosition;
+	}
+	
+	public CellMap getCellMap() {
+		return this.map;
 	}
 	
 }
