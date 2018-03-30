@@ -33,9 +33,10 @@ public class MiniatureCellMap extends JComponent {
 	}
 	
 	public void setSquareNumber(int x, int y) {
-		this.xSquaresNumber = x;
-		this.ySquaresNumber = y;
+		this.xSquaresNumber = x == 0 ? 1 : x + 1;
+		this.ySquaresNumber = y == 0 ? 1 : y + 1;
 		bufferedImage = new BufferedImage(xSquaresNumber * CELL_OFFSET, ySquaresNumber * CELL_OFFSET, BufferedImage.TYPE_INT_ARGB);
+		draw();
 	}
 	
 	public void setCurrentSquare(int x, int y) {
@@ -64,7 +65,7 @@ public class MiniatureCellMap extends JComponent {
             	g2d.setStroke(new BasicStroke(1));
             	
             	//Clear
-		    	g2d.setColor(UIManager.getColor("Panel.background"));
+		    	g2d.setColor(Color.LIGHT_GRAY);
 		    	g2d.fillRect(0, 0, xSquaresNumber * CELL_OFFSET, ySquaresNumber * CELL_OFFSET);         	
             	
             	//Draw current position square
@@ -78,19 +79,26 @@ public class MiniatureCellMap extends JComponent {
     }
     
     @Override
-    public Dimension getPreferredSize() {
-    	return new Dimension(this.panelSize, this.panelSize);
-    }
-    
-    @Override
     public Dimension getMaximumSize() {
     	return new Dimension(this.panelSize, this.panelSize);
     }
     
     @Override
     public Dimension getMinimumSize() {
+    	return new Dimension(0, 0);
+    }
+    
+    /*@Override
+    public Dimension getPreferredSize() {
     	return new Dimension(this.panelSize, this.panelSize);
     }
+    
+    
+    
+    @Override
+    public Dimension getMinimumSize() {
+    	return new Dimension(this.panelSize, this.panelSize);
+    }*/
    
 
 }

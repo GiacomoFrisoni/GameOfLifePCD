@@ -93,7 +93,7 @@ public class MenuPanel extends JPanel {
         this.timeElapsed = factory.createTitleLabel(DEFAULT_NUMBER);
         this.aliveCells = factory.createTitleLabel(DEFAULT_NUMBER);
         this.currentPosition = factory.createTitleLabel(DEFAULT_POSITION);
-        this.previewDimension = factory.createLabel(DEFAULT_PREVIEW);
+        this.previewDimension = factory.createTitleLabel(DEFAULT_PREVIEW);
         
         this.miniatureMap = new MiniatureCellMap(PANEL_WIDTH);
         

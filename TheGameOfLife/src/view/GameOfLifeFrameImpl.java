@@ -109,7 +109,6 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 	public void drawCells(Set<ConwayCell> cells) {
     	checkInitialization();
     	this.cellMapViewer.getCellMap().setCellsToPaint(cells);
-    	//this.cellMapViewer.getCellMap().revalidate();
 	}
     
     @Override

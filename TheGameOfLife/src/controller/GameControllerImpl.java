@@ -91,6 +91,6 @@ public class GameControllerImpl implements GameController {
 	@Override
 	public Dimension getCellMapDimension() {
 		//TODO take this value from MODEL!
-		return new Dimension(50, 50);
+		return this.model.getCellMapDimension();
 	}
 }
