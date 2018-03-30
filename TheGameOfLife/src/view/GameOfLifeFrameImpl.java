@@ -102,12 +102,7 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
     @Override
     public void showView() {
         checkInitialization();
-        this.frame.setVisible(true);
-        
-        //Update sizes of views
-        this.cellMapViewer.getCellMap().initialize();
-        this.cellMapViewer.calculateMapLimits();
-        this.menuPanel.setPreviewDimensionInfo(this.cellMapViewer.getCellMap().getDrawableXCellsNumber(), this.cellMapViewer.getCellMap().getDrawableYCellsNumber());
+        this.frame.setVisible(true);      
     }
     
     @Override
@@ -149,6 +144,12 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
 	@Override
 	public void setStarted() {
 		this.menuPanel.setStarted();
+		
+		//Update sizes of views
+        this.cellMapViewer.getCellMap().initialize();
+        this.cellMapViewer.calculateMapLimits();
+        this.menuPanel.setPreviewDimensionInfo(this.cellMapViewer.getCellMap().getDrawableXCellsNumber(), this.cellMapViewer.getCellMap().getDrawableYCellsNumber());
+        this.menuPanel.setMiniatureMapSize(this.cellMapViewer.getMapLimits());
 	}
 
 	@Override

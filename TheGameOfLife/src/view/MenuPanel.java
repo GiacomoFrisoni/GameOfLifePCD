@@ -42,6 +42,7 @@ public class MenuPanel extends JPanel {
 	private static final String DEFAULT_POSITION = "W:0|H:0";
 	private static final String DEFAULT_PREVIEW = "-";
 	private static final String DEFAULT_NUMBER = "0";
+	private static final int DEFAULT_VALUE = 0;
 	private static final String INPUT_ERROR = "Inserire valori numerici!";
 	
 	
@@ -59,6 +60,7 @@ public class MenuPanel extends JPanel {
 	private final JLabel timeElapsed;
 	private final JLabel aliveCells;
 	private final JLabel currentPosition;
+	private final MiniatureCellMap miniatureMap;
 	
 	private final JLabel previewDimension;
 	
@@ -93,7 +95,8 @@ public class MenuPanel extends JPanel {
         this.currentPosition = factory.createTitleLabel(DEFAULT_POSITION);
         this.previewDimension = factory.createLabel(DEFAULT_PREVIEW);
         
-
+        this.miniatureMap = new MiniatureCellMap(PANEL_WIDTH);
+        
         //Putting the area of input
         panel.add(factory.createLabel(MAP_WIDTH_INFO));
         panel.add(this.mapDimensionX); 
@@ -113,6 +116,8 @@ public class MenuPanel extends JPanel {
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
         
         //Putting the are of info
+        panel.add(this.miniatureMap);
+        panel.add(Box.createRigidArea(new Dimension(0, 5)));
         panel.add(factory.createLabel(MAP_POSITION_INFO));
         panel.add(currentPosition);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -152,6 +157,10 @@ public class MenuPanel extends JPanel {
     public final Dimension getPreferredSize() {
         return new Dimension(PANEL_WIDTH, 0);
     }
+	
+	public void setMiniatureMapSize(Dimension d) {
+		this.miniatureMap.setSquareNumber(d.width, d.height);
+	}
 	
     
 	/**
@@ -198,11 +207,12 @@ public class MenuPanel extends JPanel {
      * @param x - width (x) position of the map
      * @param y - height (y) position of the map
      */
-    public void setCurrentPosition(String x, String y) {
+    public void setCurrentPosition(int x, int y) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 currentPosition.setText("W: " + x + " | H: " + y);
+                miniatureMap.setCurrentSquare(x, y);
             }
         });
     }
@@ -269,6 +279,6 @@ public class MenuPanel extends JPanel {
 		setCurrentGenerationInfo(DEFAULT_PREVIEW);
 		setTimeElapsedInfo(DEFAULT_PREVIEW);
 		setLiveCellsInfo(DEFAULT_PREVIEW);
-		setCurrentPosition(DEFAULT_NUMBER, DEFAULT_NUMBER);
+		setCurrentPosition(DEFAULT_VALUE, DEFAULT_VALUE);
 	}
 }

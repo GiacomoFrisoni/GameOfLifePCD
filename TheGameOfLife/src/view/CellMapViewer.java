@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -76,7 +77,7 @@ public class CellMapViewer extends JPanel {
 	
 	
 	private void updateMenuState() {
-		container.getMenuPanel().setCurrentPosition("" + mapXcurrentPosition, "" + mapYcurrentPosition);
+		container.getMenuPanel().setCurrentPosition(mapXcurrentPosition, mapYcurrentPosition);
 		map.draw(true);
 	}
 	
@@ -89,6 +90,10 @@ public class CellMapViewer extends JPanel {
 	public void calculateMapLimits() {
 		mapXLimit = (controller.getCellMapDimension().width / map.getDrawableXCellsNumber());
 		mapYLimit = (controller.getCellMapDimension().height / map.getDrawableYCellsNumber());
+	}
+	
+	public Dimension getMapLimits() {
+		return new Dimension(mapXLimit, mapYLimit);
 	}
 	
 	public int getXcurrentPosition() {
