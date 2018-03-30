@@ -8,7 +8,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import model.ConwayCell;
@@ -27,10 +26,10 @@ public class GameOfLifeProducer extends Thread {
 	private final ConwayCellMap model;
 	private final Flag stopFlag;
 	
-	public GameOfLifeProducer(final BlockingQueue<GenerationResult> queue,
-			ConwayCellMap model, int poolSize, Flag stopFlag) {
+	public GameOfLifeProducer(final BlockingQueue<GenerationResult> queue, final ExecutorService executor,
+			final ConwayCellMap model, final Flag stopFlag) {
 		this.queue = queue;
-		this.executor = Executors.newFixedThreadPool(poolSize);
+		this.executor = executor;
 		this.model = model;
 		this.stopFlag = stopFlag;
 	}

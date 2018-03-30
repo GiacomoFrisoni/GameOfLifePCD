@@ -14,8 +14,8 @@ import view.GameOfLifeFrameImpl;
  */
 public final class GameOfLife {
 
-	private static final int CELLMAP_WIDTH = 300;
-	private static final int CELLMAP_HEIGHT = 300;
+	private static final int CELLMAP_WIDTH = 1000;
+	private static final int CELLMAP_HEIGHT = 1000;
 
 	private GameOfLife() { }
 	

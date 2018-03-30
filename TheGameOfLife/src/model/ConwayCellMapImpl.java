@@ -62,13 +62,13 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 		this.lastUpdatedCells = new HashSet<>();
 		
 		// Creates the set with the cells to evaluate for the current generation
-		this.cellsToEvaluate = new HashSet<>();
+		this.cellsToEvaluate = Collections.synchronizedSet(new HashSet<>());
 		
 		// Initializes number of generations
 		this.generation = 0;
 		
-		// Randomly sets cell status in the map and makes initialization
-		randomInit();
+		// Clear data for status initialization
+		clear();
 	}
 	
 	@Override
@@ -203,7 +203,7 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 	
 	@Override
 	public boolean nextGeneration() {
-		//if (this.cellsToEvaluate.isEmpty()) {
+		if (this.cellsToEvaluate.isEmpty()) {
 			// Set current cell map = next cell map
 			copyList(this.nextCells, this.cells);
 			// Clears last updated cells
@@ -213,12 +213,12 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 			// Increments generation number
 			this.generation++;
 			return true;
-		/*} else {
+		} else {
 			for (ConwayCell c : this.cellsToEvaluate) {
 				System.out.println(c.toString());
 			}
 		}
-		return false;*/
+		return false;
 	}
 	
 	/*
@@ -233,21 +233,13 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 	}
 	
 	@Override
-	public void randomInit() {
-		int x;
-		int y;
-		int initLength = (this.mapDimension.height * this.mapDimension.width) / 2;
-		clear();
-		// Randomly initializes the cell map to about 50% on-cells
-		do {
-			x = ThreadLocalRandom.current().nextInt(0, this.mapDimension.width);
-			y = ThreadLocalRandom.current().nextInt(0, this.mapDimension.height);
-			final ConwayCell cell = getCellByPosition(this.cells, x, y).get();
-			if (!getCellByPosition(this.nextCells, x, y).get().isAlive()) {
-				setCellStateOn(cell.getPosition());
-			}
-		} while (--initLength > 0);
-		nextGeneration();
+	public void randomInitCell() {
+		int x = ThreadLocalRandom.current().nextInt(0, this.mapDimension.width);
+		int y = ThreadLocalRandom.current().nextInt(0, this.mapDimension.height);
+		final ConwayCell cell = getCellByPosition(this.cells, x, y).get();
+		if (!getCellByPosition(this.nextCells, x, y).get().isAlive()) {
+			setCellStateOn(cell.getPosition());
+		}
 	}
 	
 	@Override
@@ -270,14 +262,5 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 			}
 		}
 		return Collections.unmodifiableSet(getLastUpdatedCellsInRegion);
-	}
-	
-	public void print() {
-		for (int i = 0; i < this.mapDimension.height; i++) {
-			for (int j = 0; j < this.mapDimension.width; j++) {
-				System.out.print(" " + (getCellByPosition(this.cells, j, i).get().isAlive() ? "O" : "X"));
-			}
-			System.out.println();
-		}
 	}
 }

@@ -14,7 +14,7 @@ public interface ConwayCellMap {
 	/**
 	 * Randomly initializes the status of the cells in the map.
 	 */
-	void randomInit();
+	void randomInitCell();
 	
 	/**
 	 * @return the dimension (width and height) of the cell map.
@@ -71,6 +71,4 @@ public interface ConwayCellMap {
 	 * @return the last updated cells in the region.
 	 */
 	Set<ConwayCell> getLastUpdatedCellsInRegion(Point startPoint, Dimension regionDimension);
-	
-	void print();
 }
