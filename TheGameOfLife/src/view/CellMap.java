@@ -2,22 +2,16 @@ package view;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.util.Collections;
 import java.util.Set;
-import java.util.SortedSet;
 
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
-import controller.GameController;
 import model.ConwayCell;
 
 /**
@@ -64,6 +58,7 @@ public class CellMap extends JComponent {
             public void run() {
 		    	Graphics2D g2d = bufferedImage.createGraphics();   	
 		    	g2d.setStroke(new BasicStroke(1));
+		    	g2d.setColor(UIManager.getColor("Panel.background"));
 		    	g2d.fillRect(0, 0, actualWidth, actualHeight);
 		    	g2d.dispose();
 		        repaint();
@@ -107,7 +102,11 @@ public class CellMap extends JComponent {
 		                		}
 		            			
 		            			//Draw
-		            			g2d.fillRect(c.getPosition().x * CELL_OFFSET, c.getPosition().y * CELL_OFFSET, CELL_SIZE, CELL_SIZE);
+		            			g2d.fillRect(
+		            					(c.getPosition().x - (container.getXcurrentPosition() * getDrawableXCellsNumber())) * CELL_OFFSET, 
+		            					(c.getPosition().y - (container.getYcurrentPosition() * getDrawableYCellsNumber())) * CELL_OFFSET, 
+		            					CELL_SIZE, 
+		            					CELL_SIZE);
 		            		}
 		            	});
 		                    
@@ -117,6 +116,8 @@ public class CellMap extends JComponent {
 		        });
 	    	}
     	}
+    	
+    	
     }
     
     
@@ -135,9 +136,10 @@ public class CellMap extends JComponent {
     private boolean checkXlimit(ConwayCell c) {
     	int min = this.container.getXcurrentPosition() * getDrawableXCellsNumber();
     	int max = (this.container.getXcurrentPosition() + 1) * getDrawableXCellsNumber();
-    			
-    	if (c.getPosition().x >= min && c.getPosition().x <= max)
+    		
+    	if (c.getPosition().x >= min && c.getPosition().x <= max) {
     		return true;
+    	}
     	
     	return false;
     }
@@ -146,7 +148,7 @@ public class CellMap extends JComponent {
     private boolean checkYlimit(ConwayCell c) {
     	int min = this.container.getYcurrentPosition() * getDrawableYCellsNumber();
     	int max = (this.container.getYcurrentPosition() + 1) * getDrawableYCellsNumber();
-    			
+    		
     	if (c.getPosition().y >= min && c.getPosition().y <= max)
     		return true;
     	
