@@ -62,6 +62,11 @@ public interface ConwayCellMap {
 	Set<ConwayCell> getLastUpdatedCells();
 	
 	/**
+	 * Resets all data.
+	 */
+	void clear();
+	
+	/**
 	 * Gets the cells updated in the last generation that are in a specified range region.
 	 * 
 	 * @param startPoint

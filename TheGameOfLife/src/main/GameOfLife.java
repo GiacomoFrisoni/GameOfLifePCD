@@ -14,8 +14,8 @@ import view.GameOfLifeFrameImpl;
  */
 public final class GameOfLife {
 
-	private static final int CELLMAP_WIDTH = 1000;
-	private static final int CELLMAP_HEIGHT = 1000;
+	private static final int CELLMAP_WIDTH = 4;
+	private static final int CELLMAP_HEIGHT = 4;
 
 	private GameOfLife() { }
 	
@@ -30,6 +30,7 @@ public final class GameOfLife {
 		final GameOfLifeFrame view = new GameOfLifeFrameImpl();
 		
 		final GameController controller = new GameControllerImpl(model, view);
+		controller.reset();
 		view.setObserver(controller);
 		view.initView();
 		
