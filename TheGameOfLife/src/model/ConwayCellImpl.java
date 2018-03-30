@@ -5,7 +5,7 @@ import java.awt.Point;
 /**
  * Implementation of {@link ConwayCell}.
  */
-public class ConwayCellImpl implements ConwayCell, Cloneable {
+public class ConwayCellImpl implements ConwayCell {
 
 	private final Point position;
 	private boolean state;
