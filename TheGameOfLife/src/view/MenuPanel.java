@@ -1,6 +1,5 @@
 package view;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
@@ -27,9 +26,26 @@ public class MenuPanel extends JPanel {
 	private static final int PANEL_WIDTH = 250;
 	private static final int DEFAULT_MAP_WIDTH = 500;
 	private static final int DEFAULT_MAP_HEIGHT = 500;
+	private static final int PANEL_INSETS = 10;
+	
+	private static final String START = "Start";
+	private static final String STOP = "Stop";
+	private static final String RESET = "Reset";
+	
+	private static final String MAP_WIDTH_INFO = "Map width (X)";
+	private static final String MAP_HEIGHT_INFO = "Map height (Y)";
+	private static final String MAP_POSITION_INFO = "Current map position";
+	private static final String GENERATION_INFO = "Current generation";
+	private static final String TIME_ELAPSED_INFO = "Time elapsed";
+	private static final String ALIVE_CELLS_INFO = "Alive cells";
+	private static final String PREVIEW_SQUARES_INFO = "Preview squares";
+	private static final String DEFAULT_POSITION = "W:0|H:0";
+	private static final String DEFAULT_PREVIEW = "-";
+	private static final String DEFAULT_NUMBER = "0";
+	private static final String INPUT_ERROR = "Inserire valori numerici!";
+	
 	
 	private final GameController controller;
-	private final GameOfLifeFrameImpl container;
 	
 	private final JButton start;
 	private final JButton stop;
@@ -41,14 +57,15 @@ public class MenuPanel extends JPanel {
 	
 	private final JLabel currentGeneration;
 	private final JLabel timeElapsed;
-	private final JLabel liveCells;
+	private final JLabel aliveCells;
 	private final JLabel currentPosition;
 	
-	private final JLabel previewDimension;	
+	private final JLabel previewDimension;
 	
-	public MenuPanel(final GameController controller, final GameOfLifeFrameImpl container) {
+	
+	
+	public MenuPanel(final GameController controller) {
 		this.controller = Objects.requireNonNull(controller);
-		this.container = Objects.requireNonNull(container);
 
         final GUIFactory factory = new GUIFactory.Standard();
         this.setLayout(new GridLayout(1, 1));
@@ -56,32 +73,32 @@ public class MenuPanel extends JPanel {
         //Creating additional panel for additional info
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
+        panel.setBorder(new EmptyBorder(new Insets(PANEL_INSETS, PANEL_INSETS, PANEL_INSETS, PANEL_INSETS)));
         
         //TextField for specifying map dimensions
         this.mapDimensionX = factory.createTextField(true, "" + DEFAULT_MAP_WIDTH);
         this.mapDimensionY = factory.createTextField(true, "" + DEFAULT_MAP_HEIGHT);
-        this.inputError = factory.createErrorLabel("Inserire valori numerici!");
+        this.inputError = factory.createErrorLabel(INPUT_ERROR);
         this.inputError.setVisible(false);
         
         //Buttons to interact with game
-        this.start = factory.createPanelButton("Start");
-        this.stop = factory.createPanelButton("Stop");
-        this.reset = factory.createPanelButton("Reset");
+        this.start = factory.createPanelButton(START);
+        this.stop = factory.createPanelButton(STOP);
+        this.reset = factory.createPanelButton(RESET);
         
         //Some info about what's happening
-        this.currentGeneration = factory.createTitleLabel("0");
-        this.timeElapsed = factory.createTitleLabel("0");
-        this.liveCells = factory.createTitleLabel("0");
-        this.currentPosition = factory.createTitleLabel("0:0");
-        this.previewDimension = factory.createLabel("-");
+        this.currentGeneration = factory.createTitleLabel(DEFAULT_NUMBER);
+        this.timeElapsed = factory.createTitleLabel(DEFAULT_NUMBER);
+        this.aliveCells = factory.createTitleLabel(DEFAULT_NUMBER);
+        this.currentPosition = factory.createTitleLabel(DEFAULT_POSITION);
+        this.previewDimension = factory.createLabel(DEFAULT_PREVIEW);
         
 
         //Putting the area of input
-        panel.add(factory.createLabel("Map width (X)"));
+        panel.add(factory.createLabel(MAP_WIDTH_INFO));
         panel.add(this.mapDimensionX); 
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
-        panel.add(factory.createLabel("Map width (X)"));
+        panel.add(factory.createLabel(MAP_HEIGHT_INFO));
         panel.add(this.mapDimensionY);
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
         panel.add(this.inputError);
@@ -96,34 +113,34 @@ public class MenuPanel extends JPanel {
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
         
         //Putting the are of info
-        panel.add(factory.createLabel("Current map position"));
+        panel.add(factory.createLabel(MAP_POSITION_INFO));
         panel.add(currentPosition);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
-        panel.add(factory.createLabel("Current generation"));
+        panel.add(factory.createLabel(GENERATION_INFO));
         panel.add(currentGeneration);
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
-        panel.add(factory.createLabel("Time elapsed"));
+        panel.add(factory.createLabel(TIME_ELAPSED_INFO));
         panel.add(timeElapsed);
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
-        panel.add(factory.createLabel("Live cells"));
-        panel.add(liveCells);
+        panel.add(factory.createLabel(ALIVE_CELLS_INFO));
+        panel.add(aliveCells);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));           
-        panel.add(factory.createLabel("Preview squares"));
+        panel.add(factory.createLabel(PREVIEW_SQUARES_INFO));
         panel.add(this.previewDimension);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
               
         
         //Action listeners
         this.start.addActionListener(e -> {
-        	controller.start();
+        	this.controller.start();
         });
         
         this.stop.addActionListener(e -> {
-        	controller.stop();
+        	this.controller.stop();
         });
         
         this.reset.addActionListener(e -> {
-        	controller.reset();
+        	this.controller.reset();
         });
        
         
@@ -171,7 +188,7 @@ public class MenuPanel extends JPanel {
     	SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-            	liveCells.setText(text);
+            	aliveCells.setText(text);
             }
         });
     }
@@ -182,10 +199,10 @@ public class MenuPanel extends JPanel {
      * @param y - height (y) position of the map
      */
     public void setCurrentPosition(String x, String y) {
-    	SwingUtilities.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-            	currentPosition.setText(x + ";" + y);
+                currentPosition.setText("W: " + x + " | H: " + y);
             }
         });
     }
@@ -249,9 +266,9 @@ public class MenuPanel extends JPanel {
 		this.mapDimensionX.setEnabled(true);
 		this.mapDimensionY.setEnabled(true);
 		
-		setCurrentGenerationInfo("-");
-		setTimeElapsedInfo("-");
-		setLiveCellsInfo("-");
-		setCurrentPosition("0", "0");
+		setCurrentGenerationInfo(DEFAULT_PREVIEW);
+		setTimeElapsedInfo(DEFAULT_PREVIEW);
+		setLiveCellsInfo(DEFAULT_PREVIEW);
+		setCurrentPosition(DEFAULT_NUMBER, DEFAULT_NUMBER);
 	}
 }

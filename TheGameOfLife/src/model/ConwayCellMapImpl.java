@@ -52,7 +52,7 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 		this.cells = new ArrayList<>(width * height);
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				cells.add(i * height + j, new ConwayCellImpl(new Point(j, i)));
+				cells.add(i * width + j, new ConwayCellImpl(new Point(j, i)));
 			}
 		}
 		

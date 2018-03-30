@@ -57,7 +57,7 @@ public class GameOfLifeFrameImpl implements GameOfLifeFrame {
         });
 		
 		// Sets the panels
-		this.menuPanel = new MenuPanel(this.controller, this);
+		this.menuPanel = new MenuPanel(this.controller);
 		this.cellMapViewer = new CellMapViewer(this.controller, this);
 		
 		// Sets the layout and add panels
