@@ -1,5 +1,6 @@
 package controller;
 
+import java.awt.Point;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -42,9 +43,9 @@ public class GameOfLifeProducer extends Thread {
 			while (!stopFlag.isOn()) {
 				cron.start();
 				cellsAlive = 0;
-				final Set<ConwayCell> cellsToEvaluate = this.model.getCellsToEvaluate();
+				final Set<Point> cellsToEvaluate = this.model.getCellsToEvaluate();
 				final Set<Callable<Optional<Boolean>>> tasks = new HashSet<>();
-				for (final ConwayCell cell : cellsToEvaluate) {
+				for (final Point cell : cellsToEvaluate) {
 					tasks.add(new ComputeTask(model, cell));
 				}
 				final List<Future<Optional<Boolean>>> res = this.executor.invokeAll(tasks);

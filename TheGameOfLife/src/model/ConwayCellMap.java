@@ -2,6 +2,7 @@ package model;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,7 +25,7 @@ public interface ConwayCellMap {
 	/**
 	 * @return all the cells in the cell map.
 	 */
-	Set<ConwayCell> getCellMap();
+	Map<Point,Boolean> getCellMap();
 	
 	/**
 	 * @return current generation number.
@@ -34,7 +35,7 @@ public interface ConwayCellMap {
 	/**
 	 * @return the cells to evaluate for current generation completion.
 	 */
-	Set<ConwayCell> getCellsToEvaluate();
+	Set<Point> getCellsToEvaluate();
 	
 	/**
 	 * Applies game of life rules to the specified cell.
@@ -45,7 +46,7 @@ public interface ConwayCellMap {
 	 * 		cell to compute
 	 * @return the next status of the cell after the computation.
 	 */
-	Optional<Boolean> computeCell(ConwayCell cell);
+	Optional<Boolean> computeCell(Point cellPosition);
 	
 	/**
 	 * Goes to the next generation of the game.
@@ -59,21 +60,11 @@ public interface ConwayCellMap {
 	/**
 	 * @return the cells updated in the last generation.
 	 */
-	Set<ConwayCell> getLastUpdatedCells();
+	Map<Point,Boolean> getLastUpdatedCells();
 	
 	/**
 	 * Resets all data.
 	 */
 	void clear();
 	
-	/**
-	 * Gets the cells updated in the last generation that are in a specified range region.
-	 * 
-	 * @param startPoint
-	 * 		top-left angle of the region
-	 * @param regionDimension
-	 * 		dimension of the region
-	 * @return the last updated cells in the region.
-	 */
-	Set<ConwayCell> getLastUpdatedCellsInRegion(Point startPoint, Dimension regionDimension);
 }

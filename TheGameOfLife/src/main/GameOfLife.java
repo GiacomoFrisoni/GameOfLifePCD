@@ -4,8 +4,6 @@ import javax.swing.SwingUtilities;
 
 import controller.GameController;
 import controller.GameControllerImpl;
-import model.ConwayCellMap;
-import model.ConwayCellMapImpl;
 import view.GameOfLifeFrame;
 import view.GameOfLifeFrameImpl;
 
@@ -25,7 +23,6 @@ public final class GameOfLife {
 	public static void main(final String... args) {
 		final GameOfLifeFrame view = new GameOfLifeFrameImpl();
 		
-		//final GameController controller = new GameControllerImpl(model, view);
 		final GameController controller = new GameControllerImpl(view);
 		view.setObserver(controller);
 		view.initView();

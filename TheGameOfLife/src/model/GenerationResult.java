@@ -1,15 +1,16 @@
 package model;
 
-import java.util.Set;
+import java.awt.Point;
+import java.util.Map;
 
 public class GenerationResult {
 	
 	private final long generationNumber;
-	private final Set<ConwayCell> updatedCells;
+	private final Map<Point,Boolean> updatedCells;
 	private final long cellsAlive;
 	private final long computationTime;
 	
-	public GenerationResult(final long generationNumber, final Set<ConwayCell> updatedCells,
+	public GenerationResult(final long generationNumber, final Map<Point,Boolean> updatedCells,
 			final long cellsAlive, final long computationTime) {
 		this.generationNumber = generationNumber;
 		this.updatedCells = updatedCells;
@@ -25,7 +26,7 @@ public class GenerationResult {
 		return this.cellsAlive;
 	}
 	
-	public Set<ConwayCell> getUpdatedCells() {
+	public Map<Point,Boolean> getUpdatedCells() {
 		return this.updatedCells;
 	}
 	
