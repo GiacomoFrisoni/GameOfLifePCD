@@ -2,19 +2,10 @@ package model;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
+
+import org.magicwerk.brownies.collections.BigList;
 
 /**
  * This class represents the Model, as it contains all game of life elements.
@@ -26,12 +17,12 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 	private final Dimension mapDimension;
 	private long generation;
 	
-	private boolean[] cells;
-	private boolean[] nextCells;
-	private byte[] neighborgs;
+	private static final int STATE_BIT = 4;
 	
-	private Map<Point,Boolean> lastUpdatedCells;
-	private Set<Point> cellsToEvaluate;
+	private byte[] cells;
+	private byte[] nextCells;
+	
+	private BigList<Point> cellsToEvaluate;
 	
 	
 	/**
@@ -55,20 +46,14 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 		this.mapDimension = new Dimension(width, height);
 		
 		// Creates the cell map
-		this.cells = new boolean[width * height];
+		this.cells = new byte[width * height];
 		
 		// Creates an unaltered version of the cell map from which to work
-		this.nextCells = new boolean[width * height];
-		
-		// Creates an array with the neighbors of the cells
-		this.neighborgs = new byte[width * height];
-		
-		// Creates a map with the cells updated in the last generation
-		this.lastUpdatedCells = new HashMap<>();
+		this.nextCells = new byte[width * height];
 		
 		// Creates the set with the cells to evaluate for the current generation
-		this.cellsToEvaluate = Collections.synchronizedSet(new HashSet<>());
-		
+		this.cellsToEvaluate = new BigList<>();
+				
 		// Initializes number of generations
 		this.generation = 0;
 	}
@@ -84,26 +69,20 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 	}
 	
 	@Override
-	public Map<Point,Boolean> getCellMap() {
-		final Map<Point,Boolean> cellMap = new HashMap<>();
-		for (int i = 0; i < this.mapDimension.height; i++) {
-			for (int j = 0; j < this.mapDimension.width; j++) {
-				cellMap.put(new Point(j, i), getCellStatusByPosition(this.cells, i, j).get());
-			}
-		}
-		return cellMap;
+	public byte[] getCellMap() {
+		return this.cells;
 	}
 	
-	/*
-	 * Calculates the cells to be evaluated for the current generation completion.
-	 * Excludes off-cells with no neighbors.
-	 */
-	private void calculateCellsToEvaluate() {
+	private void calculatesCellsToEvaluate() {
 		this.cellsToEvaluate.clear();
-		for (int i = 0; i < this.mapDimension.getHeight(); i++) {
-			for (int j = 0; j < this.mapDimension.getWidth(); j++) {
-				int index = getOneDimensionalIndex(j, i);
-				if (this.cells[index] || (!this.cells[index] && this.neighborgs[index] > 0)) {
+		final int height = this.mapDimension.height;
+		final int width = this.mapDimension.width;
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				int index = encode(j, i);
+				byte cell = this.cells[index];
+				boolean state = getState(cell); 
+				if (state || (!state && getCellOnNeighborCount(cell) > 0)) {
 					this.cellsToEvaluate.add(new Point(j, i));
 				}
 			}
@@ -111,131 +90,92 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 	}
 	
 	@Override
-	public Set<Point> getCellsToEvaluate() {
-		final Set<Point> res = new HashSet<>();
-		for (final Point cell : this.cellsToEvaluate) {
-			res.add(new Point(cell));
-		}
-		return Collections.unmodifiableSet(res);
+	public BigList<Point> getCellsToEvaluate() {
+		return this.cellsToEvaluate;
 	}
 	
-	/*
-	 * Check if a specified position is inside the cell map.
-	 */
-	private boolean isInsideCellMap(final int x, final int y) {
-		return x >= 0 && x < this.mapDimension.width && y >= 0 && y < this.mapDimension.height;
-	}
-	
-	private int getOneDimensionalIndex(final int x, final int y) {
-		return (y * this.mapDimension.width) + x;
-	}
-	
-	private Optional<Boolean> getCellStatusByPosition(final boolean[] cellMap, final int x, final int y) {
-		if (isInsideCellMap(x, y)) {
-			return Optional.of(cellMap[getOneDimensionalIndex(x, y)]);
-		} else {
-			return Optional.empty();
-		}
-	}
-	
-	/*
-	 * Turns an off-cell on, incrementing the on-neighbor count for
-	 * the eight neighboring cells.
-	 * 
-	 * @param cellPosition
-	 * 		the position of the cell to set on
-	 */
-	private void setCellStateOn(final Point cellPosition) {
-		getCellStatusByPosition(this.cells, cellPosition.x, cellPosition.y).ifPresent(status -> {
-			if (!status) {
-				// Turns on the cell state
-				this.nextCells[getOneDimensionalIndex(cellPosition.x, cellPosition.y)] = true;
-				// Increments the on-neighbor count for each neighbor
-				for (int yOffset = -1; yOffset < 1; yOffset++) {
-					for (int xOffset = -1; xOffset < 1; xOffset++) {
-						int neighborX = cellPosition.x + xOffset;
-						int neighborY = cellPosition.y + yOffset;
-						getCellStatusByPosition(this.cells, neighborX, neighborY)
-						.ifPresent(val -> this.neighborgs[getOneDimensionalIndex(neighborX, neighborY)]++);
+	private void setCellStateOn(final byte cell, int x, int y) {
+		boolean state = getState(cell);
+		if (!state) {
+			// Turns on the cell
+			this.nextCells[encode(x, y)] = (byte) (cell | (1 << STATE_BIT));
+			// Increments the on-neighbor count for each neighbor
+			for (int i = y - 1; i <= y + 1; i++) {
+				for (int j = x - 1; j <= x + 1; j++) {
+					if (j >= 0 && j < this.mapDimension.width && i >= 0 && i < this.mapDimension.height && (i != y || j != x)) {
+						byte nextCounter = (byte)(Math.min(getCellOnNeighborCount(cell) + 1, 8));
+						this.nextCells[encode(j, i)] = (byte) (((state ? 1 : 0) << STATE_BIT) | nextCounter);
 					}
 				}
 			}
-		});
+		}
 	}
 	
-	/*
-	 * Turns an on-cell off, decrementing the on-neighbor count for
-	 * the eight neighboring cells.
-	 * 
-	 * @param cellPosition
-	 * 		the position of the cell to set off
-	 */
-	private void setCellStateOff(final Point cellPosition) {
-		getCellStatusByPosition(this.cells, cellPosition.x, cellPosition.y).ifPresent(status -> {
-			if (status) {
-				// Turns on the cell state
-				this.nextCells[getOneDimensionalIndex(cellPosition.x, cellPosition.y)] = false;
-				// Increments the on-neighbor count for each neighbor
-				for (int yOffset = -1; yOffset < 1; yOffset++) {
-					for (int xOffset = -1; xOffset < 1; xOffset++) {
-						int neighborX = cellPosition.x + xOffset;
-						int neighborY = cellPosition.y + yOffset;
-						getCellStatusByPosition(this.cells, neighborX, neighborY)
-						.ifPresent(val -> this.neighborgs[getOneDimensionalIndex(neighborX, neighborY)]--);
+	private void setCellStateOff(final byte cell, int x, int y) {
+		boolean state = getState(cell);
+		if (!state) {
+			// Turns off the cell
+			this.nextCells[encode(x, y)] = (byte) (cell & ~(1 << STATE_BIT));
+			// Decrements the on-neighbor count for each neighbor
+			for (int i = y - 1; i < y + 1; i++) {
+				for (int j = x - 1; x < x + 1; j++) {
+					if (i != y && j != x) {
+						byte nextCounter = (byte)(Math.max(getCellOnNeighborCount(cell) - 1, 0));
+						this.nextCells[encode(x, y)] = (byte) (((state ? 1 : 0) << STATE_BIT) | nextCounter);
 					}
 				}
 			}
-		});
+		}
+	}
+	
+	private boolean getState(final byte cell) {
+		return (cell & (1 << STATE_BIT)) != 0;
+	}
+	
+	private byte getCellOnNeighborCount(final byte cell) {
+		return (byte)(cell & 0x07);
+	}
+	
+	private int encode(final int x, final int y) {
+		return y * this.mapDimension.width + x;
 	}
 	
 	@Override
-	public Optional<Boolean> computeCell(final Point cellPosition) {
-		Objects.requireNonNull(cellPosition);
-		Optional<Boolean> state = getCellStatusByPosition(this.cells, cellPosition.x, cellPosition.y);
-		if (state.isPresent()) {
-			boolean nextState = state.get();
-			int index = getOneDimensionalIndex(cellPosition.x, cellPosition.y);
-			byte onNeighborCount = this.neighborgs[index];
-			if (state.get()) {
-				if ((onNeighborCount < 2) || (onNeighborCount > 3)) {
-					setCellStateOff(cellPosition);
-					this.lastUpdatedCells.put(cellPosition, false);
-					nextState = false;
-				}
-			} else {
-				if (onNeighborCount == 3) {
-					this.nextCells[getOneDimensionalIndex(cellPosition.x, cellPosition.y)] = true;
-					this.lastUpdatedCells.put(cellPosition, true);
-					nextState = true;
-				}
+	public boolean computeCell(final int x, final int y) {
+		byte cell = this.cells[encode(x, y)];
+		boolean state = getState(cell);
+		boolean nextState = state;
+		byte onNeighborCount = getCellOnNeighborCount(cell);
+		if (state) {
+			if ((onNeighborCount < 2) || (onNeighborCount > 3)) {
+				setCellStateOff(cell, x, y);
+				nextState = false;
 			}
-			return Optional.of(nextState);
+		} else {
+			if (onNeighborCount == 3) {
+				setCellStateOn(cell, x, y);
+				nextState = true;
+			}
 		}
-		return Optional.empty();
+		return nextState;
 	}
 	
 	@Override
 	public boolean nextGeneration() {
-		if (this.cellsToEvaluate.isEmpty()) {
-			// Set current cell map = next cell map
-			System.arraycopy(this.nextCells, 0, this.cells, 0, this.cells.length);
-			// Clears last updated cells
-			this.lastUpdatedCells.clear();
-			// Calculates cells to evaluate in the new generation
-			calculateCellsToEvaluate();
-			// Increments generation number
-			this.generation++;
-			return true;
-		}
-		return false;
+		// Sets current cell map = next cell map
+		System.arraycopy(this.nextCells, 0, this.cells, 0, this.cells.length);
+		// Calculates cells to evaluate in the new generation
+		calculatesCellsToEvaluate();
+		// Increments generation number
+		this.generation++;
+		return true;
 	}
 	
 	@Override
 	public void clear() {
-		Arrays.fill(this.cells, false);
-		Arrays.fill(this.nextCells, false);
+		Arrays.fill(this.cells, (byte)0);
+		Arrays.fill(this.nextCells, (byte)0);
 		this.cellsToEvaluate.clear();
-		this.lastUpdatedCells.clear();
 		this.generation = 0;
 	}
 	
@@ -243,17 +183,10 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 	public void randomInitCell() {
 		int x = ThreadLocalRandom.current().nextInt(0, this.mapDimension.width);
 		int y = ThreadLocalRandom.current().nextInt(0, this.mapDimension.height);
-		final Point initPoint = new Point(x, y);
-		synchronized(this.lastUpdatedCells) {
-			if (!this.lastUpdatedCells.containsKey(initPoint)) {
-				setCellStateOn(initPoint);
-				this.lastUpdatedCells.put(initPoint, true);
+		synchronized (this.nextCells) {
+			if (!getState(this.nextCells[encode(x, y)])) {
+				setCellStateOn(this.cells[encode(x, y)], x, y);
 			}
 		}
-	}
-	
-	@Override
-	public Map<Point,Boolean> getLastUpdatedCells() {
-		return Collections.unmodifiableMap(this.lastUpdatedCells);
 	}
 }

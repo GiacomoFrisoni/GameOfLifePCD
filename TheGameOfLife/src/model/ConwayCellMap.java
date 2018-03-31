@@ -2,9 +2,8 @@ package model;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+
+import org.magicwerk.brownies.collections.BigList;
 
 /**
  * This interface handles a cell map for the Game Of Life.
@@ -25,17 +24,17 @@ public interface ConwayCellMap {
 	/**
 	 * @return all the cells in the cell map.
 	 */
-	Map<Point,Boolean> getCellMap();
+	byte[] getCellMap();
+	
+	/**
+	 * @return the cells to evaluate for current generation completion.
+	 */
+	BigList<Point> getCellsToEvaluate();
 	
 	/**
 	 * @return current generation number.
 	 */
 	long getGenerationNumber();
-	
-	/**
-	 * @return the cells to evaluate for current generation completion.
-	 */
-	Set<Point> getCellsToEvaluate();
 	
 	/**
 	 * Applies game of life rules to the specified cell.
@@ -46,7 +45,7 @@ public interface ConwayCellMap {
 	 * 		cell to compute
 	 * @return the next status of the cell after the computation.
 	 */
-	Optional<Boolean> computeCell(Point cellPosition);
+	boolean computeCell(int x, int y);
 	
 	/**
 	 * Goes to the next generation of the game.
@@ -56,11 +55,6 @@ public interface ConwayCellMap {
 	 * @return true if the transition is performed, false otherwise.
 	 */
 	boolean nextGeneration();
-	
-	/**
-	 * @return the cells updated in the last generation.
-	 */
-	Map<Point,Boolean> getLastUpdatedCells();
 	
 	/**
 	 * Resets all data.

@@ -26,10 +26,11 @@ public class GameOfLifeService extends Thread {
 	
 	@Override
 	public void run() {
+		/*
 		if (this.model.getCellMap().isEmpty()) {
 			this.stopFlag.setOn();
 			//view.changeState("No point in Matrix!");
-		}
+		}*/
 		
 		// Starts producer and consumer threads
 		new GameOfLifeProducer(this.queue, this.executor, this.model, this.stopFlag).start();

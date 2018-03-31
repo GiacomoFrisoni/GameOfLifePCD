@@ -1,17 +1,15 @@
 package controller;
 
 import java.awt.Point;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import model.ConwayCell;
+import org.magicwerk.brownies.collections.BigList;
+
 import model.ConwayCellMap;
 import model.GenerationResult;
 
@@ -43,22 +41,20 @@ public class GameOfLifeProducer extends Thread {
 			while (!stopFlag.isOn()) {
 				cron.start();
 				cellsAlive = 0;
-				final Set<Point> cellsToEvaluate = this.model.getCellsToEvaluate();
-				final Set<Callable<Optional<Boolean>>> tasks = new HashSet<>();
+				final BigList<Callable<Boolean>> tasks = new BigList<>();
+				final BigList<Point> cellsToEvaluate = this.model.getCellsToEvaluate();
 				for (final Point cell : cellsToEvaluate) {
-					tasks.add(new ComputeTask(model, cell));
+					tasks.add(new ComputeTask(model, cell.x, cell.y));
 				}
-				final List<Future<Optional<Boolean>>> res = this.executor.invokeAll(tasks);
-				for (final Future<Optional<Boolean>> f : res) {
-					if (f.get().isPresent()) {
-						if (f.get().get()) {
-							cellsAlive++;
-						}
+				final List<Future<Boolean>> res = this.executor.invokeAll(tasks);
+				for (final Future<Boolean> f : res) {
+					if (f.get()) {
+						cellsAlive++;
 					}
 				}
 				cron.stop();
 				final GenerationResult generationResult = new GenerationResult(this.model.getGenerationNumber(),
-						this.model.getCellMap(), cellsAlive, cron.getTime());
+						null, cellsAlive, cron.getTime());
 				/*
 				 * The put() method will block if the queue is full, waiting for space becomes available.
 				 * While waiting, it will throw InterruptedException if the current thread is interrupted.

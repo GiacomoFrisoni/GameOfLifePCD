@@ -1,24 +1,24 @@
 package controller;
 
-import java.awt.Point;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 
 import model.ConwayCellMap;
 
-public class ComputeTask implements Callable<Optional<Boolean>> {
+public class ComputeTask implements Callable<Boolean> {
 
 	private final ConwayCellMap model;
-	private final Point cell;
+	private final int cellX;
+	private final int cellY;
 	
-	public ComputeTask(final ConwayCellMap model, final Point cell) {
+	public ComputeTask(final ConwayCellMap model, final int cellX, final int cellY) {
 		this.model = model;
-		this.cell = cell;
+		this.cellX = cellX;
+		this.cellY = cellY;
 	}
 	
 	@Override
-	public Optional<Boolean> call() {
-		return this.model.computeCell(this.cell);
+	public Boolean call() {
+		return this.model.computeCell(this.cellX, this.cellY);
 	}
 
 }
