@@ -1,105 +1,85 @@
 package view;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-
 import controller.GameController;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
 
-public class CellMapViewer extends JPanel {
-	
-	private static final long serialVersionUID = 4900611774904891447L;
-	
-	private static final String LEFT_SHIFT_INFO = "◀";
-	private static final String UP_SHIFT_INFO = "▲";
-	private static final String RIGHT_SHIFT_INFO = "▶";
-	private static final String DOWN_SHIFT_INFO = "▼";
-	
-	private final GameController controller;
-	private final GameOfLifeFrameImpl container;
-	
-	private final CellMap map;
-	
-	private final JButton left;
-	private final JButton up;
-	private final JButton right;
-	private final JButton down;
-	
-	private int mapXcurrentPosition = 0;
-	private int mapYcurrentPosition = 0;
-	private int mapXLimit = 1;
-	private int mapYLimit = 1;
+public class CellMapViewer extends BorderPane {
 
+	@FXML
+	private CellMap cellMap;
+	
+	@FXML
+	private Button left, top, right, bottom;
+	
+	
+	private GameController controller;
+	private MainFrame container;
+	private int xPosition = 0, yPosition = 0;
+	private int mapXLimit = 1, mapYLimit = 1;
+	
 	/**
-	 * Constructs a cell map viewer.
-	 * 
-	 * @param controller
-	 * 		the game of life controller
-	 * @param container
-	 * 		the frame container
+	 * Create a new CellMapViewer
 	 */
-	public CellMapViewer(final GameController controller, final GameOfLifeFrameImpl container) {
-		// Takes references
+	public CellMapViewer() {
+		final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("CellMapViewer.fxml"));
+		fxmlLoader.setRoot(this);
+		fxmlLoader.setController(this);
+		
+        try {
+            fxmlLoader.load();
+        } catch (Exception exception) {
+            System.out.println("FXML Loading Exception: CellMapViewer.fxml could not be loaded. Exception: " + exception.getMessage());
+            System.exit(0);
+        }  
+	}
+	
+	/**
+	 * Initialize a cellMapViewer
+	 * @param controller
+	 * 		controller of the main frame
+	 * @param container
+	 * 		container of the cellMapViewer
+	 */
+	public void init(GameController controller, MainFrame container) {
+		//Controllers & containers
 		this.controller = controller;
-		this.container = container;	
-		
-		// Prepares buttons
-        final GUIFactory factory = new GUIFactory.Standard();
-		this.left = factory.createButton(LEFT_SHIFT_INFO);
-		this.up = factory.createButton(UP_SHIFT_INFO);
-		this.right = factory.createButton(RIGHT_SHIFT_INFO);
-		this.down = factory.createButton(DOWN_SHIFT_INFO);
-		
-		// Prepares the map
-		this.map = new CellMap(this);
-		
-		// Sets the layout
-		this.setLayout(new BorderLayout());
-		this.add(this.map, BorderLayout.CENTER);
-		this.add(this.left, BorderLayout.WEST);
-		this.add(this.up, BorderLayout.NORTH);
-		this.add(this.right, BorderLayout.EAST);
-		this.add(this.down, BorderLayout.SOUTH);
+		this.container = container;
 		
 		//Action listeners
-		this.left.addActionListener(e -> {
-			this.mapXcurrentPosition = mapXcurrentPosition <= 0 ? 0 : mapXcurrentPosition - 1;
+		this.left.setOnMouseClicked(e -> {
+			this.xPosition = xPosition <= 0 ? 0 : xPosition - 1;
 			updateMenuState();
 		});
 		
-		this.up.addActionListener(e -> {
-			this.mapYcurrentPosition = mapYcurrentPosition <= 0 ? 0 : mapYcurrentPosition - 1;
+		this.top.setOnMouseClicked(e -> {
+			this.yPosition = yPosition<= 0 ? 0 : yPosition - 1;
 			updateMenuState();
 		});
 		
-		this.right.addActionListener(e -> {
-			this.mapXcurrentPosition = mapXcurrentPosition >= mapXLimit ? mapXLimit : mapXcurrentPosition + 1;
+		this.right.setOnMouseClicked(e -> {
+			this.xPosition = xPosition >= mapXLimit ? mapXLimit : xPosition + 1;
 			updateMenuState();
 		});
 		
-		this.down.addActionListener(e -> {
-			this.mapYcurrentPosition = mapYcurrentPosition >= mapYLimit ? mapYLimit : mapYcurrentPosition + 1;
+		this.bottom.setOnMouseClicked(e -> {
+			this.yPosition = yPosition >= mapYLimit ? mapYLimit : yPosition + 1;
 			updateMenuState();
 		});
 		
-		this.setBackground(factory.getBackgroundColor());
-	}
-	
-	private void updateMenuState() {
-		container.getMenuPanel().setCurrentPosition(mapXcurrentPosition, mapYcurrentPosition);
-		map.draw(true);
+		this.cellMap.setContainer(this);
 	}
 	
 	/**
-	 * Resets the cell map viewer.
-	 * Back to default position.
+	 * Draw the cells
+	 * @param cells
+	 * 		cells to draw
 	 */
-	public void reset() {
-		this.mapXcurrentPosition = 0;
-		this.mapYcurrentPosition = 0;
-		calculateMapLimits();
+	public void drawCells(boolean[][] cells) {
+		this.cellMap.setCellsToDraw(cells);
 	}
 	
 	/**
@@ -107,33 +87,81 @@ public class CellMapViewer extends JPanel {
 	 */
 	public void calculateMapLimits() {
 		final Dimension mapDimension = controller.getCellMapDimension();
-		this.mapXLimit = (mapDimension.width / map.getDrawableXCellsNumber());
-		this.mapYLimit = (mapDimension.height / map.getDrawableYCellsNumber());
-	}
-	
-	public Dimension getMapLimits() {
-		return new Dimension(mapXLimit, mapYLimit);
+		this.mapXLimit = (mapDimension.width / cellMap.getDrawableXCellsNumber());
+		this.mapYLimit = (mapDimension.height / cellMap.getDrawableYCellsNumber());
 	}
 	
 	/**
-	 * @return the x-coordinate of the current region reference position.
+	 * Get the width of the center panel
+	 * @return
+	 * 		width of the center panel
 	 */
-	public int getXcurrentPosition() {
-		return this.mapXcurrentPosition;
+	public double getCenterPanelX() {
+		return this.getWidth() - this.left.getWidth() - this.right.getWidth();
 	}
 	
 	/**
-	 * @return the y-coordinate of the current region reference position.
+	 * Get the height of the center panel
+	 * @return
+	 * 		height of the center panel
 	 */
-	public int getYcurrentPosition() {
-		return this.mapYcurrentPosition;
+	public double getCenterPanelY() {
+		return this.getHeight() - this.top.getHeight() - this.bottom.getHeight();
 	}
 	
 	/**
-	 * @return the represented map component.
+	 * Get the number of drawable cells in preview in width
+	 * @return
+	 * 		drawable cells in preview in width
 	 */
-	public CellMap getCellMap() {
-		return this.map;
+	public int getDrawableXCellsNumber() {
+		return this.cellMap.getDrawableXCellsNumber();
 	}
 	
+	
+	/**
+	 * Get the number of drawable cells in preview in height
+	 * @return
+	 * 		drawable cells in preview in height
+	 */
+	public int getDrawableYCellsNumber() {
+		return this.cellMap.getDrawableYCellsNumber();
+	}
+
+
+	/**
+	 * Get the actual X position of the preview
+	 * @return the X position of preview
+	 */
+	public int getXposition() {
+		return xPosition;
+	}
+	
+	/**
+	 * Get the actual Y position of the preview
+	 * @return the Y position of preview
+	 */
+	public int getYposition() {
+		return yPosition;
+	}
+	
+	/**
+	 * Reset the component to initial state
+	 */
+	public void reset() {
+		this.cellMap.reset();
+		this.xPosition = 0;
+		this.yPosition = 0;
+		this.updateMenuState();
+	}
+	
+	
+	/**
+	 * Performing operation when the preview change position
+	 */
+	private void updateMenuState() {
+		this.cellMap.updatePosition(xPosition, yPosition);
+		this.container.getMenuPanel().setCurrentPosition(xPosition, yPosition);
+	}
+
 }

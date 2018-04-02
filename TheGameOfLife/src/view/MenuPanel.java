@@ -1,296 +1,249 @@
 package view;
 
 import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.util.Objects;
 import java.util.Optional;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
-
 import controller.GameController;
+import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
-public class MenuPanel extends JPanel {
+public class MenuPanel extends VBox {
+
+	@FXML
+	private TextField mapWidth, mapHeight;
+	
+	@FXML
+	private MiniatureCellMap miniatureCellMap;
+	
+	@FXML
+	private Label currentPosition, viewableCells, generation, elapsedTime, cellsAlive, errorLabel, loadingLabel;
+	
+	@FXML
+	private Button start, stop, reset;
+	
+	@FXML
+	private Pane cellMapContainer;
+	
+	@FXML
+	private VBox loadingStatus;
+	
+	@FXML
+	private ProgressBar progress;
+	
+	private GameController controller;
 
 	/**
-	 * Auto-generated UID.
+	 * Create a new menu panel
 	 */
-	private static final long serialVersionUID = -3478859524085262735L;
-
-	private static final int PANEL_WIDTH = 250;
-	private static final int DEFAULT_MAP_WIDTH = 500;
-	private static final int DEFAULT_MAP_HEIGHT = 500;
-	private static final int PANEL_INSETS = 10;
-	
-	private static final String START = "Start";
-	private static final String STOP = "Stop";
-	private static final String RESET = "Reset";
-	
-	private static final String MAP_WIDTH_INFO = "Map width (X)";
-	private static final String MAP_HEIGHT_INFO = "Map height (Y)";
-	private static final String MAP_POSITION_INFO = "Current map position";
-	private static final String GENERATION_INFO = "Current generation";
-	private static final String TIME_ELAPSED_INFO = "Time elapsed";
-	private static final String ALIVE_CELLS_INFO = "Alive cells";
-	private static final String PREVIEW_SQUARES_INFO = "Preview squares";
-	private static final String DEFAULT_POSITION = "W:0|H:0";
-	private static final String DEFAULT_PREVIEW = "-";
-	private static final String DEFAULT_NUMBER = "0";
-	private static final int DEFAULT_VALUE = 0;
-	private static final String INPUT_ERROR = "Inserire valori numerici!";
-	
-	
-	private final GameController controller;
-	
-	private final JButton start;
-	private final JButton stop;
-	private final JButton reset;
-	
-	private final JTextField mapDimensionX;
-	private final JTextField mapDimensionY;
-	private final JLabel inputError;
-	
-	private final JLabel currentGeneration;
-	private final JLabel timeElapsed;
-	private final JLabel aliveCells;
-	private final JLabel currentPosition;
-	private final MiniatureCellMap miniatureMap;
-	
-	private final JLabel previewDimension;
-	
-	
-	/**
-	 * Creates a new menu panel.
-	 * 
-	 * @param controller
-	 * 		the game of life controller
-	 */
-	public MenuPanel(final GameController controller) {
-		this.controller = Objects.requireNonNull(controller);
-
-        final GUIFactory factory = new GUIFactory.Standard();
-        this.setLayout(new GridLayout(1, 1));
-        
-        //Creating additional panel for additional info
-        JPanel panel = factory.createPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(new EmptyBorder(new Insets(PANEL_INSETS, PANEL_INSETS, PANEL_INSETS, PANEL_INSETS)));
-        
-        //TextField for specifying map dimensions
-        this.mapDimensionX = factory.createTextField(true, "" + DEFAULT_MAP_WIDTH);
-        this.mapDimensionY = factory.createTextField(true, "" + DEFAULT_MAP_HEIGHT);
-        this.inputError = factory.createErrorLabel(INPUT_ERROR);
-        this.inputError.setVisible(false);
-        
-        //Buttons to interact with game
-        this.start = factory.createPanelButton(START);
-        this.stop = factory.createPanelButton(STOP);
-        this.reset = factory.createPanelButton(RESET);
-        
-        //Some info about what's happening
-        this.currentGeneration = factory.createTitleLabel(DEFAULT_NUMBER);
-        this.timeElapsed = factory.createTitleLabel(DEFAULT_NUMBER);
-        this.aliveCells = factory.createTitleLabel(DEFAULT_NUMBER);
-        this.currentPosition = factory.createTitleLabel(DEFAULT_POSITION);
-        this.previewDimension = factory.createTitleLabel(DEFAULT_PREVIEW);
-        
-        this.miniatureMap = new MiniatureCellMap(PANEL_WIDTH);
-        
-        //Putting the area of input
-        panel.add(factory.createLabel(MAP_WIDTH_INFO));
-        panel.add(this.mapDimensionX); 
-        panel.add(Box.createRigidArea(new Dimension(0, 5)));
-        panel.add(factory.createLabel(MAP_HEIGHT_INFO));
-        panel.add(this.mapDimensionY);
-        panel.add(Box.createRigidArea(new Dimension(0, 5)));
-        panel.add(this.inputError);
-        panel.add(Box.createRigidArea(new Dimension(0, 20)));
-        
-        //Putting the area of interact
-        panel.add(this.start);
-        panel.add(Box.createRigidArea(new Dimension(0, 5)));
-        panel.add(this.stop);
-        panel.add(Box.createRigidArea(new Dimension(0, 5)));
-        panel.add(this.reset);
-        panel.add(Box.createRigidArea(new Dimension(0, 20)));
-        
-        //Putting the are of info
-        panel.add(this.miniatureMap);
-        panel.add(Box.createRigidArea(new Dimension(0, 5)));
-        panel.add(factory.createLabel(MAP_POSITION_INFO));
-        panel.add(currentPosition);
-        panel.add(Box.createRigidArea(new Dimension(0, 20)));
-        panel.add(factory.createLabel(GENERATION_INFO));
-        panel.add(currentGeneration);
-        panel.add(Box.createRigidArea(new Dimension(0, 5)));
-        panel.add(factory.createLabel(TIME_ELAPSED_INFO));
-        panel.add(timeElapsed);
-        panel.add(Box.createRigidArea(new Dimension(0, 5)));
-        panel.add(factory.createLabel(ALIVE_CELLS_INFO));
-        panel.add(aliveCells);
-        panel.add(Box.createRigidArea(new Dimension(0, 20)));           
-        panel.add(factory.createLabel(PREVIEW_SQUARES_INFO));
-        panel.add(this.previewDimension);
-        panel.add(Box.createRigidArea(new Dimension(0, 20)));
-              
-        
-        //Action listeners
-        this.start.addActionListener(e -> {
-        	this.controller.start();
-        });
-        
-        this.stop.addActionListener(e -> {
-        	this.controller.stop();
-        });
-        
-        this.reset.addActionListener(e -> {
-        	this.controller.reset();
-        });
-       
-        
-        //Add all things to the panel
-        this.add(panel);
-	}
-	
-	@Override
-    public final Dimension getPreferredSize() {
-        return new Dimension(PANEL_WIDTH, 0);
-    }
-	
-	public void setMiniatureMapSize(Dimension d) {
-		this.miniatureMap.setSquareNumber(d.width, d.height);
-	}
-	
-    
-	/**
-	 * Sets text to inform about current generation.
-	 * @param text
-	 * 		the number of generation
-	 */
-    public void setCurrentGenerationInfo(final String text) {
-    	SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-            	currentGeneration.setText(text);
-            }
-        }); 	
-    }
-    
-    /**
-     * Sets text to inform about time elapsed during last computation.
-     * @param text
-     * 		the time elapsed during last computation
-     */
-    public void setTimeElapsedInfo(final String text) { 	
-    	SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-            	timeElapsed.setText(text);
-            }
-        }); 
-    }
-    
-    /**
-     * Sets text to inform about how many cells are still alive.
-     * @param text
-     * 		how many cells are still alive
-     */
-    public void setLiveCellsInfo(final String text) {
-    	SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-            	aliveCells.setText(text);
-            }
-        });
-    }
-    
-    /**
-     * Sets text to inform about what's the current position on the general map.
-     * @param x
-     * 		width (x) position of the map
-     * @param y
-     * 		height (y) position of the map
-     */
-    public void setCurrentPosition(int x, int y) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                currentPosition.setText("W: " + x + " | H: " + y);
-                miniatureMap.setCurrentSquare(x, y);
-            }
-        });
-    }
-    
-    /**
-     * Sets text to inform how big is preview area.
-     * @param x
-     * 		squares in width
-     * @param y
-     * 		squares in height
-     */
-    public void setPreviewDimensionInfo(int x, int y) {
-    	SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-            	previewDimension.setText("W: " + x + " H: " + y);
-            }
-        });
-    }
-    
-    /**
-     * Takes the user input of how big should be the map.
-     * @return {@link Dimension} if input was correct, null otherwise
-     */
-	public Optional<Dimension> getMapDimension() {
-		this.inputError.setVisible(false);
+	public MenuPanel() {
+		final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MenuPanel.fxml"));
+		fxmlLoader.setRoot(this);
+		fxmlLoader.setController(this);
 		
-		if (this.mapDimensionX.getText().chars().allMatch(Character::isDigit) &&
-				this.mapDimensionY.getText().chars().allMatch(Character::isDigit)) {
-			return Optional.of(new Dimension(Integer.parseInt(this.mapDimensionX.getText()), Integer.parseInt(this.mapDimensionY.getText())));
-		} else {
-			this.inputError.setVisible(true);
-			return Optional.empty();
-		}
-
+		
+        try {
+            fxmlLoader.load();
+    		this.reset();
+        } catch (Exception exception) {
+            System.out.println("FXML Loading Exception: MenuPanel.fxml could not be loaded. Exception: " + exception.getMessage());
+            System.exit(0);
+        }  
 	}
 	
 	/**
-	 * Sets the current state of the view as started.
+	 * Initialize the menu panel
+	 * @param controller
+	 * 		controller of the main frame
+	 */
+	public void init(GameController controller) {
+		this.controller = controller;
+		setProgress(ProgressType.IDLE, "Idle");
+		
+		start.setOnMouseClicked(e -> {
+			setProgress(ProgressType.INDETERMINATE, "Starting...");
+			controller.start();
+		});
+		
+		stop.setOnMouseClicked(e -> {
+			setProgress(ProgressType.INDETERMINATE, "Stopping...");
+			controller.stop();
+		});
+		
+		reset.setOnMouseClicked(e -> {
+			setProgress(ProgressType.INDETERMINATE, "Resetting...");
+			controller.reset();
+		});
+	}
+	
+	/**
+	 * Get the map dimension inserted by user
+	 * @return
+	 * 		dimension of the map inserted by user
+	 */
+	public Optional<Dimension> getMapDimension() {
+		this.errorLabel.setVisible(false);
+		final String width = this.mapWidth.getText();
+		final String height = this.mapHeight.getText();
+		
+		if (width != null && height != null) {
+			if (!width.isEmpty() && !height.isEmpty()) {
+				if (width.chars().allMatch(Character::isDigit) && height.chars().allMatch(Character::isDigit)) {
+					if (Integer.parseInt(width) > 0 && Integer.parseInt(height) > 0) {
+						return Optional.of(new Dimension(Integer.parseInt(width), Integer.parseInt(height)));
+					}
+				}
+			} 
+		}
+			
+		this.errorLabel.setVisible(true);
+		return Optional.empty();	
+	}
+	
+	
+	/**
+	 * Set the info about the current position of the preview
+	 * @param x
+	 * 		x position of the preview
+	 * @param y
+	 * 		y position of the preview
+	 */
+	public void setCurrentPosition(int x, int y) {
+		Platform.runLater(new Runnable() {			
+			@Override
+			public void run() {
+				currentPosition.setText(x + ", " + y);	
+				miniatureCellMap.drawCurrentPosition(x,y);
+			}
+		});		
+	}
+	
+	/**
+	 * Set the info about how many cells are viewable
+	 * @param x
+	 * 		cells viewable in width
+	 * @param y
+	 * 		cells viewable in height
+	 */
+	public void setViewableCells(int x, int y) {
+		Platform.runLater(new Runnable() {			
+			@Override
+			public void run() {
+				viewableCells.setText("W: " + x + ", H: " + y);		
+			}
+		});			
+	}
+	
+	/**
+	 * Set info about the current generation
+	 * @param gen
+	 * 		number of the generation
+	 * @param time
+	 * 		time elapsed to calculate this generation
+	 * @param cells
+	 * 		currently alive cells
+	 */
+	public void setGenerationInfo(long gen, long time, long cells) {
+		Platform.runLater(new Runnable() {			
+			@Override
+			public void run() {
+				generation.setText("" + gen);
+				elapsedTime.setText("" + time + "ms");
+				cellsAlive.setText("" + cells);	
+			}
+		});	
+	}
+	
+	/**
+	 * Invoked when coputation started
 	 */
 	public void setStarted() {
-		this.start.setEnabled(false);
-		this.stop.setEnabled(true);
-		this.mapDimensionX.setEnabled(false);
-		this.mapDimensionY.setEnabled(false);
-	}
-
-	/**
-	 * Sets the current state of the view as stopped.
-	 */
-	public void setStopped() {
-		this.start.setEnabled(true);
-		this.stop.setEnabled(false);
+		Platform.runLater(new Runnable() {			
+			@Override
+			public void run() {
+				start.setDisable(true);
+				reset.setDisable(true);
+				stop.setDisable(false);
+				
+				mapWidth.setDisable(true);
+				mapHeight.setDisable(true);
+			}
+		});	
 	}
 	
 	/**
-	 * Resets all the view.
+	 * Invoked when coputation stopped
+	 */
+	public void setStopped() {	
+		Platform.runLater(new Runnable() {			
+			@Override
+			public void run() {
+				start.setDisable(false);
+				reset.setDisable(false);
+				stop.setDisable(true);
+			}
+		});		
+	}
+	
+	/**
+	 * Reset all the view and sub components
 	 */
 	public void reset() {
-		this.start.setEnabled(true);
-		this.stop.setEnabled(false);
-		this.mapDimensionX.setEnabled(true);
-		this.mapDimensionY.setEnabled(true);
+		Platform.runLater(new Runnable() {			
+			@Override
+			public void run() {
+				start.setDisable(false);
+				reset.setDisable(true);
+				stop.setDisable(true);
+				errorLabel.setVisible(false);
+				
+				mapWidth.setDisable(false);
+				mapHeight.setDisable(false);
+				miniatureCellMap.reset();		
+			}
+		});	
 		
-		setCurrentGenerationInfo(DEFAULT_PREVIEW);
-		setTimeElapsedInfo(DEFAULT_PREVIEW);
-		setLiveCellsInfo(DEFAULT_PREVIEW);
-		setCurrentPosition(DEFAULT_VALUE, DEFAULT_VALUE);
+		setCurrentPosition(0, 0);
+		setGenerationInfo(0, 0, 0);
 	}
+
+	
+	/**
+	 * Set the progress
+	 * @param type
+	 * 		type of the progress (determinate or not)
+	 * @param title
+	 * 		title of the label of progress
+	 */
+	public void setProgress(ProgressType type, String title) {
+		Platform.runLater(new Runnable() {			
+			@Override
+			public void run() {
+				loadingLabel.setText(title);	
+				progress.setProgress(type.equals(ProgressType.INDETERMINATE) ? ProgressBar.INDETERMINATE_PROGRESS : 0);
+			}
+		});	
+	}
+	
+	/**
+	 * Update the value of the progress if it's determinated
+	 * @param value
+	 * 		value of the progress between 0 and 1 (example, 50% is 0.5)
+	 */
+	public void updateProgress(double value) {
+		Platform.runLater(new Runnable() {			
+			@Override
+			public void run() {
+				progress.setProgress(value);
+			}
+		});	
+	}
+	
+
 }

@@ -40,16 +40,15 @@ public class GameOfLifeConsumer extends Thread {
 			try {
 				// Waits for minimum view updating frequency
 				Thread.sleep(2000);
+				
 				// Retrieves a generation result, waiting if necessary until an element becomes available.
 				res = queue.take();
+				
 				// Updates view
 				System.out.println(res.getComputationTime());
-				/*
-				view.setCurrentGenerationInfo("" + res.getGenerationNumber());
-				view.setTimeElapsedInfo("" + res.getComputationTime() + " ms");
-				view.setLiveCellsInfo("" + res.getCellsAlive());
-				view.drawCells(res.getUpdatedCells());
-				*/
+				view.setGenerationInfo(res.getGenerationNumber(), res.getComputationTime(), res.getCellsAlive());
+				view.drawCells(res.getCellsStates());
+
 			} catch (InterruptedException ie) {
 				ie.printStackTrace();
 				// Stop + view notification

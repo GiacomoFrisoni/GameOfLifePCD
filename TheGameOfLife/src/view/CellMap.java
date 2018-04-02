@@ -1,184 +1,151 @@
 package view;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.util.Set;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javafx.application.Platform;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
-import model.ConwayCell;
-
-/**
- * A {@link JPanel} for the game of life matrix rendering.
- * It draws the live cells.
- *
- */
-public class CellMap extends JComponent {
+public class CellMap extends Canvas {
 	
-    private static final long serialVersionUID = -6689261673710076779L;
-    
 	private static final int CELL_SIZE = 9;
 	private static final int CELL_OFFSET = CELL_SIZE + 1;
 	
-	private final CellMapViewer container;
+	private CellMapViewer container;
+	private boolean[][] cells;
 	
-	private final GUIFactory factory;
-    private BufferedImage bufferedImage;  
-    private int actualWidth, actualHeight;   
-    private Set<ConwayCell> cells;
-    
-    
-    /**
-     * Constructs a new cell map component.
-     * 
-     * @param container
-     * 		the cell map viewer container
-     */
-    public CellMap(final CellMapViewer container) {
-    	this.container = container;
-    	this.factory = new GUIFactory.Standard();
-    }  
+	private int xPosition, yPosition;
+	
+	public CellMap() {
+		
+	}
+	
+	/**
+	 * Set cells to draw on screen
+	 * @param cells
+	 * 		cells to draw
+	 */
+	public void setCellsToDraw (boolean[][] cells) {
+		this.cells = cells;
+		draw();
+	}
+	
+	/**
+	 * Set the container of the CellMap
+	 * @param container
+	 * 		container of the CellMap
+	 */
+	public void setContainer(CellMapViewer container) {
+		this.container = container;
+		this.setWidth(this.container.getCenterPanelX());
+		this.setHeight(this.container.getCenterPanelY());
+	}
+	
+	/**
+	 * Clear all drawing in the CellMap
+	 */
+	private void clear() {
+		Platform.runLater(new Runnable() {			
+			@Override
+			public void run() {
+				//Create the graphics
+				final GraphicsContext gc = getGraphicsContext2D();
+				gc.setFill(new Color(0.23, 0.23, 0.23, 1));
+				gc.fillRect(0, 0, getWidth(), getHeight());
+			}
+		});	
 
-    /**
-     * Initializes the component.
-     */
-    public void initialize() {
-    	actualWidth = CELL_OFFSET * ((int)(this.getWidth() / CELL_OFFSET));
-    	actualHeight = CELL_OFFSET * ((int)(this.getHeight() / CELL_OFFSET));
-    	bufferedImage = new BufferedImage(actualWidth, actualHeight, BufferedImage.TYPE_INT_ARGB);
-    }
-        
-    @Override
-    protected void paintComponent(final Graphics g) {
-        super.paintComponent(g);
-        
-        if (bufferedImage != null) {
-        	g.drawImage(bufferedImage, 0, 0, null);
-        }      
-    }
-    
-    /**
-     * Clears the cell map rendering.
-     */
-    public void clear() {
-    	SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-		    	final Graphics2D g2d = bufferedImage.createGraphics();   	
-		    	g2d.setStroke(new BasicStroke(1));
-		    	g2d.setColor(factory.getBackgroundColor());
-		    	g2d.fillRect(0, 0, actualWidth, actualHeight);
-		    	g2d.dispose();
-		        repaint();
-            }
-    	});
-    }
-    
-    /**
-     * Paints a cell.
-     * 
-     * @param cellsToDraw
-     * 		the cells to draw
-     */
-    public void setCellsToPaint(final Set<ConwayCell> cellsToDraw) {
-    	this.cells = cellsToDraw;  
-    	draw(false);
-    }
-    
-    /**
-     * Draw the matrix.
-     * 
-     * @param clear
-     * 		true if the matrix need to be cleared (preview shifts), false otherwise.
-     */
-    public void draw(final boolean clear) {
-    	if (clear) {
-    		clear();
-    	}
-    	
-    	// If i have something to draw
-    	if (cells != null) {
-	    	if (!cells.isEmpty()) {
-	    		// Just draw it!
-		    	SwingUtilities.invokeLater(new Runnable() {
-		            @Override
-		            public void run() {
-		            	final Graphics2D g2d = bufferedImage.createGraphics();   	
-		            	g2d.setStroke(new BasicStroke(1));
-		            	
-		            	// For each cell I have
-		            	cells.forEach(c -> {
-		            		//If the cell is inside my current limit
-		            		if (checkXlimit(c) && checkYlimit(c)) {
-		            			if (c.isAlive()) {
-		                	        g2d.setColor(factory.getAliveCellColor());
-		                		} else {
-		                	        g2d.setColor(factory.getDeadCellColor());
-		                		}
-		            			
-		            			// Draw
-		            			g2d.fillRect(
-		            					(c.getPosition().x - (container.getXcurrentPosition() * getDrawableXCellsNumber())) * CELL_OFFSET, 
-		            					(c.getPosition().y - (container.getYcurrentPosition() * getDrawableYCellsNumber())) * CELL_OFFSET, 
-		            					CELL_SIZE, 
-		            					CELL_SIZE);
-		            		}
-		            	});
-		                    
-		            	g2d.dispose();
-		                repaint();
-		            }
-		        });
-	    	}
-    	}
-    }
-    
+	}
+	
+	/**
+	 * Update current preview position of the map
+	 * @param x
+	 * 		x position of preview
+	 * @param y
+	 * 		y position of preview
+	 */
+	public void updatePosition(int x, int y) {
+		this.xPosition = x;
+		this.yPosition = y;
+		clear();
+		draw();
+	}
+
+	
+	/**
+	 * Draw the cells considering current position
+	 */
+	private void draw() {
+		//Getting current position of preview (of total map)
+		final int containerXposition = this.xPosition;
+		final int containerYposition = this.yPosition;
+		
+		//Getting how many squares I can draw in X and Y
+		final int drawableX = getDrawableXCellsNumber();
+		final int drawableY = getDrawableYCellsNumber();
+		
+		//X value of inferior limit of cells I'm able to draw (0 * 144, 1 * 144, 2 * 144)
+		final int xOffset = containerXposition * drawableX;
+		//X value of superior limit of cells I'm able to draw (1 * 144, 2 * 144, 3 * 144)
+		final int xMaxOffset = (containerXposition + 1) * drawableX;
+		
+		//Y value of inferior limit of cells I'm able to draw (0 * 144, 1 * 144, 2 * 144)
+		final int yOffset = containerYposition * drawableY;		
+		//Y value of inferior limit of cells I'm able to draw (1 * 144, 2 * 144, 3 * 144)
+		final int yMaxOffset = (containerYposition+1) * drawableY;
+		
+		
+		//Draw (x must be from minOffset to maxOffset, same y)
+		Platform.runLater(new Runnable() {			
+			@Override
+			public void run() {
+				//Create the graphics
+				final GraphicsContext gc = getGraphicsContext2D();
+				
+				//For each cell I have
+				if (cells != null) {
+					
+					/*for (int i = xOffset; i < xMaxOffset; i++) {
+						for (int j = yOffset; j < yMaxOffset; j++) {
+							
+							if (cells[i][j]) {
+		        				gc.setFill(Color.AQUA);
+		            		} else {
+		            			gc.setFill(new Color(0.23, 0.23, 0.23, 1));
+		            		}       			   				
+		        			
+		        			gc.fillRect((i - xOffset) * CELL_OFFSET, (j - yOffset) * CELL_OFFSET, CELL_SIZE, CELL_SIZE);
+						}
+					}*/
+
+				}
+			}
+		});			
+	}
+	
+	
     /**
      * @return the number of drawable cells in width.
      */
     public int getDrawableXCellsNumber() {
-    	return (int)(this.getWidth() / CELL_OFFSET);
+    	return ((int)(this.getWidth() / CELL_OFFSET)) - 1;
     }
     
     /**
      * @return the number of drawable cells in height.
      */
     public int getDrawableYCellsNumber() {
-    	return (int)(this.getHeight() / CELL_OFFSET);
+    	return ((int)(this.getHeight() / CELL_OFFSET)) - 1;
     }
     
-    /*
-     * Checks if the point stay in current limit (X).
+    /**
+     * Reset the control
      */
-    private boolean checkXlimit(final ConwayCell c) {
-    	final int min = this.container.getXcurrentPosition() * getDrawableXCellsNumber();
-    	final int max = (this.container.getXcurrentPosition() + 1) * getDrawableXCellsNumber();
-    		
-    	if (c.getPosition().x >= min && c.getPosition().x <= max) {
-    		return true;
-    	}
-    	
-    	return false;
-    }
-    
-    /*
-     * Checks if the point stay in current limit (Y).
-     */
-    private boolean checkYlimit(final ConwayCell c) {
-    	final int min = this.container.getYcurrentPosition() * getDrawableYCellsNumber();
-    	final int max = (this.container.getYcurrentPosition() + 1) * getDrawableYCellsNumber();
-    		
-    	if (c.getPosition().y >= min && c.getPosition().y <= max)
-    		return true;
-    	
-    	return false;
+    public void reset() {
+    	this.cells = null;
+    	this.clear();
     }
     
     
+   
 }
