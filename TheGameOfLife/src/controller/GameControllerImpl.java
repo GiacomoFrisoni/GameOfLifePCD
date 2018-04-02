@@ -1,6 +1,7 @@
 package controller;
 
 import java.awt.Dimension;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -29,8 +30,8 @@ public class GameControllerImpl implements GameController {
 	private final BlockingQueue<GenerationResult> queue;
 	private final ExecutorService executor;
 	private final Flag stopFlag;
-	private boolean isStarted;
-	private boolean isInitialized;
+	private boolean isMapInitialized;
+	
 	
 	/**
 	 * Constructs a new game controller.
@@ -39,24 +40,30 @@ public class GameControllerImpl implements GameController {
 	 * 		the Game Of Life view
 	 */
 	public GameControllerImpl(final GameOfLifeFrame view) {
+		Objects.requireNonNull(view);
 		this.view = view;
-		this.isStarted = false;
-		this.isInitialized = false;
+		this.isMapInitialized = false;
 		// Calculates the pool size for tasks executor, according to the processors number
 		final int poolSize = Runtime.getRuntime().availableProcessors() + 1;
 		// Initializes the executor
 		this.executor = Executors.newFixedThreadPool(poolSize);
 		// Initializes the stop flag
 		this.stopFlag = new Flag();
+		this.stopFlag.setOn();
 		// Creates the producer / consumer queue
 		this.queue = new ArrayBlockingQueue<>(BUFFER_SIZE);
 	}
 	
+	
+	/*
+	 * Randomly initializes the model cell map to about 50% on-cells.
+	 * Creates tasks for the initialization and awaits their end. 
+	 */
 	private void initCellMap() {
+		Objects.requireNonNull(this.model);
 		this.model.clear();
-		view.setProgress(ProgressType.INDETERMINATE, "Initializing...");
+		this.view.setProgress(ProgressType.INDETERMINATE, "Initializing...");
 		try {
-			// Randomly initializes the cell map to about 50% on-cells
 			final BigList<Callable<Void>> initTasks = new BigList<>();
 			final Dimension cellMapDimension = this.model.getCellMapDimension();
 			int initLength = (cellMapDimension.width * cellMapDimension.height) / 2;
@@ -70,29 +77,42 @@ public class GameControllerImpl implements GameController {
 					"Failed to do the init", 
 					e.getMessage());
 		}
-		
-		view.setProgress(ProgressType.INDETERMINATE, "Computing...");
 		this.model.nextGeneration();
-		this.isInitialized = true;
+		this.isMapInitialized = true;
+		this.view.reset();
+		this.view.drawCells(this.model.getCellMapStates());
 	}
 	
-	private boolean init() {
-		final Optional<Dimension> d = view.getMapDimension();
-		if (d.isPresent()) 
-			this.model = new ConwayCellMapImpl(d.get().width, d.get().height);
-		return d.isPresent();
+	
+	/*
+	 * Gets the map dimension specified as input from the view and
+	 * initializes the model. Return true if the operation is successful,
+	 * false otherwise.
+	 */
+	private boolean initModel() {
+		final Optional<Dimension> mapDimension = view.getMapDimension();
+		if (mapDimension.isPresent()) {
+			this.model = new ConwayCellMapImpl(mapDimension.get().width, mapDimension.get().height);
+			return true;
+		}
+		return false;
 	}
+	
 	
 	@Override
 	public void start() {
-		if (init()) {
-			reset();
-			
-			if (this.isInitialized && !this.isStarted) {
-				stopFlag.setOff();
-				new GameOfLifeService(this.queue, this.executor, this.model, this.view, this.stopFlag).start();
-				isStarted = true;
-				view.setStarted();
+		if (initModel()) {
+			if (this.stopFlag.isOn()) {
+				if (!this.isMapInitialized)
+					initCellMap();
+
+				this.stopFlag.setOff();
+				
+				// Starts producer and consumer threads
+				new GameOfLifeProducer(this.queue, this.executor, this.model, this.stopFlag).start();
+				new GameOfLifeConsumer(this.queue, this.view, this.stopFlag).start();
+				
+				this.view.setStarted();
 			}
 		} else {
 			MessageViewer.showException(
@@ -103,18 +123,16 @@ public class GameControllerImpl implements GameController {
 	
 	@Override
 	public void stop() {
-		stopFlag.setOn();
-		isStarted = false;
-		view.setStopped();
+		this.stopFlag.setOn();
+		this.view.setStopped();
 	}
 
 	@Override
 	public void reset() {
-		stopFlag.setOn();
-		isStarted = false;
+		this.stopFlag.setOn();
 		this.queue.clear();
-		initCellMap();
-		view.reset();
+		this.isMapInitialized = false;
+		this.view.reset();
 	}
 	
 	@Override
