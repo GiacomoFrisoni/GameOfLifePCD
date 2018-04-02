@@ -66,7 +66,7 @@ public class GameControllerImpl implements GameController {
 			this.executor.invokeAll(initTasks);
 		} catch (InterruptedException e) {
 			MessageViewer.showException(
-					"Init failed", 
+					"Init failed",
 					"Failed to do the init", 
 					e.getMessage());
 		}

@@ -2,7 +2,6 @@ package view;
 
 import java.awt.Dimension;
 import java.util.Optional;
-import java.util.Set;
 
 import controller.GameController;
 

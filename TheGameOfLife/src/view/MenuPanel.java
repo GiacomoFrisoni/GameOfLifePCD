@@ -72,17 +72,17 @@ public class MenuPanel extends VBox {
 		
 		start.setOnMouseClicked(e -> {
 			setProgress(ProgressType.INDETERMINATE, "Starting...");
-			controller.start();
+			this.controller.start();
 		});
 		
 		stop.setOnMouseClicked(e -> {
 			setProgress(ProgressType.INDETERMINATE, "Stopping...");
-			controller.stop();
+			this.controller.stop();
 		});
 		
 		reset.setOnMouseClicked(e -> {
 			setProgress(ProgressType.INDETERMINATE, "Resetting...");
-			controller.reset();
+			this.controller.reset();
 		});
 	}
 	
@@ -169,7 +169,7 @@ public class MenuPanel extends VBox {
 	}
 	
 	/**
-	 * Invoked when coputation started
+	 * Invoked when computation started
 	 */
 	public void setStarted() {
 		Platform.runLater(new Runnable() {			
@@ -186,7 +186,7 @@ public class MenuPanel extends VBox {
 	}
 	
 	/**
-	 * Invoked when coputation stopped
+	 * Invoked when computation stopped
 	 */
 	public void setStopped() {	
 		Platform.runLater(new Runnable() {			

@@ -45,7 +45,6 @@ public class GameOfLifeConsumer extends Thread {
 				res = queue.take();
 				
 				// Updates view
-				System.out.println(res.getComputationTime());
 				view.setGenerationInfo(res.getGenerationNumber(), res.getComputationTime(), res.getCellsAlive());
 				view.drawCells(res.getCellsStates());
 
