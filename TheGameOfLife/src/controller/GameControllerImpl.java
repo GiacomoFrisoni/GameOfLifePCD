@@ -68,13 +68,18 @@ public class GameControllerImpl implements GameController {
 			final BigList<Callable<Void>> initTasks = new BigList<>();
 			final Dimension cellMapDimension = this.model.getCellMapDimension();
 			int initLength = (cellMapDimension.width * cellMapDimension.height) / 2;
+			this.view.setProgress(ProgressType.INDETERMINATE, "Creating tasks...");
 			do {
 				initTasks.add(new InitTask(model));
 			} while (--initLength > 0);
+			
+			this.view.setProgress(ProgressType.INDETERMINATE, "Executing...");
 			this.executor.invokeAll(initTasks);
 		} catch (InterruptedException e) {
 			view.showErrorAlert("Init failed", "Failed to do the init", e.getMessage());
 		}
+		
+		this.view.setProgress(ProgressType.INDETERMINATE, "Computing next generation...");
 		this.model.nextGeneration();
 		this.isMapInitialized = true;
 		this.view.reset();
@@ -99,36 +104,56 @@ public class GameControllerImpl implements GameController {
 	
 	@Override
 	public void start() {
-		if (initModel()) {
-			if (this.stopFlag.isOn()) {
-				if (!this.isMapInitialized)
-					initCellMap();
+		new Thread(new Runnable() {		
+			@Override
+			public void run() {
+				if (initModel()) {
+					if (stopFlag.isOn()) {
+						if (!isMapInitialized)
+							initCellMap();
 
-				this.stopFlag.setOff();
-				
-				// Starts producer and consumer threads
-				new GameOfLifeProducer(this.queue, this.executor, this.model, this.stopFlag).start();
-				new GameOfLifeConsumer(this.queue, this.view, this.stopFlag).start();
-				
-				this.view.setStarted();
+						stopFlag.setOff();
+						
+						// Starts producer and consumer threads
+						new GameOfLifeProducer(queue, executor, model, stopFlag).start();
+						new GameOfLifeConsumer(queue, view, stopFlag).start();	
+						
+						view.setStarted();
+					}
+				} else {
+					view.showAlert("Failed to init", "Failed to start. Maybye some input field are empty");
+				}
 			}
-		} else {
-			view.showAlert("Failed to init", "Failed to start. Maybye some input field are empty");
-		}
+		}).start();	
 	}
 	
 	@Override
 	public void stop() {
-		this.stopFlag.setOn();
-		this.view.setStopped();
+		new Thread(new Runnable() {		
+			@Override
+			public void run() {
+				view.setProgress(ProgressType.INDETERMINATE, "Stopping...");
+				stopFlag.setOn();
+				view.setStopped();
+				view.setProgress(ProgressType.IDLE, "(Stopped) Idle");
+			}
+		}).start();
 	}
 
 	@Override
 	public void reset() {
-		this.stopFlag.setOn();
-		this.queue.clear();
-		this.isMapInitialized = false;
-		this.view.reset();
+		new Thread(new Runnable() {		
+			@Override
+			public void run() {
+				view.setProgress(ProgressType.INDETERMINATE, "Resetting...");
+				stopFlag.setOn();
+				queue.clear();
+				isMapInitialized = false;
+				view.reset();
+				view.setProgress(ProgressType.IDLE, "Idle");
+			}
+		}).start();
+
 	}
 	
 	@Override

@@ -68,17 +68,18 @@ public class MenuPanel extends VBox {
 		setProgress(ProgressType.IDLE, "Idle");
 		
 		start.setOnMouseClicked(e -> {
-			setProgress(ProgressType.INDETERMINATE, "Starting...");
+			this.start.setDisable(true);
+			this.stop.setDisable(false);
 			this.controller.start();
 		});
 		
 		stop.setOnMouseClicked(e -> {
-			setProgress(ProgressType.INDETERMINATE, "Stopping...");
+			this.stop.setDisable(true);
 			this.controller.stop();
 		});
 		
 		reset.setOnMouseClicked(e -> {
-			setProgress(ProgressType.INDETERMINATE, "Resetting...");
+			this.reset.setDisable(true);
 			this.controller.reset();
 		});
 	}
@@ -125,6 +126,13 @@ public class MenuPanel extends VBox {
 		});		
 	}
 	
+	/**
+	 * Set the limits of the small map
+	 * @param x
+	 * 		max width of the map
+	 * @param y
+	 * 		max height of the map
+	 */
 	public void setLimits(final int x, final int y) {
 		this.miniatureCellMap.setLimits(x, y);
 	}
