@@ -26,16 +26,19 @@ public class GameControllerImpl implements GameController {
 
 	private static final int BUFFER_SIZE = 100;
 	private static final int PROGRESS_PERIOD = 250;
+	private static final int DEFAULT_MIN_TICK_TIME = 1500;
 	
 	private ConwayCellMap model;
 	private final GameOfLifeFrame view;
 	private final BlockingQueue<GenerationResult> queue;
 	private final ExecutorService executor;
 	private final Flag stopFlag;
-	private final GameOfLifeConsumer consumer;
+	private Optional<GameOfLifeProducer> producer;
+	private Optional<GameOfLifeConsumer> consumer;
+	private int minTickTime;
 	private boolean isMapInitialized;
 	
-	private ScheduledFuture<?> updatingPool;
+	private Optional<ScheduledFuture<?>> updatingPool;
 	
 	
 	/**
@@ -55,10 +58,14 @@ public class GameControllerImpl implements GameController {
 		// Initializes the stop flag
 		this.stopFlag = new Flag();
 		this.stopFlag.setOn();
+		// Initializes the updating schedule
+		this.updatingPool = Optional.empty();
 		// Creates the producer / consumer queue
 		this.queue = new ArrayBlockingQueue<>(BUFFER_SIZE);
-		// Initializes the consumer
-		this.consumer = new GameOfLifeConsumer(this.queue, this.view, this.stopFlag);
+		// Initializes the producer and the consumer
+		this.producer = Optional.empty();
+		this.consumer = Optional.empty();
+		this.minTickTime = DEFAULT_MIN_TICK_TIME;
 	}
 	
 	
@@ -121,10 +128,12 @@ public class GameControllerImpl implements GameController {
 						stopFlag.setOff();
 						
 						// Starts producer and consumer threads
-						new GameOfLifeProducer(queue, executor, model, stopFlag).start();
-						consumer.start();	
+						producer = Optional.of(new GameOfLifeProducer(queue, executor, model, stopFlag));
+						consumer = Optional.of(new GameOfLifeConsumer(queue, view, stopFlag, minTickTime));
+						producer.get().start();
+						consumer.get().start();
 						
-						updatingPool = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Thread(new Runnable() {
+						updatingPool = Optional.of(Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Thread(new Runnable() {
 							@Override
 							public void run() {
 								if (queue.isEmpty()) {
@@ -142,7 +151,7 @@ public class GameControllerImpl implements GameController {
 									}*/
 								}
 							}
-						}), 0, PROGRESS_PERIOD, TimeUnit.MILLISECONDS);
+						}), 0, PROGRESS_PERIOD, TimeUnit.MILLISECONDS));
 						
 						
 						view.setStarted();
@@ -163,9 +172,10 @@ public class GameControllerImpl implements GameController {
 				stopFlag.setOn();
 				view.setStopped();
 				view.setProgress(ProgressType.IDLE, "(Stopped) Idle");
-				
-				if (updatingPool != null)
-					updatingPool.cancel(true);
+				producer = Optional.empty();
+				consumer = Optional.empty();
+				updatingPool.ifPresent(p -> p.cancel(true));
+				updatingPool = Optional.empty();
 			}
 		}).start();
 	}
@@ -181,9 +191,10 @@ public class GameControllerImpl implements GameController {
 				isMapInitialized = false;
 				view.reset();
 				view.setProgress(ProgressType.IDLE, "Idle");
-				
-				if (updatingPool != null)
-					updatingPool.cancel(true);
+				producer = Optional.empty();
+				consumer = Optional.empty();
+				updatingPool.ifPresent(p -> p.cancel(true));
+				updatingPool = Optional.empty();
 			}
 		}).start();
 
@@ -196,12 +207,13 @@ public class GameControllerImpl implements GameController {
 
 	@Override
 	public int getViewSpeed() {
-		return this.consumer.getConsumerSpeed();
+		return this.minTickTime;
 	}
 	
 	@Override
-	public void setViewSpeed(int minimumDelay) {
-		this.consumer.setConsumerSpeed(minimumDelay);
+	public void setViewSpeed(final int minimumDelay) {
+		this.minTickTime = minimumDelay;
+		this.consumer.ifPresent(c -> c.setConsumerSpeed(minimumDelay));
 	}
 	
 }

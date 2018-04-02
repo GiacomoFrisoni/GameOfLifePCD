@@ -13,8 +13,6 @@ import view.GameOfLifeFrame;
  */
 public class GameOfLifeConsumer extends Thread {
 	
-	private static final int DEFAULT_MIN_TICK_TIME = 1500;
-	
 	// Time when last update happened. Used for controlling the frame rate
 	private long lastUpdate;
 	
@@ -37,11 +35,11 @@ public class GameOfLifeConsumer extends Thread {
 	 * 		the stop flag
 	 */
 	public GameOfLifeConsumer(final BlockingQueue<GenerationResult> queue, final GameOfLifeFrame view,
-			final Flag stopFlag) {
+			final Flag stopFlag, final int defaultMinTickTime) {
 		this.queue = queue;
 		this.view = view;
 		this.stopFlag = stopFlag;
-		this.minTickTime = DEFAULT_MIN_TICK_TIME;
+		this.minTickTime = defaultMinTickTime;
 	}
 	
 	/**

@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import controller.GameController;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -127,7 +128,7 @@ public class MainFrame extends BorderPane implements GameOfLifeFrame {
 	}
 
 	@Override
-	public void updateProgress(double value) {
+	public void updateProgress(final double value) {
 		this.menuPanel.updateProgress(value);
 	}
 	
@@ -141,13 +142,17 @@ public class MainFrame extends BorderPane implements GameOfLifeFrame {
 	}
 
 	@Override
-	public void showErrorAlert(String header, String message, String exception) {
-		MessageViewer.showExceptionAndExit(header, message, exception);
+	public void showErrorAlert(final String header, final String message, final String exception) {
+		Platform.runLater(() -> {
+			MessageViewer.showExceptionAndExit(header, message, exception);
+		});
 	}
 
 	@Override
 	public void showAlert(String header, String message) {
-		MessageViewer.showMessage(AlertType.INFORMATION, "Warning", header, message, "", null);
+		Platform.runLater(() -> {
+			MessageViewer.showMessage(AlertType.INFORMATION, "Warning", header, message, "", null);
+		});
 	}
 
 	@Override
