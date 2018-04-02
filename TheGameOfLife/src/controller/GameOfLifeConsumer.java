@@ -69,6 +69,7 @@ public class GameOfLifeConsumer extends Thread {
 				// Updates view
 				view.setGenerationInfo(res.getGenerationNumber(), res.getComputationTime(), res.getCellsAlive());
 				view.drawCells(res.getCellsStates());
+				view.updateProgress(0);
 
 				// Waits for minimum view updating frequency
 				limitFPS();
