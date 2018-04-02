@@ -5,8 +5,6 @@ import java.util.Optional;
 
 import controller.GameController;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -75,11 +73,11 @@ public class MenuPanel extends VBox {
 		slider.valueProperty().addListener((observable, oldValue, newValue) -> {
             sliderValue.setText(Integer.toString(newValue.intValue()));
         });
+		slider.setValue(this.controller.getViewSpeed());
 		
 		slider.setOnMouseReleased(e -> {
-			//TODO add controller logic to handle!
+			this.controller.setViewSpeed((int)slider.getValue());
 		});
-		
 		
 		start.setOnMouseClicked(e -> {
 			this.start.setDisable(true);

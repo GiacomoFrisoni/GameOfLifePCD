@@ -31,6 +31,7 @@ public class GameControllerImpl implements GameController {
 	private final BlockingQueue<GenerationResult> queue;
 	private final ExecutorService executor;
 	private final Flag stopFlag;
+	private final GameOfLifeConsumer consumer;
 	private boolean isMapInitialized;
 	
 	
@@ -53,6 +54,8 @@ public class GameControllerImpl implements GameController {
 		this.stopFlag.setOn();
 		// Creates the producer / consumer queue
 		this.queue = new ArrayBlockingQueue<>(BUFFER_SIZE);
+		// Initializes the consumer
+		this.consumer = new GameOfLifeConsumer(this.queue, this.view, this.stopFlag);
 	}
 	
 	
@@ -116,7 +119,7 @@ public class GameControllerImpl implements GameController {
 						
 						// Starts producer and consumer threads
 						new GameOfLifeProducer(queue, executor, model, stopFlag).start();
-						new GameOfLifeConsumer(queue, view, stopFlag).start();	
+						consumer.start();	
 						
 						Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Thread(new Runnable() {
 							@Override
@@ -167,6 +170,16 @@ public class GameControllerImpl implements GameController {
 	@Override
 	public Dimension getCellMapDimension() {
 		return this.model.getCellMapDimension();
+	}
+
+	@Override
+	public int getViewSpeed() {
+		return this.consumer.getConsumerSpeed();
+	}
+	
+	@Override
+	public void setViewSpeed(int minimumDelay) {
+		this.consumer.setConsumerSpeed(minimumDelay);
 	}
 	
 }

@@ -28,4 +28,17 @@ public interface GameController {
 	 */
 	Dimension getCellMapDimension();
 	
+	/**
+	 * @return the current minimum delay used by the view consumer.
+	 */
+	int getViewSpeed();
+	
+	/**
+	 * Sets the minimum delay between each view consumer representation.
+	 * 
+	 * @param minimumDelay
+	 * 		the minimum delay between each frame
+	 */
+	void setViewSpeed(int minimumDelay);
+	
 }

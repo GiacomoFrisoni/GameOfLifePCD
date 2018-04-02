@@ -13,16 +13,18 @@ import view.GameOfLifeFrame;
  */
 public class GameOfLifeConsumer extends Thread {
 	
-	// Desired frame duration
-	private static final int MIN_TICK_TIME = 1500;
+	private static final int DEFAULT_MIN_TICK_TIME = 1500;
 	
 	// Time when last update happened. Used for controlling the frame rate
 	private long lastUpdate;
 	
+	// Desired frame duration
+	private volatile int minTickTime;
+	
 	private final BlockingQueue<GenerationResult> queue;
 	private final GameOfLifeFrame view;
 	private final Flag stopFlag;
-
+	
 	
 	/**
 	 * Constructs a new Game Of Life consumer.
@@ -39,6 +41,7 @@ public class GameOfLifeConsumer extends Thread {
 		this.queue = queue;
 		this.view = view;
 		this.stopFlag = stopFlag;
+		this.minTickTime = DEFAULT_MIN_TICK_TIME;
 	}
 	
 	/**
@@ -50,28 +53,46 @@ public class GameOfLifeConsumer extends Thread {
 		final long now = System.currentTimeMillis();
 		if (lastUpdate > 0) {
 			final long delta = now - lastUpdate;
-			if (delta < MIN_TICK_TIME) {
-				Thread.sleep(MIN_TICK_TIME - delta);
+			if (delta < this.minTickTime) {
+				Thread.sleep(this.minTickTime - delta);
 			}
+		} else {
+			Thread.sleep(this.minTickTime);
 		}
 		lastUpdate = System.currentTimeMillis();
+	}
+	
+	/**
+	 * @return the current minimum delay used by the view consumer.
+	 */
+	public int getConsumerSpeed() {
+		return this.minTickTime;
+	}
+	
+	/**
+	 * Sets the minimum delay between each view consumer representation.
+	 * 
+	 * @param minTickTime
+	 * 		the minimum delay between each frame
+	 */
+	public void setConsumerSpeed(final int minTickTime) {
+		this.minTickTime = minTickTime;
 	}
 	
 	@Override
 	public void run() {
 		GenerationResult res;
-		this.lastUpdate = System.currentTimeMillis();
 		while (!stopFlag.isOn()) {
 			try {
+				// Waits for minimum view updating frequency
+				limitFPS();
+				
 				// Retrieves a generation result, waiting if necessary until an element becomes available.
 				res = queue.take();
 				
 				// Updates view
-				view.setGenerationInfo(res.getGenerationNumber(), res.getComputationTime(), res.getCellsAlive());
-				view.drawCells(res.getCellsStates());
-
-				// Waits for minimum view updating frequency
-				limitFPS();
+				this.view.setGenerationInfo(res.getGenerationNumber(), res.getComputationTime(), res.getCellsAlive());
+				this.view.drawCells(res.getCellsStates());
 			} catch (InterruptedException ie) {
 				ie.printStackTrace();
 				// Stop + view notification

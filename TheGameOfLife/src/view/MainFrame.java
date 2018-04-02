@@ -155,6 +155,4 @@ public class MainFrame extends BorderPane implements GameOfLifeFrame {
 		return this.menuPanel.getMinRefreshTime();
 	}
 	
-	
-	
 }

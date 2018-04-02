@@ -10,7 +10,8 @@ public interface GameOfLifeFrame {
 	/**
      * Sets an observer of the game frame.
      * 
-     * @param observer - the controller to attach
+     * @param observer
+     * 		the controller to attach
      */
     void setObserver(GameController observer);
     
