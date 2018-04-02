@@ -11,17 +11,13 @@ public class MiniatureCellMap extends Canvas {
 	private static final int CELL_SIZE = 9;
 	private static final int CELL_OFFSET = CELL_SIZE + 1;
 	
-	private int maxX, maxY;
 	private int cellSizeX, cellSizeY;
-	
 	
 	public MiniatureCellMap() {
 		
 	}
 	
 	public void setLimits(int x, int y) {
-		this.maxX = x;
-		this.maxY = y;
 		this.cellSizeX = (int) (getWidth() / (x+1));
 		this.cellSizeY = (int) (getHeight() / (y+1));
 	}
