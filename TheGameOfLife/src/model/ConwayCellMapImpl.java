@@ -146,13 +146,17 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 			final int height = this.mapDimension.height;
 			final int width = this.mapDimension.width;
 			// Turns on the cell
-			this.nextCells[encode(x, y)] = (byte) (cell | (1 << STATE_BIT));
+			this.nextCells[encode(x, y)] |= (1 << STATE_BIT);
 			// Increments the on-neighbor count for each neighbor
 			for (int i = y - 1; i <= y + 1; i++) {
 				for (int j = x - 1; j <= x + 1; j++) {
 					if (j >= 0 && j < width && i >= 0 && i < height && (i != y || j != x)) {
-						final byte nextNeighborsCounter = (byte)(Math.min(getCellOnNeighborCount(cell) + 1, 8));
-						this.nextCells[encode(j, i)] = (byte) (((state ? 1 : 0) << STATE_BIT) | nextNeighborsCounter);
+						synchronized (this.nextCells) {
+							final byte nextCell = this.nextCells[encode(j, i)];
+							final byte nextNeighborsCounter = (byte)(Math.min(getCellOnNeighborCount(nextCell) + 1, 8));
+							this.nextCells[encode(j, i)] &= 16;
+							this.nextCells[encode(j, i)] |= nextNeighborsCounter;
+						}
 					}
 				}
 			}
@@ -172,11 +176,14 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 			// Turns off the cell
 			this.nextCells[encode(x, y)] = (byte) (cell & ~(1 << STATE_BIT));
 			// Decrements the on-neighbor count for each neighbor
-			for (int i = y - 1; i < y + 1; i++) {
-				for (int j = x - 1; x < x + 1; j++) {
+			for (int i = y - 1; i <= y + 1; i++) {
+				for (int j = x - 1; j <= x + 1; j++) {
 					if (j >= 0 && j < width && i >= 0 && i < height && (i != y || j != x)) {
-						final byte nextNeighborsCounter = (byte)(Math.max(getCellOnNeighborCount(cell) - 1, 0));
-						this.nextCells[encode(x, y)] = (byte) (((state ? 1 : 0) << STATE_BIT) | nextNeighborsCounter);
+						synchronized (this.nextCells) {
+							final byte nextCell = this.nextCells[encode(j, i)];
+							final byte nextNeighborsCounter = (byte)(Math.max(getCellOnNeighborCount(nextCell) - 1, 0));
+							this.nextCells[encode(j, i)] = (byte) (((getState(nextCell) ? 1 : 0) << STATE_BIT) | nextNeighborsCounter);
+						}
 					}
 				}
 			}
