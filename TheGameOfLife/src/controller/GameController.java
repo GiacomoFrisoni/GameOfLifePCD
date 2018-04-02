@@ -2,6 +2,10 @@ package controller;
 
 import java.awt.Dimension;
 
+/**
+ * This class represents the controller of the application.
+ *
+ */
 public interface GameController {
 	
 	/**
@@ -20,8 +24,7 @@ public interface GameController {
 	void reset();
 	
 	/**
-	 * This method returns the dimension of the cell map.
-	 * @return the dimension of the cell map.
+	 * @return the dimension (width and height) of the cell map.
 	 */
 	Dimension getCellMapDimension();
 	

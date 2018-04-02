@@ -18,7 +18,16 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 	private long generation;
 	
 	private static final int STATE_BIT = 4;
+	private static final int NEIGHBORS_MASK = 0x07;
 	
+	/*
+	 * Cell map format to store a byte for each cell, with the byte storing
+	 * not only the cell state but also the count of neighboring on-cells for
+	 * that cell.
+	 * The first 4 bit store the number of on-neighbors and the next one is the
+	 * cell's state.
+	 * 
+	 */
 	private byte[] cells;
 	private byte[] nextCells;
 	
@@ -29,9 +38,9 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 	 * Conway's cell map constructor.
 	 * 
 	 * @param width
-	 * 		width of the cell map
+	 * 		the width of the cell map
 	 * @param height
-	 * 		height of the cell map
+	 * 		the height of the cell map
 	 */
 	public ConwayCellMapImpl(final int width, final int height) {
 		// Checks cell map dimension
@@ -51,7 +60,7 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 		// Creates an unaltered version of the cell map from which to work
 		this.nextCells = new byte[width * height];
 		
-		// Creates the set with the cells to evaluate for the current generation
+		// Creates the list with the cells to evaluate for the current generation
 		this.cellsToEvaluate = new BigList<>();
 				
 		// Initializes number of generations
@@ -69,19 +78,51 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 	}
 	
 	@Override
-	public byte[] getCellMap() {
-		return this.cells;
+	public boolean[][] getCellMapStates() {
+		final int height = this.mapDimension.height;
+		final int width = this.mapDimension.width;
+		final boolean[][] res = new boolean[height][width];
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				res[i][j] = getState(this.cells[encode(j, i)]);
+			}
+		}
+		return res;
 	}
 	
+	/*
+	 * Returns the state of the specified cell.
+	 */
+	private boolean getState(final byte cell) {
+		return (cell & (1 << STATE_BIT)) != 0;
+	}
+	
+	/*
+	 * Returns the number of on-neighbors for the specified cell.
+	 */
+	private byte getCellOnNeighborCount(final byte cell) {
+		return (byte)(cell & NEIGHBORS_MASK);
+	}
+	
+	/*
+	 * Converts 2D array index to 1D, according to the dimension of the cell map.
+	 */
+	private int encode(final int x, final int y) {
+		return y * this.mapDimension.width + x;
+	}
+	
+	/*
+	 * Calculates the cells to evaluate for the current generation
+	 * (it excludes off-cells with no alive neighbor).
+	 */
 	private void calculatesCellsToEvaluate() {
 		this.cellsToEvaluate.clear();
 		final int height = this.mapDimension.height;
 		final int width = this.mapDimension.width;
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				int index = encode(j, i);
-				byte cell = this.cells[index];
-				boolean state = getState(cell); 
+				final byte cell = this.cells[encode(j, i)];
+				final boolean state = getState(cell);
 				if (state || (!state && getCellOnNeighborCount(cell) > 0)) {
 					this.cellsToEvaluate.add(new Point(j, i));
 				}
@@ -94,50 +135,52 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 		return this.cellsToEvaluate;
 	}
 	
-	private void setCellStateOn(final byte cell, int x, int y) {
-		boolean state = getState(cell);
+	/*
+	 * Turns an off-cell on, incrementing the on-neighbor count for
+	 * the eight neighboring cells.
+	 */
+	private void setCellStateOn(final int x, final int y) {
+		final byte cell = this.cells[encode(y, x)];
+		final boolean state = getState(cell);
 		if (!state) {
+			final int height = this.mapDimension.height;
+			final int width = this.mapDimension.width;
 			// Turns on the cell
 			this.nextCells[encode(x, y)] = (byte) (cell | (1 << STATE_BIT));
 			// Increments the on-neighbor count for each neighbor
 			for (int i = y - 1; i <= y + 1; i++) {
 				for (int j = x - 1; j <= x + 1; j++) {
-					if (j >= 0 && j < this.mapDimension.width && i >= 0 && i < this.mapDimension.height && (i != y || j != x)) {
-						byte nextCounter = (byte)(Math.min(getCellOnNeighborCount(cell) + 1, 8));
-						this.nextCells[encode(j, i)] = (byte) (((state ? 1 : 0) << STATE_BIT) | nextCounter);
+					if (j >= 0 && j < width && i >= 0 && i < height && (i != y || j != x)) {
+						final byte nextNeighborsCounter = (byte)(Math.min(getCellOnNeighborCount(cell) + 1, 8));
+						this.nextCells[encode(j, i)] = (byte) (((state ? 1 : 0) << STATE_BIT) | nextNeighborsCounter);
 					}
 				}
 			}
 		}
 	}
 	
-	private void setCellStateOff(final byte cell, int x, int y) {
-		boolean state = getState(cell);
+	/*
+	 * Turns an on-cell off, decrementing the on-neighbor count for
+	 * the eight neighboring cells.
+	 */
+	private void setCellStateOff(int x, int y) {
+		final byte cell = this.cells[encode(y, x)];
+		final boolean state = getState(cell);
 		if (!state) {
+			final int height = this.mapDimension.height;
+			final int width = this.mapDimension.width;
 			// Turns off the cell
 			this.nextCells[encode(x, y)] = (byte) (cell & ~(1 << STATE_BIT));
 			// Decrements the on-neighbor count for each neighbor
 			for (int i = y - 1; i < y + 1; i++) {
 				for (int j = x - 1; x < x + 1; j++) {
-					if (i != y && j != x) {
-						byte nextCounter = (byte)(Math.max(getCellOnNeighborCount(cell) - 1, 0));
-						this.nextCells[encode(x, y)] = (byte) (((state ? 1 : 0) << STATE_BIT) | nextCounter);
+					if (j >= 0 && j < width && i >= 0 && i < height && (i != y || j != x)) {
+						final byte nextNeighborsCounter = (byte)(Math.max(getCellOnNeighborCount(cell) - 1, 0));
+						this.nextCells[encode(x, y)] = (byte) (((state ? 1 : 0) << STATE_BIT) | nextNeighborsCounter);
 					}
 				}
 			}
 		}
-	}
-	
-	private boolean getState(final byte cell) {
-		return (cell & (1 << STATE_BIT)) != 0;
-	}
-	
-	private byte getCellOnNeighborCount(final byte cell) {
-		return (byte)(cell & 0x07);
-	}
-	
-	private int encode(final int x, final int y) {
-		return y * this.mapDimension.width + x;
 	}
 	
 	@Override
@@ -148,12 +191,12 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 		byte onNeighborCount = getCellOnNeighborCount(cell);
 		if (state) {
 			if ((onNeighborCount < 2) || (onNeighborCount > 3)) {
-				setCellStateOff(cell, x, y);
+				setCellStateOff(x, y);
 				nextState = false;
 			}
 		} else {
 			if (onNeighborCount == 3) {
-				setCellStateOn(cell, x, y);
+				setCellStateOn(x, y);
 				nextState = true;
 			}
 		}
@@ -161,14 +204,14 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 	}
 	
 	@Override
-	public boolean nextGeneration() {
+	public void nextGeneration() {
 		// Sets current cell map = next cell map
 		System.arraycopy(this.nextCells, 0, this.cells, 0, this.cells.length);
 		// Calculates cells to evaluate in the new generation
 		calculatesCellsToEvaluate();
 		// Increments generation number
 		this.generation++;
-		return true;
+		System.out.println(this.toString());
 	}
 	
 	@Override
@@ -181,12 +224,29 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 	
 	@Override
 	public void randomInitCell() {
-		int x = ThreadLocalRandom.current().nextInt(0, this.mapDimension.width);
-		int y = ThreadLocalRandom.current().nextInt(0, this.mapDimension.height);
+		final int x = ThreadLocalRandom.current().nextInt(0, this.mapDimension.width);
+		final int y = ThreadLocalRandom.current().nextInt(0, this.mapDimension.height);
 		synchronized (this.nextCells) {
 			if (!getState(this.nextCells[encode(x, y)])) {
-				setCellStateOn(this.cells[encode(x, y)], x, y);
+				setCellStateOn(x, y);
 			}
 		}
+	}
+	
+	@Override
+	public String toString() {
+		final StringBuilder res = new StringBuilder();
+		res.append("Cell map at generation " + this.generation + "\n");
+		final int height = this.mapDimension.height;
+		final int width = this.mapDimension.width;
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				final byte cell = this.cells[encode(j, i)];
+				res.append(" " + (getState(cell) ? "O" : "X"));
+				res.append("(" + getCellOnNeighborCount(cell) + ")");
+			}
+			res.append("\n");
+		}
+		return res.toString();
 	}
 }

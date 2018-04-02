@@ -5,12 +5,28 @@ import java.util.concurrent.BlockingQueue;
 import model.GenerationResult;
 import view.GameOfLifeFrame;
 
+/**
+ * This class models a Game Of Life Consumer.
+ * It picks up the results of the computations from the buffer and shows them
+ * on video with the minimum frequency desired.
+ *
+ */
 public class GameOfLifeConsumer extends Thread {
 	
 	private final BlockingQueue<GenerationResult> queue;
 	private final GameOfLifeFrame view;
 	private final Flag stopFlag;
 	
+	/**
+	 * Constructs a new Game Of Life consumer.
+	 * 
+	 * @param queue
+	 * 		the producer / consumer queue
+	 * @param view
+	 * 		the application view
+	 * @param stopFlag
+	 * 		the stop flag
+	 */
 	public GameOfLifeConsumer(final BlockingQueue<GenerationResult> queue, final GameOfLifeFrame view, final Flag stopFlag) {
 		this.queue = queue;
 		this.view = view;

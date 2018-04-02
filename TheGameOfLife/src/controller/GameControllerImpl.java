@@ -1,25 +1,27 @@
 package controller;
 
 import java.awt.Dimension;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.magicwerk.brownies.collections.BigList;
+
 import model.ConwayCellMap;
 import model.ConwayCellMapImpl;
 import model.GenerationResult;
 import view.GameOfLifeFrame;
 
+/**
+ * Implementation of {@link GameController}.
+ */
 public class GameControllerImpl implements GameController {
 
 	private static final int BUFFER_SIZE = 100;
 	
-	//private final ConwayCellMap model;
 	private ConwayCellMap model;
 	private final GameOfLifeFrame view;
 	private final BlockingQueue<GenerationResult> queue;
@@ -28,16 +30,17 @@ public class GameControllerImpl implements GameController {
 	private boolean isStarted;
 	private boolean isInitialized;
 	
-	//public GameControllerImpl(final ConwayCellMap model, final GameOfLifeFrame view) {
+	/**
+	 * Constructs a new game controller.
+	 * 
+	 * @param view
+	 * 		the Game Of Life view
+	 */
 	public GameControllerImpl(final GameOfLifeFrame view) {
-		//this.model = model;
 		this.view = view;
 		this.isStarted = false;
 		this.isInitialized = false;
-		/*
-		 * Calculates the pool size for tasks executor, according to the processors
-		 * number.
-		 */
+		// Calculates the pool size for tasks executor, according to the processors number
 		final int poolSize = Runtime.getRuntime().availableProcessors() + 1;
 		// Initializes the executor
 		this.executor = Executors.newFixedThreadPool(poolSize);
@@ -48,12 +51,11 @@ public class GameControllerImpl implements GameController {
 	}
 	
 	private void initCellMap() {
-		// Initializes the cell map
 		this.model.clear();
 		try {
-			final Set<Callable<Void>> initTasks = new HashSet<>();
-			final Dimension cellMapDimension = this.model.getCellMapDimension();
 			// Randomly initializes the cell map to about 50% on-cells
+			final BigList<Callable<Void>> initTasks = new BigList<>();
+			final Dimension cellMapDimension = this.model.getCellMapDimension();
 			int initLength = (cellMapDimension.width * cellMapDimension.height) / 2;
 			do {
 				initTasks.add(new InitTask(model));
@@ -64,6 +66,13 @@ public class GameControllerImpl implements GameController {
 		}
 		this.model.nextGeneration();
 		this.isInitialized = true;
+	}
+	
+	private boolean init() {
+		final Optional<Dimension> d = view.getMapDimension();
+		if (d.isPresent()) 
+			this.model = new ConwayCellMapImpl(d.get().width, d.get().height);
+		return d.isPresent();
 	}
 	
 	@Override
@@ -104,12 +113,4 @@ public class GameControllerImpl implements GameController {
 		return this.model.getCellMapDimension();
 	}
 	
-	private boolean init() {
-		Optional<Dimension> d = view.getMapDimension();
-		
-		if (d.isPresent()) 
-			this.model = new ConwayCellMapImpl(d.get().width, d.get().height);
-		
-		return d.isPresent();
-	}
 }

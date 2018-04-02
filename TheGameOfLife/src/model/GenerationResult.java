@@ -1,19 +1,16 @@
 package model;
 
-import java.awt.Point;
-import java.util.Map;
-
 public class GenerationResult {
 	
 	private final long generationNumber;
-	private final Map<Point,Boolean> updatedCells;
+	private final boolean[][] cellsStates;
 	private final long cellsAlive;
 	private final long computationTime;
 	
-	public GenerationResult(final long generationNumber, final Map<Point,Boolean> updatedCells,
+	public GenerationResult(final long generationNumber, final boolean[][] cellsStates,
 			final long cellsAlive, final long computationTime) {
 		this.generationNumber = generationNumber;
-		this.updatedCells = updatedCells;
+		this.cellsStates = cellsStates;
 		this.cellsAlive = cellsAlive;
 		this.computationTime = computationTime;
 	}
@@ -26,8 +23,8 @@ public class GenerationResult {
 		return this.cellsAlive;
 	}
 	
-	public Map<Point,Boolean> getUpdatedCells() {
-		return this.updatedCells;
+	public boolean[][] getCellsStates() {
+		return this.cellsStates;
 	}
 	
 	public long getComputationTime() {

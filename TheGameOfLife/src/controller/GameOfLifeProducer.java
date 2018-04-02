@@ -14,8 +14,9 @@ import model.ConwayCellMap;
 import model.GenerationResult;
 
 /**
- * This producer enumerates the updated cells for each
- * GameOfLive generation and then put the result on the queue.
+ * This class models a Game Of Life Producer.
+ * It enumerates the updated cells for each game generation and then
+ * put the results on the queue.
  *
  */
 public class GameOfLifeProducer extends Thread {
@@ -25,6 +26,18 @@ public class GameOfLifeProducer extends Thread {
 	private final ConwayCellMap model;
 	private final Flag stopFlag;
 	
+	/**
+	 * Constructs a new Game Of Life producer.
+	 * 
+	 * @param queue
+	 * 		the producer / consumer queue
+	 * @param executor
+	 * 		the executor service
+	 * @param model
+	 * 		the application model
+	 * @param stopFlag
+	 * 		the stop flag
+	 */
 	public GameOfLifeProducer(final BlockingQueue<GenerationResult> queue, final ExecutorService executor,
 			final ConwayCellMap model, final Flag stopFlag) {
 		this.queue = queue;
@@ -41,11 +54,13 @@ public class GameOfLifeProducer extends Thread {
 			while (!stopFlag.isOn()) {
 				cron.start();
 				cellsAlive = 0;
+				// Creates and collects the computational tasks
 				final BigList<Callable<Boolean>> tasks = new BigList<>();
 				final BigList<Point> cellsToEvaluate = this.model.getCellsToEvaluate();
 				for (final Point cell : cellsToEvaluate) {
 					tasks.add(new ComputeTask(model, cell.x, cell.y));
 				}
+				// Waits for tasks' results
 				final List<Future<Boolean>> res = this.executor.invokeAll(tasks);
 				for (final Future<Boolean> f : res) {
 					if (f.get()) {
@@ -53,14 +68,15 @@ public class GameOfLifeProducer extends Thread {
 					}
 				}
 				cron.stop();
+				// Saves the generation results and statistics
 				final GenerationResult generationResult = new GenerationResult(this.model.getGenerationNumber(),
-						null, cellsAlive, cron.getTime());
+						this.model.getCellMapStates(), cellsAlive, cron.getTime());
 				/*
 				 * The put() method will block if the queue is full, waiting for space becomes available.
 				 * While waiting, it will throw InterruptedException if the current thread is interrupted.
 				 */
 				queue.put(generationResult);
-				// Prepare nextGeneration
+				// Prepares the next generation of the game
 				this.model.nextGeneration();
 			}
 		} catch (InterruptedException | ExecutionException ie) {
