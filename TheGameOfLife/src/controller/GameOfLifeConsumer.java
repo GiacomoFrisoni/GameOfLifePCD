@@ -13,9 +13,16 @@ import view.GameOfLifeFrame;
  */
 public class GameOfLifeConsumer extends Thread {
 	
+	// Desired frame duration
+	private static final int MIN_TICK_TIME = 1500;
+	
+	// Time when last update happened. Used for controlling the frame rate
+	private long lastUpdate;
+	
 	private final BlockingQueue<GenerationResult> queue;
 	private final GameOfLifeFrame view;
 	private final Flag stopFlag;
+
 	
 	/**
 	 * Constructs a new Game Of Life consumer.
@@ -27,10 +34,28 @@ public class GameOfLifeConsumer extends Thread {
 	 * @param stopFlag
 	 * 		the stop flag
 	 */
-	public GameOfLifeConsumer(final BlockingQueue<GenerationResult> queue, final GameOfLifeFrame view, final Flag stopFlag) {
+	public GameOfLifeConsumer(final BlockingQueue<GenerationResult> queue, final GameOfLifeFrame view,
+			final Flag stopFlag) {
 		this.queue = queue;
 		this.view = view;
 		this.stopFlag = stopFlag;
+		this.lastUpdate = System.currentTimeMillis();
+	}
+	
+	/**
+	 * Counts time that passed since last game update
+	 * and sleeps for a while if this time was shorter than target frame time.
+	 * @throws InterruptedException
+	 */
+	private void limitFPS() throws InterruptedException {
+		final long now = System.currentTimeMillis();
+		if (lastUpdate > 0) {
+			final long delta = now - lastUpdate;
+			if (delta < MIN_TICK_TIME) {
+				Thread.sleep(MIN_TICK_TIME - delta);
+			}
+		}
+		lastUpdate = System.currentTimeMillis();
 	}
 	
 	@Override
@@ -38,9 +63,6 @@ public class GameOfLifeConsumer extends Thread {
 		GenerationResult res;
 		while (!stopFlag.isOn()) {
 			try {
-				// Waits for minimum view updating frequency
-				Thread.sleep(2000);
-				
 				// Retrieves a generation result, waiting if necessary until an element becomes available.
 				res = queue.take();
 				
@@ -48,6 +70,8 @@ public class GameOfLifeConsumer extends Thread {
 				view.setGenerationInfo(res.getGenerationNumber(), res.getComputationTime(), res.getCellsAlive());
 				view.drawCells(res.getCellsStates());
 
+				// Waits for minimum view updating frequency
+				limitFPS();
 			} catch (InterruptedException ie) {
 				ie.printStackTrace();
 				// Stop + view notification

@@ -11,12 +11,10 @@ import java.util.concurrent.Executors;
 
 import org.magicwerk.brownies.collections.BigList;
 
-import javafx.scene.control.Alert.AlertType;
 import model.ConwayCellMap;
 import model.ConwayCellMapImpl;
 import model.GenerationResult;
 import view.GameOfLifeFrame;
-import view.MessageViewer;
 import view.ProgressType;
 
 /**
