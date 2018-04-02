@@ -149,6 +149,11 @@ public class MainFrame extends BorderPane implements GameOfLifeFrame {
 	public void showAlert(String header, String message) {
 		MessageViewer.showMessage(AlertType.INFORMATION, "Warning", header, message, "", null);
 	}
+
+	@Override
+	public int getMinRefreshTime() {
+		return this.menuPanel.getMinRefreshTime();
+	}
 	
 	
 	

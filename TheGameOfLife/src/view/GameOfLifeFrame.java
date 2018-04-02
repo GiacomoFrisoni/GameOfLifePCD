@@ -79,6 +79,13 @@ public interface GameOfLifeFrame {
     Optional<Dimension> getMapDimension();
     
     /**
+     * Get user input: the minimum refresh time
+     * @return
+     * 		the minimum refresh time
+     */
+    int getMinRefreshTime();
+    
+    /**
      * Show an error message
      * @param header
      * 		header of the message (main cause of the error, short!)

@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import view.MiniatureCellMap?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Slider?>
 
 <fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml/1" spacing="15" prefWidth="$defaultWidth" stylesheets="@style.css">
 	<fx:define>
@@ -58,6 +59,14 @@
 			<Label prefWidth="$mediumWidth" text="Viewable cells:"></Label>
 			<Label fx:id="viewableCells" text="W: 144, H: 88"></Label>
 		</HBox>
+	</VBox>
+	
+	<VBox>
+		<HBox spacing="5">
+			<Label text="Minimum refresh time:"></Label>
+			<Label fx:id="sliderValue"></Label>
+		</HBox>
+		<Slider fx:id="slider" prefWidth="$defaultWidth" min="100" max="4000" snapToTicks="true" minorTickCount="0" majorTickUnit="100" showTickMarks="true"  blockIncrement="100"></Slider>
 	</VBox>
 	
 	<VBox spacing="0" alignment="TOP_LEFT">

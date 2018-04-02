@@ -5,11 +5,14 @@ import java.util.Optional;
 
 import controller.GameController;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -23,7 +26,7 @@ public class MenuPanel extends VBox {
 	private MiniatureCellMap miniatureCellMap;
 	
 	@FXML
-	private Label currentPosition, viewableCells, generation, elapsedTime, cellsAlive, errorLabel, loadingLabel;
+	private Label currentPosition, viewableCells, generation, elapsedTime, cellsAlive, errorLabel, loadingLabel, sliderValue;
 	
 	@FXML
 	private Button start, stop, reset;
@@ -36,6 +39,9 @@ public class MenuPanel extends VBox {
 	
 	@FXML
 	private ProgressBar progress;
+	
+	@FXML
+	private Slider slider;
 	
 	private GameController controller;
 
@@ -66,6 +72,14 @@ public class MenuPanel extends VBox {
 	public void init(final GameController controller) {
 		this.controller = controller;
 		setProgress(ProgressType.IDLE, "Idle");
+		slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            sliderValue.setText(Integer.toString(newValue.intValue()));
+        });
+		
+		slider.setOnMouseReleased(e -> {
+			//TODO add controller logic to handle!
+		});
+		
 		
 		start.setOnMouseClicked(e -> {
 			this.start.setDisable(true);
@@ -258,5 +272,13 @@ public class MenuPanel extends VBox {
 		});	
 	}
 	
+	/**
+	 * Gets the value of the slider for min time to refresh
+	 * @return
+	 * 		min time to refresh, from 100 to 4000
+	 */
+	public int getMinRefreshTime() {
+		return (int) this.slider.getValue();
+	}
 
 }
