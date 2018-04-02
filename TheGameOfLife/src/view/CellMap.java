@@ -50,7 +50,7 @@ public class CellMap extends Canvas {
 			public void run() {
 				//Create the graphics
 				final GraphicsContext gc = getGraphicsContext2D();
-				gc.setFill(new Color(0.23, 0.23, 0.23, 1));
+				gc.setFill(BACKGROUND_COLOR);
 				gc.fillRect(0, 0, getWidth(), getHeight());
 			}
 		});	
@@ -76,54 +76,57 @@ public class CellMap extends Canvas {
 	 * Draw the cells considering current position
 	 */
 	private void draw() {
-		//Getting current position of preview (of total map)
-		final int containerXposition = this.xPosition;
-		final int containerYposition = this.yPosition;
-		
-		//Getting how many squares I can draw in X and Y
-		final int drawableXCells = getDrawableXCellsNumber();
-		final int drawableYCells = getDrawableYCellsNumber();
-		
-		//X value of inferior limit of cells I'm able to draw (0 * 144, 1 * 144, 2 * 144)
-		final int xOffset = containerXposition * drawableXCells;
-		final int yOffset = containerYposition * drawableYCells;
-		
-		//X value of superior limit of cells I'm able to draw (1 * 144, 2 * 144, 3 * 144)
-		final int xMaxOffset = (containerXposition + 1) * drawableXCells;
-		final int yMaxOffset = (containerYposition + 1) * drawableYCells;
-
-		
-
-		//Draw (x must be from minOffset to maxOffset, same y)
-		Platform.runLater(new Runnable() {			
-			@Override
-			public void run() {
-				//Create the graphics
-				final GraphicsContext gc = getGraphicsContext2D();
-				gc.clearRect(0, 0, getWidth(), getHeight());
+		//If I have something to draw
+		if (cells != null) {
+			//Getting current position of preview (of total map)
+			final int containerXposition = this.xPosition;
+			final int containerYposition = this.yPosition;
+			
+			//Getting how many squares I can draw in X and Y
+			final int drawableXCells = getDrawableXCellsNumber();
+			final int drawableYCells = getDrawableYCellsNumber();
+			
+			//X value of inferior limit of cells I'm able to draw (0 * 144, 1 * 144, 2 * 144)
+			final int xOffset = containerXposition * drawableXCells;
+			final int yOffset = containerYposition * drawableYCells;
+			
+			//X value of superior limit of cells I'm able to draw (1 * 144, 2 * 144, 3 * 144)
+			final int xMaxOffset = (containerXposition + 1) * drawableXCells;
+			final int yMaxOffset = (containerYposition + 1) * drawableYCells;
+			
+			//Take the min of MAX (144) and real matrix preview (may be minor, 10x10 have 10x and 10y limit)
+			final int minX = Math.min(xMaxOffset, cells[0].length);
+			final int minY = Math.min(yMaxOffset, cells.length);
 				
-				//For each cell I have
-				if (cells != null) {
+	
+			//Draw (x must be from minOffset to maxOffset, same y)
+			Platform.runLater(new Runnable() {			
+				@Override
+				public void run() {		
+					//Create the graphics and clear the previous
+					final GraphicsContext gc = getGraphicsContext2D();
+					gc.clearRect(0, 0, getWidth(), getHeight());
 					
-					final int minX = Math.min(xMaxOffset, cells[0].length);
-					final int minY = Math.min(yMaxOffset, cells.length);
-					
+					//Draw inside the limits
 					for (int i = xOffset; i < minX; i++) {
 						for (int j = yOffset; j < minY; j++) {
 							
+							//Check if cell is alive (for coloring)
 							if (cells[i][j]) {
-		        				gc.setFill(Color.AQUA);
+		        				gc.setFill(ALIVE_CELL_COLOR);
 		            		} else {
-		            			gc.setFill(new Color(0.23, 0.23, 0.23, 1));
-		            		}       			   				
-		        			
+		            			gc.setFill(BACKGROUND_COLOR);
+		            		}       	
+							
+		        			//Drawing
 		        			gc.fillRect((i - xOffset) * CELL_OFFSET, (j - yOffset) * CELL_OFFSET, CELL_SIZE, CELL_SIZE);
 						}
 					}
-
+	
 				}
-			}
-		});			
+				
+			});	
+		}
 	}
 	
 	
