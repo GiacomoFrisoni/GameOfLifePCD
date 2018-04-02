@@ -174,7 +174,8 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 			final int height = this.mapDimension.height;
 			final int width = this.mapDimension.width;
 			// Turns off the cell
-			this.nextCells[encode(x, y)] = (byte) (cell & ~(1 << STATE_BIT));
+			//this.nextCells[encode(x, y)] = (byte) (cell & ~(1 << STATE_BIT));
+			this.nextCells[encode(x, y)] &=  ~(1 << STATE_BIT);
 			// Decrements the on-neighbor count for each neighbor
 			for (int i = y - 1; i <= y + 1; i++) {
 				for (int j = x - 1; j <= x + 1; j++) {

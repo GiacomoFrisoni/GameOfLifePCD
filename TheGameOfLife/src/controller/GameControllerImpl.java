@@ -14,6 +14,7 @@ import model.ConwayCellMap;
 import model.ConwayCellMapImpl;
 import model.GenerationResult;
 import view.GameOfLifeFrame;
+import view.ProgressType;
 
 /**
  * Implementation of {@link GameController}.
@@ -52,6 +53,7 @@ public class GameControllerImpl implements GameController {
 	
 	private void initCellMap() {
 		this.model.clear();
+		view.setProgress(ProgressType.INDETERMINATE, "Initializing...");
 		try {
 			// Randomly initializes the cell map to about 50% on-cells
 			final BigList<Callable<Void>> initTasks = new BigList<>();
@@ -65,6 +67,8 @@ public class GameControllerImpl implements GameController {
 			// View -> initFailed
 			e.printStackTrace();
 		}
+		
+		view.setProgress(ProgressType.INDETERMINATE, "Computing...");
 		this.model.nextGeneration();
 		this.isInitialized = true;
 	}
@@ -83,7 +87,7 @@ public class GameControllerImpl implements GameController {
 			
 			if (this.isInitialized && !this.isStarted) {
 				stopFlag.setOff();
-				//new GameOfLifeService(this.queue, this.executor, this.model, this.view, this.stopFlag).start();
+				new GameOfLifeService(this.queue, this.executor, this.model, this.view, this.stopFlag).start();
 				isStarted = true;
 				view.setStarted();
 			}

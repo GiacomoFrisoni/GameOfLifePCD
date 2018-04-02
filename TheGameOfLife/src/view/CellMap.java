@@ -101,12 +101,14 @@ public class CellMap extends Canvas {
 			public void run() {
 				//Create the graphics
 				final GraphicsContext gc = getGraphicsContext2D();
+				gc.clearRect(0, 0, getWidth(), getHeight());
 				
 				//For each cell I have
 				if (cells != null) {
 					
-					for (int i = xOffset; i < xMaxOffset; i++) {
-						for (int j = yOffset; j < yMaxOffset; j++) {
+					for (int i = xOffset; i < Math.min(xMaxOffset, cells[0].length); i++) {
+						System.out.print("Drawing j: ");
+						for (int j = yOffset; j < Math.min(yMaxOffset, cells.length); j++) {
 							
 							if (cells[i][j]) {
 		        				gc.setFill(Color.AQUA);
@@ -115,7 +117,10 @@ public class CellMap extends Canvas {
 		            		}       			   				
 		        			
 		        			gc.fillRect((i - xOffset) * CELL_OFFSET, (j - yOffset) * CELL_OFFSET, CELL_SIZE, CELL_SIZE);
+		        			System.out.print("[" + (i - xOffset) * CELL_OFFSET + "][" + (j - yOffset) * CELL_OFFSET + "], ");
 						}
+						
+						System.out.println("");
 					}
 
 				}
