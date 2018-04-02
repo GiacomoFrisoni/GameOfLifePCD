@@ -40,8 +40,11 @@ public class MainFrame extends BorderPane implements GameOfLifeFrame {
         try {
             fxmlLoader.load();
         } catch (Exception exception) {
-            System.out.println("FXML Loading Exception: MainFrame.fxml could not be loaded. Exception: " + exception.getMessage());
-            exception.printStackTrace();
+        	ExceptionViewer.showException(
+        			"FXML Loading Exception", 
+        			"MainFrame.fxml could not be loaded", 
+        			exception.getMessage());
+        	
             System.exit(0);
         }  
 	}

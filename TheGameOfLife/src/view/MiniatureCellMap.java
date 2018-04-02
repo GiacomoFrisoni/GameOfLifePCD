@@ -8,9 +8,6 @@ import javafx.scene.paint.Color;
 
 public class MiniatureCellMap extends Canvas {
 	
-	private static final int CELL_SIZE = 9;
-	private static final int CELL_OFFSET = CELL_SIZE + 1;
-	
 	private int cellSizeX, cellSizeY;
 	
 	public MiniatureCellMap() {

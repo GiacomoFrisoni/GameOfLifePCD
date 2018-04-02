@@ -81,20 +81,19 @@ public class CellMap extends Canvas {
 		final int containerYposition = this.yPosition;
 		
 		//Getting how many squares I can draw in X and Y
-		final int drawableX = getDrawableXCellsNumber();
-		final int drawableY = getDrawableYCellsNumber();
+		final int drawableXCells = getDrawableXCellsNumber();
+		final int drawableYCells = getDrawableYCellsNumber();
 		
 		//X value of inferior limit of cells I'm able to draw (0 * 144, 1 * 144, 2 * 144)
-		final int xOffset = containerXposition * drawableX;
+		final int xOffset = containerXposition * drawableXCells;
+		final int yOffset = containerYposition * drawableYCells;
+		
 		//X value of superior limit of cells I'm able to draw (1 * 144, 2 * 144, 3 * 144)
-		final int xMaxOffset = (containerXposition + 1) * drawableX;
+		final int xMaxOffset = (containerXposition + 1) * drawableXCells;
+		final int yMaxOffset = (containerYposition + 1) * drawableYCells;
+
 		
-		//Y value of inferior limit of cells I'm able to draw (0 * 144, 1 * 144, 2 * 144)
-		final int yOffset = containerYposition * drawableY;		
-		//Y value of inferior limit of cells I'm able to draw (1 * 144, 2 * 144, 3 * 144)
-		final int yMaxOffset = (containerYposition+1) * drawableY;
-		
-		
+
 		//Draw (x must be from minOffset to maxOffset, same y)
 		Platform.runLater(new Runnable() {			
 			@Override
