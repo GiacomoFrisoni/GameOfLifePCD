@@ -93,6 +93,7 @@ public class GameOfLifeConsumer extends Thread {
 				// Updates view
 				this.view.setGenerationInfo(res.getGenerationNumber(), res.getComputationTime(), res.getCellsAlive());
 				this.view.drawCells(res.getCellsStates());
+				this.view.updateProgress(0);
 			} catch (InterruptedException ie) {
 				ie.printStackTrace();
 				// Stop + view notification

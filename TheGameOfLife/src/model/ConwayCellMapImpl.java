@@ -221,7 +221,7 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 	
 	@Override
 	public double getPercentageCompletion() {
-		return this.computedCells / this.cellsToEvaluate.size();
+		return (double) this.computedCells / (double) this.cellsToEvaluate.size();
 	}
 	
 	@Override
@@ -232,6 +232,7 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 		calculatesCellsToEvaluate();
 		// Increments generation number
 		this.generation++;
+		this.computedCells = 0;
 	}
 	
 	@Override

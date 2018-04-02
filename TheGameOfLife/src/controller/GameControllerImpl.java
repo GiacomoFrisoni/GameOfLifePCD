@@ -8,6 +8,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.magicwerk.brownies.collections.BigList;
@@ -33,6 +34,8 @@ public class GameControllerImpl implements GameController {
 	private final Flag stopFlag;
 	private final GameOfLifeConsumer consumer;
 	private boolean isMapInitialized;
+	
+	private ScheduledFuture<?> updatingPool;
 	
 	
 	/**
@@ -121,13 +124,26 @@ public class GameControllerImpl implements GameController {
 						new GameOfLifeProducer(queue, executor, model, stopFlag).start();
 						consumer.start();	
 						
-						Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Thread(new Runnable() {
+						updatingPool = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Thread(new Runnable() {
 							@Override
 							public void run() {
-								// TODO
-								// model.getPercentageCompletion();
+								if (queue.isEmpty()) {
+									view.updateProgress(model.getPercentageCompletion());
+									System.out.println(model.getPercentageCompletion());
+									
+									//TODO logic
+									/*
+									if (stopFlag.isOn()) {
+										if (model.getPercentageCompletion() >= 1 || model.getPercentageCompletion() == 0) {
+											view.setStopped();
+											view.setProgress(ProgressType.IDLE, "(Stopped) Idle");
+											updatingPool.cancel(true)
+										}
+									}*/
+								}
 							}
 						}), 0, PROGRESS_PERIOD, TimeUnit.MILLISECONDS);
+						
 						
 						view.setStarted();
 					}
@@ -147,6 +163,9 @@ public class GameControllerImpl implements GameController {
 				stopFlag.setOn();
 				view.setStopped();
 				view.setProgress(ProgressType.IDLE, "(Stopped) Idle");
+				
+				if (updatingPool != null)
+					updatingPool.cancel(true);
 			}
 		}).start();
 	}
@@ -162,6 +181,9 @@ public class GameControllerImpl implements GameController {
 				isMapInitialized = false;
 				view.reset();
 				view.setProgress(ProgressType.IDLE, "Idle");
+				
+				if (updatingPool != null)
+					updatingPool.cancel(true);
 			}
 		}).start();
 
