@@ -87,8 +87,8 @@ public class CellMapViewer extends BorderPane {
 	 */
 	public void calculateMapLimits() {
 		final Dimension mapDimension = controller.getCellMapDimension();
-		this.mapXLimit = (mapDimension.width / cellMap.getDrawableXCellsNumber());
-		this.mapYLimit = (mapDimension.height / cellMap.getDrawableYCellsNumber());
+		this.mapXLimit = (int) (mapDimension.width / cellMap.getDrawableXCellsNumber());
+		this.mapYLimit = (int) (mapDimension.height / cellMap.getDrawableYCellsNumber());
 	}
 	
 	/**
@@ -143,6 +143,14 @@ public class CellMapViewer extends BorderPane {
 	 */
 	public int getYposition() {
 		return yPosition;
+	}
+	
+	public int getXLimit() {
+		return mapXLimit;
+	}
+	
+	public int getYLimit() {
+		return mapYLimit;
 	}
 	
 	/**

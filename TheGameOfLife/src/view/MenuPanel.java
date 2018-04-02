@@ -124,6 +124,10 @@ public class MenuPanel extends VBox {
 		});		
 	}
 	
+	public void setLimits(int x, int y) {
+		this.miniatureCellMap.setLimits(x, y);
+	}
+	
 	/**
 	 * Set the info about how many cells are viewable
 	 * @param x
