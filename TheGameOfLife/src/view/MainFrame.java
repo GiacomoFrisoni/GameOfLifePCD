@@ -68,6 +68,11 @@ public class MainFrame extends BorderPane implements GameOfLifeFrame {
 		initView();
 		
 		final Scene scene = new Scene(this);
+		
+		this.stage.setOnCloseRequest(e -> {
+			this.closeView();
+	        System.exit(0);
+		});
 
 		this.stage.setTitle("\"The Game Of Life - Giacomo Frisoni & Marcin Pabich\"");
 		this.stage.setScene(scene);

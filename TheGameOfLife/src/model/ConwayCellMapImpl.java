@@ -218,7 +218,7 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 		calculatesCellsToEvaluate();
 		// Increments generation number
 		this.generation++;
-		System.out.println(this.toString());
+		//System.out.println(this.toString());
 	}
 	
 	@Override

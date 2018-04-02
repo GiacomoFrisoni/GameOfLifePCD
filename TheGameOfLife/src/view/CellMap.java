@@ -105,7 +105,7 @@ public class CellMap extends Canvas {
 				//For each cell I have
 				if (cells != null) {
 					
-					/*for (int i = xOffset; i < xMaxOffset; i++) {
+					for (int i = xOffset; i < xMaxOffset; i++) {
 						for (int j = yOffset; j < yMaxOffset; j++) {
 							
 							if (cells[i][j]) {
@@ -116,7 +116,7 @@ public class CellMap extends Canvas {
 		        			
 		        			gc.fillRect((i - xOffset) * CELL_OFFSET, (j - yOffset) * CELL_OFFSET, CELL_SIZE, CELL_SIZE);
 						}
-					}*/
+					}
 
 				}
 			}

@@ -63,6 +63,7 @@ public class GameControllerImpl implements GameController {
 			this.executor.invokeAll(initTasks);
 		} catch (InterruptedException e) {
 			// View -> initFailed
+			e.printStackTrace();
 		}
 		this.model.nextGeneration();
 		this.isInitialized = true;
@@ -78,12 +79,11 @@ public class GameControllerImpl implements GameController {
 	@Override
 	public void start() {
 		if (init()) {
-			initCellMap();
 			reset();
 			
 			if (this.isInitialized && !this.isStarted) {
 				stopFlag.setOff();
-				new GameOfLifeService(this.queue, this.executor, this.model, this.view, this.stopFlag).start();
+				//new GameOfLifeService(this.queue, this.executor, this.model, this.view, this.stopFlag).start();
 				isStarted = true;
 				view.setStarted();
 			}
