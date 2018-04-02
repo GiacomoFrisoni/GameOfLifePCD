@@ -4,7 +4,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 
-public class ExceptionViewer {
+public class MessageViewer {
 	
 	public static void showMessage(AlertType type, String title, String header, String message, String additional) {
 		Alert alert = new Alert(AlertType.ERROR);

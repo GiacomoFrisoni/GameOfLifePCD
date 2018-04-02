@@ -14,6 +14,7 @@ import model.ConwayCellMap;
 import model.ConwayCellMapImpl;
 import model.GenerationResult;
 import view.GameOfLifeFrame;
+import view.MessageViewer;
 import view.ProgressType;
 
 /**
@@ -64,8 +65,10 @@ public class GameControllerImpl implements GameController {
 			} while (--initLength > 0);
 			this.executor.invokeAll(initTasks);
 		} catch (InterruptedException e) {
-			// View -> initFailed
-			e.printStackTrace();
+			MessageViewer.showException(
+					"Init failed", 
+					"Failed to do the init", 
+					e.getMessage());
 		}
 		
 		view.setProgress(ProgressType.INDETERMINATE, "Computing...");
@@ -92,7 +95,9 @@ public class GameControllerImpl implements GameController {
 				view.setStarted();
 			}
 		} else {
-			System.out.println("Failed to init controller");
+			MessageViewer.showException(
+					"Init failed", 
+					"Failed to do the init");
 		}
 	}
 	

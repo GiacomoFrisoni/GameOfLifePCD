@@ -15,7 +15,7 @@ public class MiniatureCellMap extends Canvas {
 	}
 	
 	public void setLimits(int x, int y) {
-		this.cellSizeX = (int) (getWidth() / (x+1));
+		this.cellSizeX = ((int) (getWidth() / (x+1))) - 2;
 		this.cellSizeY = (int) (getHeight() / (y+1));
 	}
 
@@ -28,7 +28,7 @@ public class MiniatureCellMap extends Canvas {
 				GraphicsContext gc = getGraphicsContext2D();
 				gc.clearRect(0, 0, getWidth(), getHeight());
 				gc.setFill(Color.ORANGE);
-				gc.fillRect(x * cellSizeX , y * cellSizeY, cellSizeX , cellSizeY);
+				gc.fillRect((x * cellSizeX) + 1 , (y * cellSizeY) + 1, cellSizeX , cellSizeY );
 			}
 		});	
 		
