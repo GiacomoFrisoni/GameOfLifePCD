@@ -21,6 +21,7 @@ public class CellMapViewer extends BorderPane {
 	private int xPosition = 0, yPosition = 0;
 	private int mapXLimit = 1, mapYLimit = 1;
 	
+	
 	/**
 	 * Create a new CellMapViewer
 	 */
@@ -48,29 +49,29 @@ public class CellMapViewer extends BorderPane {
 	 * @param container
 	 * 		container of the cellMapViewer
 	 */
-	public void init(GameController controller, MainFrame container) {
+	public void init(final GameController controller, final MainFrame container) {
 		//Controllers & containers
 		this.controller = controller;
 		this.container = container;
 		
 		//Action listeners
 		this.left.setOnMouseClicked(e -> {
-			this.xPosition = xPosition <= 0 ? 0 : xPosition - 1;
+			this.xPosition = this.xPosition <= 0 ? 0 : this.xPosition - 1;
 			updateMenuState();
 		});
 		
 		this.top.setOnMouseClicked(e -> {
-			this.yPosition = yPosition<= 0 ? 0 : yPosition - 1;
+			this.yPosition = this.yPosition<= 0 ? 0 : this.yPosition - 1;
 			updateMenuState();
 		});
 		
 		this.right.setOnMouseClicked(e -> {
-			this.xPosition = xPosition >= mapXLimit ? mapXLimit : xPosition + 1;
+			this.xPosition = this.xPosition >= this.mapXLimit ? this.mapXLimit : this.xPosition + 1;
 			updateMenuState();
 		});
 		
 		this.bottom.setOnMouseClicked(e -> {
-			this.yPosition = yPosition >= mapYLimit ? mapYLimit : yPosition + 1;
+			this.yPosition = this.yPosition >= this.mapYLimit ? this.mapYLimit : this.yPosition + 1;
 			updateMenuState();
 		});
 		
@@ -82,7 +83,7 @@ public class CellMapViewer extends BorderPane {
 	 * @param cells
 	 * 		cells to draw
 	 */
-	public void drawCells(boolean[][] cells) {
+	public void drawCells(final boolean[][] cells) {
 		this.cellMap.setCellsToDraw(cells);
 	}
 	
@@ -122,7 +123,6 @@ public class CellMapViewer extends BorderPane {
 		return this.cellMap.getDrawableXCellsNumber();
 	}
 	
-	
 	/**
 	 * Get the number of drawable cells in preview in height
 	 * @return
@@ -131,7 +131,6 @@ public class CellMapViewer extends BorderPane {
 	public int getDrawableYCellsNumber() {
 		return this.cellMap.getDrawableYCellsNumber();
 	}
-
 
 	/**
 	 * Get the actual X position of the preview
@@ -166,7 +165,6 @@ public class CellMapViewer extends BorderPane {
 		this.yPosition = 0;
 		this.updateMenuState();
 	}
-	
 	
 	/**
 	 * Performing operation when the preview change position

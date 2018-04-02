@@ -47,7 +47,6 @@ public class MenuPanel extends VBox {
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
 		
-		
         try {
             fxmlLoader.load();
     		this.reset();
@@ -66,7 +65,7 @@ public class MenuPanel extends VBox {
 	 * @param controller
 	 * 		controller of the main frame
 	 */
-	public void init(GameController controller) {
+	public void init(final GameController controller) {
 		this.controller = controller;
 		setProgress(ProgressType.IDLE, "Idle");
 		
@@ -118,7 +117,7 @@ public class MenuPanel extends VBox {
 	 * @param y
 	 * 		y position of the preview
 	 */
-	public void setCurrentPosition(int x, int y) {
+	public void setCurrentPosition(final int x, final int y) {
 		Platform.runLater(new Runnable() {			
 			@Override
 			public void run() {
@@ -128,7 +127,7 @@ public class MenuPanel extends VBox {
 		});		
 	}
 	
-	public void setLimits(int x, int y) {
+	public void setLimits(final int x, final int y) {
 		this.miniatureCellMap.setLimits(x, y);
 	}
 	
@@ -139,7 +138,7 @@ public class MenuPanel extends VBox {
 	 * @param y
 	 * 		cells viewable in height
 	 */
-	public void setViewableCells(int x, int y) {
+	public void setViewableCells(final int x, final int y) {
 		Platform.runLater(new Runnable() {			
 			@Override
 			public void run() {
@@ -157,7 +156,7 @@ public class MenuPanel extends VBox {
 	 * @param cells
 	 * 		currently alive cells
 	 */
-	public void setGenerationInfo(long gen, long time, long cells) {
+	public void setGenerationInfo(final long gen, final long time, final long cells) {
 		Platform.runLater(new Runnable() {			
 			@Override
 			public void run() {
@@ -229,7 +228,7 @@ public class MenuPanel extends VBox {
 	 * @param title
 	 * 		title of the label of progress
 	 */
-	public void setProgress(ProgressType type, String title) {
+	public void setProgress(final ProgressType type, final String title) {
 		Platform.runLater(new Runnable() {			
 			@Override
 			public void run() {
@@ -244,7 +243,7 @@ public class MenuPanel extends VBox {
 	 * @param value
 	 * 		value of the progress between 0 and 1 (example, 50% is 0.5)
 	 */
-	public void updateProgress(double value) {
+	public void updateProgress(final double value) {
 		Platform.runLater(new Runnable() {			
 			@Override
 			public void run() {

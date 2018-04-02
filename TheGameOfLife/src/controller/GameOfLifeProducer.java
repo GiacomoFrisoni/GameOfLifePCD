@@ -68,6 +68,8 @@ public class GameOfLifeProducer extends Thread {
 					}
 				}
 				cron.stop();
+				// Prepares the next generation of the game
+				this.model.nextGeneration();
 				// Saves the generation results and statistics
 				final GenerationResult generationResult = new GenerationResult(this.model.getGenerationNumber(),
 						this.model.getCellMapStates(), cellsAlive, cron.getTime());
@@ -76,8 +78,6 @@ public class GameOfLifeProducer extends Thread {
 				 * While waiting, it will throw InterruptedException if the current thread is interrupted.
 				 */
 				queue.put(generationResult);
-				// Prepares the next generation of the game
-				this.model.nextGeneration();
 			}
 		} catch (InterruptedException | ExecutionException ie) {
 			ie.printStackTrace();

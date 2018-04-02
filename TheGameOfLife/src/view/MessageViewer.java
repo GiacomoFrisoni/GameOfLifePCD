@@ -6,8 +6,9 @@ import javafx.scene.control.ButtonType;
 
 public class MessageViewer {
 	
-	public static void showMessage(AlertType type, String title, String header, String message, String additional) {
-		Alert alert = new Alert(AlertType.ERROR);
+	public static void showMessage(final AlertType type, final String title, final String header,
+			final String message, final String additional) {
+		final Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Error");
 		alert.setHeaderText(title);
 		
@@ -26,11 +27,11 @@ public class MessageViewer {
 		 });
 	}
 
-	public static void showException(String title, String message, String exception) {
+	public static void showException(final String title, final String message, final String exception) {
 		showMessage(AlertType.ERROR, title, "ERROR", message, exception);		
 	}
 	
-	public static void showException(String title, String message) {
+	public static void showException(final String title, final String message) {
 		showException(title, message, "");
 	}
 }

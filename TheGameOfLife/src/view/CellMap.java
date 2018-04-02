@@ -16,16 +16,16 @@ public class CellMap extends Canvas {
 	
 	private int xPosition, yPosition;
 	
-	public CellMap() {
-		
-	}
+	
+	public CellMap() { }
+	
 	
 	/**
 	 * Set cells to draw on screen
 	 * @param cells
 	 * 		cells to draw
 	 */
-	public void setCellsToDraw (boolean[][] cells) {
+	public void setCellsToDraw (final boolean[][] cells) {
 		this.cells = cells;
 		draw();
 	}
@@ -35,7 +35,7 @@ public class CellMap extends Canvas {
 	 * @param container
 	 * 		container of the CellMap
 	 */
-	public void setContainer(CellMapViewer container) {
+	public void setContainer(final CellMapViewer container) {
 		this.container = container;
 		this.setWidth(this.container.getCenterPanelX());
 		this.setHeight(this.container.getCenterPanelY());
@@ -53,8 +53,7 @@ public class CellMap extends Canvas {
 				gc.setFill(new Color(0.23, 0.23, 0.23, 1));
 				gc.fillRect(0, 0, getWidth(), getHeight());
 			}
-		});	
-
+		});
 	}
 	
 	/**
@@ -64,13 +63,12 @@ public class CellMap extends Canvas {
 	 * @param y
 	 * 		y position of preview
 	 */
-	public void updatePosition(int x, int y) {
+	public void updatePosition(final int x, final int y) {
 		this.xPosition = x;
 		this.yPosition = y;
 		clear();
 		draw();
 	}
-
 	
 	/**
 	 * Draw the cells considering current position
@@ -84,15 +82,13 @@ public class CellMap extends Canvas {
 		final int drawableXCells = getDrawableXCellsNumber();
 		final int drawableYCells = getDrawableYCellsNumber();
 		
-		//X value of inferior limit of cells I'm able to draw (0 * 144, 1 * 144, 2 * 144)
+		//X value of inferior limit of cells I'm able to draw
 		final int xOffset = containerXposition * drawableXCells;
 		final int yOffset = containerYposition * drawableYCells;
 		
-		//X value of superior limit of cells I'm able to draw (1 * 144, 2 * 144, 3 * 144)
+		//X value of superior limit of cells I'm able to draw
 		final int xMaxOffset = (containerXposition + 1) * drawableXCells;
 		final int yMaxOffset = (containerYposition + 1) * drawableYCells;
-
-		
 
 		//Draw (x must be from minOffset to maxOffset, same y)
 		Platform.runLater(new Runnable() {			
@@ -149,6 +145,4 @@ public class CellMap extends Canvas {
     	this.clear();
     }
     
-    
-   
 }
