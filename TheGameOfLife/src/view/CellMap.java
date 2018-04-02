@@ -106,9 +106,11 @@ public class CellMap extends Canvas {
 				//For each cell I have
 				if (cells != null) {
 					
-					for (int i = xOffset; i < Math.min(xMaxOffset, cells[0].length); i++) {
-						System.out.print("Drawing j: ");
-						for (int j = yOffset; j < Math.min(yMaxOffset, cells.length); j++) {
+					final int minX = Math.min(xMaxOffset, cells[0].length);
+					final int minY = Math.min(yMaxOffset, cells.length);
+					
+					for (int i = xOffset; i < minX; i++) {
+						for (int j = yOffset; j < minY; j++) {
 							
 							if (cells[i][j]) {
 		        				gc.setFill(Color.AQUA);
@@ -117,10 +119,7 @@ public class CellMap extends Canvas {
 		            		}       			   				
 		        			
 		        			gc.fillRect((i - xOffset) * CELL_OFFSET, (j - yOffset) * CELL_OFFSET, CELL_SIZE, CELL_SIZE);
-		        			System.out.print("[" + (i - xOffset) * CELL_OFFSET + "][" + (j - yOffset) * CELL_OFFSET + "], ");
 						}
-						
-						System.out.println("");
 					}
 
 				}
