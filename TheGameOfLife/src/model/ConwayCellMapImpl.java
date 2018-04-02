@@ -35,6 +35,7 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 	private byte[] nextCells;
 	
 	private BigList<Point> cellsToEvaluate;
+	private long computedCells;
 	
 	
 	/**
@@ -68,6 +69,9 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 				
 		// Initializes number of generations
 		this.generation = 0;
+		
+		// Initializes number of computed cells
+		this.computedCells = 0;
 	}
 	
 	@Override
@@ -211,7 +215,13 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 				nextState = true;
 			}
 		}
+		this.computedCells++;
 		return nextState;
+	}
+	
+	@Override
+	public double getPercentageCompletion() {
+		return this.computedCells / this.cellsToEvaluate.size();
 	}
 	
 	@Override
@@ -230,6 +240,7 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 		Arrays.fill(this.nextCells, (byte)0);
 		this.cellsToEvaluate.clear();
 		this.generation = 0;
+		this.computedCells = 0;
 	}
 	
 	@Override

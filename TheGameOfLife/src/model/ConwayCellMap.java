@@ -43,6 +43,12 @@ public interface ConwayCellMap {
 	boolean computeCell(int x, int y);
 	
 	/**
+	 * @return the number of computed cells on the total expected for the
+	 * current generation.
+	 */
+	double getPercentageCompletion();
+	
+	/**
 	 * Goes to the next generation of the game.
 	 */
 	void nextGeneration();
