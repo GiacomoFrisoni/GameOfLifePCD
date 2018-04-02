@@ -39,7 +39,6 @@ public class GameOfLifeConsumer extends Thread {
 		this.queue = queue;
 		this.view = view;
 		this.stopFlag = stopFlag;
-		this.lastUpdate = System.currentTimeMillis();
 	}
 	
 	/**
@@ -61,6 +60,7 @@ public class GameOfLifeConsumer extends Thread {
 	@Override
 	public void run() {
 		GenerationResult res;
+		this.lastUpdate = System.currentTimeMillis();
 		while (!stopFlag.isOn()) {
 			try {
 				// Retrieves a generation result, waiting if necessary until an element becomes available.

@@ -8,6 +8,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.magicwerk.brownies.collections.BigList;
 
@@ -23,6 +24,7 @@ import view.ProgressType;
 public class GameControllerImpl implements GameController {
 
 	private static final int BUFFER_SIZE = 100;
+	private static final int PROGRESS_PERIOD = 250;
 	
 	private ConwayCellMap model;
 	private final GameOfLifeFrame view;
@@ -115,6 +117,14 @@ public class GameControllerImpl implements GameController {
 						// Starts producer and consumer threads
 						new GameOfLifeProducer(queue, executor, model, stopFlag).start();
 						new GameOfLifeConsumer(queue, view, stopFlag).start();	
+						
+						Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Thread(new Runnable() {
+							@Override
+							public void run() {
+								// TODO
+								// model.getPercentageCompletion();
+							}
+						}), 0, PROGRESS_PERIOD, TimeUnit.MILLISECONDS);
 						
 						view.setStarted();
 					}
