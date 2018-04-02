@@ -51,12 +51,10 @@ public class MenuPanel extends VBox {
             fxmlLoader.load();
     		this.reset();
         } catch (Exception exception) {
-        	MessageViewer.showException(
+        	MessageViewer.showExceptionAndExit(
         			"FXML Loading Exception", 
         			"MenuPanel.fxml could not be loaded.", 
         			exception.getMessage());
-        	
-            System.exit(0);
         }  
 	}
 	

@@ -10,12 +10,14 @@ import controller.GameController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class MainFrame extends BorderPane implements GameOfLifeFrame {
 	
 	private static final int FRAME_SCALE = 70;
+	private static final String WINDOW_TITLE = "\"The Game Of Life - Giacomo Frisoni & Marcin Pabich\"";
 	
 	private GameController controller;
 	private final Stage stage;
@@ -41,11 +43,10 @@ public class MainFrame extends BorderPane implements GameOfLifeFrame {
         try {
             fxmlLoader.load();
         } catch (Exception exception) {
-        	MessageViewer.showException(
+        	MessageViewer.showExceptionAndExit(
         			"FXML Loading Exception",
         			"MainFrame.fxml could not be loaded",
         			exception.getMessage());
-            System.exit(0);
         }
 	}
 	
@@ -73,7 +74,7 @@ public class MainFrame extends BorderPane implements GameOfLifeFrame {
 	        System.exit(0);
 		});
 
-		this.stage.setTitle("\"The Game Of Life - Giacomo Frisoni & Marcin Pabich\"");
+		this.stage.setTitle(WINDOW_TITLE);
 		this.stage.setScene(scene);
 		this.stage.show();	
 		
@@ -138,5 +139,17 @@ public class MainFrame extends BorderPane implements GameOfLifeFrame {
 	public MenuPanel getMenuPanel() {
 		return this.menuPanel;
 	}
+
+	@Override
+	public void showErrorAlert(String header, String message, String exception) {
+		MessageViewer.showExceptionAndExit(header, message, exception);
+	}
+
+	@Override
+	public void showAlert(String header, String message) {
+		MessageViewer.showMessage(AlertType.INFORMATION, "Warning", header, message, "", null);
+	}
+	
+	
 	
 }

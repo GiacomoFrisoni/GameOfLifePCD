@@ -33,12 +33,10 @@ public class CellMapViewer extends BorderPane {
         try {
             fxmlLoader.load();
         } catch (Exception exception) {
-        	MessageViewer.showException(
+        	MessageViewer.showExceptionAndExit(
         			"FXML Loading Exception", 
         			"CellMapViewer.fxml could not be loaded.", 
         			exception.getMessage());
-        	
-            System.exit(0);
         }  
 	}
 	

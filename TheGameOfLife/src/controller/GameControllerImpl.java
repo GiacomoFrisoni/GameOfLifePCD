@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 
 import org.magicwerk.brownies.collections.BigList;
 
+import javafx.scene.control.Alert.AlertType;
 import model.ConwayCellMap;
 import model.ConwayCellMapImpl;
 import model.GenerationResult;
@@ -72,10 +73,7 @@ public class GameControllerImpl implements GameController {
 			} while (--initLength > 0);
 			this.executor.invokeAll(initTasks);
 		} catch (InterruptedException e) {
-			MessageViewer.showException(
-					"Init failed",
-					"Failed to do the init", 
-					e.getMessage());
+			view.showErrorAlert("Init failed", "Failed to do the init", e.getMessage());
 		}
 		this.model.nextGeneration();
 		this.isMapInitialized = true;
@@ -115,9 +113,7 @@ public class GameControllerImpl implements GameController {
 				this.view.setStarted();
 			}
 		} else {
-			MessageViewer.showException(
-					"Init failed", 
-					"Failed to do the init");
+			view.showAlert("Failed to init", "Failed to start. Maybye some input field are empty");
 		}
 	}
 	
