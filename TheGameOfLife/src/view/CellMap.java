@@ -1,16 +1,8 @@
 package view;
 
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.stream.Stream;
-
-import javax.imageio.stream.ImageInputStreamImpl;
-
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
@@ -23,6 +15,7 @@ public class CellMap extends Canvas {
 	
 	private CellMapViewer container;
 	private boolean[][] cells;
+	private WritableImage writableImage;
 	
 	private int xPosition, yPosition;
 	
@@ -49,6 +42,7 @@ public class CellMap extends Canvas {
 		this.container = container;
 		this.setWidth(this.container.getCenterPanelX());
 		this.setHeight(this.container.getCenterPanelY());
+		this.writableImage = new WritableImage((int)getWidth(), (int) getHeight());
 	}
 	
 	/**
@@ -58,7 +52,6 @@ public class CellMap extends Canvas {
 		Platform.runLater(new Runnable() {			
 			@Override
 			public void run() {
-				//Create the graphics
 				final GraphicsContext gc = getGraphicsContext2D();
 				gc.fillRect(0, 0, getWidth(), getHeight());			
 			}
@@ -129,9 +122,7 @@ public class CellMap extends Canvas {
 		        			//Drawing
 		        			gc.fillRect((i - xOffset) * CELL_OFFSET, (j - yOffset) * CELL_OFFSET, CELL_SIZE, CELL_SIZE);		        			
 						}
-					}
-					
-					
+					}	
 				}
 				
 			});	
