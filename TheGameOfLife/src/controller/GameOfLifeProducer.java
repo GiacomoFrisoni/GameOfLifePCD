@@ -12,6 +12,7 @@ import org.magicwerk.brownies.collections.BigList;
 
 import model.ConwayCellMap;
 import model.GenerationResult;
+import view.GameOfLifeFrame;
 
 /**
  * This class models a Game Of Life Producer.
@@ -24,6 +25,7 @@ public class GameOfLifeProducer extends Thread {
 	private final BlockingQueue<GenerationResult> queue;
 	private final ExecutorService executor;
 	private final ConwayCellMap model;
+	private final GameOfLifeFrame view;
 	private final Flag stopFlag;
 	
 	/**
@@ -39,11 +41,12 @@ public class GameOfLifeProducer extends Thread {
 	 * 		the stop flag
 	 */
 	public GameOfLifeProducer(final BlockingQueue<GenerationResult> queue, final ExecutorService executor,
-			final ConwayCellMap model, final Flag stopFlag) {
+			final ConwayCellMap model, final Flag stopFlag, final GameOfLifeFrame view) {
 		this.queue = queue;
 		this.executor = executor;
 		this.model = model;
 		this.stopFlag = stopFlag;
+		this.view = view;
 	}
 	
 	@Override
@@ -80,8 +83,7 @@ public class GameOfLifeProducer extends Thread {
 				queue.put(generationResult);
 			}
 		} catch (InterruptedException | ExecutionException ie) {
-			ie.printStackTrace();
-			// Stop + view notification
+			view.showAlert("Thread error", "Someone killed the producer when was waiting for something. Please reset.\n\n" + ie.getMessage());
 		}
 	}
 }

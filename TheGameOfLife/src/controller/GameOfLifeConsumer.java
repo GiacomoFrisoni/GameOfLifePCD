@@ -5,6 +5,7 @@ import java.util.concurrent.CountDownLatch;
 
 import model.GenerationResult;
 import view.GameOfLifeFrame;
+import view.ProgressType;
 
 /**
  * This class models a Game Of Life Consumer.
@@ -88,7 +89,10 @@ public class GameOfLifeConsumer extends Thread {
 				limitFPS();
 				
 				// Retrieves a generation result, waiting if necessary until an element becomes available.
+				if (!stopFlag.isOn())
+					this.view.setProgress(ProgressType.INDETERMINATE, "Computing next generation...");
 				res = queue.take();
+				
 				
 				// Updates view
 				this.view.setGenerationInfo(res.getGenerationNumber(), res.getComputationTime(), res.getCellsAlive());
@@ -97,8 +101,7 @@ public class GameOfLifeConsumer extends Thread {
 				this.view.drawCells(res.getCellsStates(), this.latch);
 				this.latch.await();
 			} catch (InterruptedException ie) {
-				ie.printStackTrace();
-				// Stop + view notification
+				view.showAlert("Thread error", "Someone killed the consumer when was waiting for something. Please reset.\n\n" + ie.getMessage());
 			}
 		}
 	}
