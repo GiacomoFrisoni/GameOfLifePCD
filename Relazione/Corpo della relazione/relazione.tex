@@ -180,8 +180,15 @@ In questo capitolo...
 \chapter{Valutazione delle prestazioni}           %crea il capitolo
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%imposta l'intestazione di pagina
 \lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
-In questo capitolo...
+In questo capitolo si parlerà delle prestazioni della soluzione proposta, valutando le performance testate su diverse
+configurazioni tabellari e del programma.
 \section{Prove di performance}					%crea la sezione
+Il principale vantaggio di avere una struttura con più thread che lavorano in parallelo è quello di poter sfruttare a pieno la
+potenza che offre una CPU. Sono state effettuate tre prove, su matrici di dimensione crescente, per osservare l'andamento del tempo
+con il crescere della dimensione. E' naturale aspettarsi che matrici di grandi dimensioni impieghino una quantità di tempo nettamente superiore, ma è interessante vedere come in realtà i tempi tendono a calare: i risultati sono riportati nella tabella seguente.
+\\
+
+\begin{table}[h]
 \begin{tabular}{|l|ccccc|c|}
 	\hline
 	\diagbox{Dimensione}{Generazioni} & 5 & 10 & 20 & 50 & 100 & MEDIA\\
@@ -191,8 +198,51 @@ In questo capitolo...
 	5000x5000 & 15913 & 8824 & 8049 & 6695 & 2752 & 8446,6\\
 	\hline
 \end{tabular}
+\caption{Tempo di computazione alla n-esima generazione, in ms}
 
-\section{Speedup}								%crea la sezione
+Come si può notare, all'aumentare della grandezza della matrice di partenza, il tempo di computazione cresce in maniera drastica.
+Il meccanismo della valutazione selettiva delle celle da computare aiuta però a far calare i tempi man mano che si procede con la
+simulazione: questo grazie al fatto di non dover ogni volta ricalcolare ogni singola cella della matrice, ma soltanto celle che
+sono predisposte a cambiare (ovvero, quelle con celle vicine mutate nel frattempo). Nonostante questo, i tempi di valutazione di una
+matrice 5000 x 5000 non sono trascurabili, passando in media più di 8 secondi per computare un'intera generazione.
+\label{table:costo_accessi}
+\end{table}
+
+\section{Speedup}								%crea la sezioneE
+E' necessario porre molta attenzione nella configurazione dei thread: utilizzare numerosi thread potrebbe portare ad un effetto
+contrario da quello desiderato, ovvero un calo di performance, a fronte di un overhead non trascurabile aggiunto da ognuno di essi
+nella fase di creazione, scheduling e messa in pausa. E' quindi buona norma assegnare tanti thread lavoranti quanti processori si ha
+a disposizione sulla macchina.\\
+
+I vantaggi di una architettura multi-threading non sono inoltre apprezzabili su test piccoli, in quanto il vantaggio della
+computazione in parallelo è a rischio, proprio a causa dei tempi per impostare, incodare, eseguire e mettere in pausa i thread lanciati: 
+un esempio banale è suddividere un quick-sort in più thread con soli 10 elementi da ordinare.\\
+
+Per questo, per fare test sull'effettivo speed-up si utilizza la matrice 2000x2000. Si eseguono tre test: mono-thread, multi-thread con il numero dei thread uguale al numero dei processori e multi-thread con il numero dei thread nettamente superiore al numero dei processori. I risultati sono riportati nella tabella. 
+
+\begin{table}[h]
+	\begin{tabular}{|l|ccccc|c|}
+		\hline
+		\diagbox{Thread}{Generazioni} & 5 & 10 & 20 & 50 & 100 & MEDIA\\
+		\hline
+		1 & 1010 & 830 & 780 & 570 & 439 & 725,8\\
+		8 & 869 & 669 & 570 & 385 & 317 & 562\\
+		64 & 1123 & 990 & 727 & 613 & 515 & 793,6\\
+		\hline
+	\end{tabular}
+	\caption{Tempo di computazione con n° thread variabile, in ms}
+\end{table}
+
+I risultati della tabella sono molto interessanti. Con l'architettura utilizzata per la computazione (CPU i7 7700k, 4 Core, 8 Thread),
+la differenza nell'utilizzo di uno o più core esiste, ma è più piccola rispetto al risultato atteso: lo speed-up, nel caso di utilizzo
+ottimale, risulta essere di "appena" +30\%, mentre la differenza tra mono-thread e "oversized" thread è particolarmente bassa.\\
+
+Questo è l'effetto negativo di un aspetto molto fondamentale nella scelta progettuale effettuata: si hanno numerosi piccoli thread, di cui
+ognuno svolge una computazione molto ridotta. Ciò comporta un utilizzo sub-ottimo delle risorse a disposizione, in quanto il tempo
+necessario per la creazione e la messa in esecuzione del thread non è trascurabile. Avendo inoltre blocchi di sincronizzazione all'interno
+della computazione, per quanto riguarda la valutazione e il conteggio delle celle vicine, porta ad un ulteriore abbassamento delle
+performance.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%imposta l'intestazione di pagina
 \lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%per fare le conclusioni
@@ -201,7 +251,26 @@ In questo capitolo...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%aggiunge la voce Conclusioni
                                         %   nell'indice
 \addcontentsline{toc}{chapter}{Conclusioni e sviluppi futuri}
-L'obiettivo di questo elaborato \`e stato quello di...
+L'obiettivo di questo elaborato è stato quello di dimostrare che la programmazione multi-threading può portare ad un considerevole
+aumento di prestazioni, portando con sè tutte le problematiche relative alle corse critiche e sincronizzazione tra diversi thread.
+I risultati ottenuti dal progetto proposto sono comunque soddisfacenti, ma soprattutto molto parlanti. Durante la valutazione è
+emerso infatti che la ealizzazione del parallelismo può produrre codice che soltanto in teoria è perfetto, mentre nella pratica
+aggiunge tempi considerevoli per la sincronizzazione e gestione delle strutture dati interne, tali da diminuire considerevolmente
+le performance generali. Ciononostante, si dimostra coi dati ottenuti che un impiego efficiente e intelligente delle risorse a disposizione
+porta all'incremento delle prestazioni. Questo aumento considera non solo i tempi relativi alla gestione dei thread e della sincronizzazione,
+ma anche alla gestione delle strutture dati che servono al programma: cambiando soltanto l'implementazione della lista si è ottenuto
+un miglioramento di circa 50\% in termini di tempo di computazione e utilizzo memoria.\\
+
+Un interessante test viene svolto in conclusione a questo progetto. Come descritto nel capitolo 3.2, i thread svolgono tante minuscole
+computazioni, tanto da non poter essere effettivamente paralleli a causa del blocco di sincronizzazione nella valutazione delle celle vicine. L'esperimento consiste nella suddivisione delle celle da valutare in tanti chunk di dimensione fissa, i quali verranno valutati 
+dai singoli thread: si vuole dimostrare che è possibile migliorare ulteriormente le performance, incrementando il lavoro che ogni
+thread svolge. Una ulteriore e approfondita analisi del codice porta ad una osservazione importantissima, ovvero i blocchi di sincronizzazione. Se fosse stato possibile eliminare questi blocchi, si potrebbe sfruttare al massimo il parallelismo tra thread che lavorano su un insieme di punti. Visto che si tratta comunque di un test, il risultato della computazione  potrebbe non essere corretto: si decide di togliere anche i blocchi di sincronizzazione e di procedere con la computazione di una matrice 2000 x 2000.
+
+
+
+Il risultato è quello atteso: parallelismo tra thread sfruttato al massimo e tempi di computazione notevolmente incrementati. Nonostante il risultato sia completamente errato, questo test risulta essere molto utile per capire quanto effettivamente la programmazione multi-threading può essere (in)efficiente.\\
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%imposta l'intestazione di pagina
 \renewcommand{\chaptermark}[1]{\markright{\thechapter \ #1}{}}
 \lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
