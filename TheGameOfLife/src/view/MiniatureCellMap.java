@@ -41,7 +41,7 @@ public class MiniatureCellMap extends Canvas {
 				final GraphicsContext gc = getGraphicsContext2D();
 				gc.clearRect(0, 0, getWidth(), getHeight());
 				gc.setFill(Color.ORANGE);
-				gc.fillRect((x * cellSizeX) + 1 , (y * cellSizeY) + 1, cellSizeX -1 , cellSizeY -1);
+				gc.fillRect((x * cellSizeX), (y * cellSizeY), cellSizeX , cellSizeY);
 			}
 		});	
 	}

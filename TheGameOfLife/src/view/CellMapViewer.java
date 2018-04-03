@@ -54,23 +54,31 @@ public class CellMapViewer extends BorderPane {
 		
 		//Action listeners
 		this.left.setOnMouseClicked(e -> {
-			this.xPosition = this.xPosition <= 0 ? 0 : this.xPosition - 1;
-			updateMenuState();
+			if (this.xPosition > 0) {
+				this.xPosition -= 1;
+				updateMenuState();
+			}
 		});
 		
 		this.top.setOnMouseClicked(e -> {
-			this.yPosition = this.yPosition<= 0 ? 0 : this.yPosition - 1;
-			updateMenuState();
+			if (this.yPosition > 0) {
+				this.yPosition -= 1;
+				updateMenuState();
+			}
 		});
 		
 		this.right.setOnMouseClicked(e -> {
-			this.xPosition = this.xPosition >= this.mapXLimit ? this.mapXLimit : this.xPosition + 1;
-			updateMenuState();
+			if (this.xPosition < this.mapXLimit) {
+				this.xPosition += 1;
+				updateMenuState();
+			}
 		});
 		
 		this.bottom.setOnMouseClicked(e -> {
-			this.yPosition = this.yPosition >= this.mapYLimit ? this.mapYLimit : this.yPosition + 1;
-			updateMenuState();
+			if (this.yPosition < this.mapYLimit) {
+				this.yPosition += 1;
+				updateMenuState();
+			}
 		});
 		
 		this.cellMap.setContainer(this);
