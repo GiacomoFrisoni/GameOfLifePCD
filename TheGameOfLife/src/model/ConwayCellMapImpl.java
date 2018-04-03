@@ -221,7 +221,6 @@ public class ConwayCellMapImpl implements ConwayCellMap {
 	
 	@Override
 	public double getPercentageCompletion() {
-		System.out.println(this.computedCells + " / " + this.cellsToEvaluate.size());
 		return (double) this.computedCells / (double) this.cellsToEvaluate.size();
 	}
 	
