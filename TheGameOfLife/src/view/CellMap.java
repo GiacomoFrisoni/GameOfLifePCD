@@ -52,6 +52,7 @@ public class CellMap extends Canvas {
 			@Override
 			public void run() {
 				final GraphicsContext gc = getGraphicsContext2D();
+				gc.setFill(BACKGROUND_COLOR);
 				gc.fillRect(0, 0, getWidth(), getHeight());			
 			}
 		});
