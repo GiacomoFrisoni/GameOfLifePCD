@@ -14,6 +14,7 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%libreria per impostare il documento
 \usepackage{fancyhdr}
+\usepackage{diagbox}
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%libreria per avere l'indentazione
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   all'inizio dei capitoli, ...
@@ -181,6 +182,16 @@ In questo capitolo...
 \lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
 In questo capitolo...
 \section{Prove di performance}					%crea la sezione
+\begin{tabular}{|l|ccccc|c|}
+	\hline
+	\diagbox{Dimensione}{Generazioni} & 5 & 10 & 20 & 50 & 100 & MEDIA\\
+	\hline
+	500x500 & 79 & 46 & 35 & 25 & 19 & 40,8\\
+	2000x2000 & 892 & 691 & 538 & 385 & 299 & 561\\
+	5000x5000 & 15913 & 8824 & 8049 & 6695 & 2752 & 8446,6\\
+	\hline
+\end{tabular}
+
 \section{Speedup}								%crea la sezione
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%imposta l'intestazione di pagina
 \lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
