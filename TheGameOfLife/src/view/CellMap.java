@@ -1,9 +1,10 @@
 package view;
 
+import java.util.concurrent.CountDownLatch;
+
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 public class CellMap extends Canvas {
@@ -15,7 +16,6 @@ public class CellMap extends Canvas {
 	
 	private CellMapViewer container;
 	private boolean[][] cells;
-	private WritableImage writableImage;
 	
 	private int xPosition, yPosition;
 	
@@ -28,9 +28,9 @@ public class CellMap extends Canvas {
 	 * @param cells
 	 * 		cells to draw
 	 */
-	public void setCellsToDraw (final boolean[][] cells) {
+	public void setCellsToDraw (final boolean[][] cells, CountDownLatch latch) {
 		this.cells = cells;
-		draw();
+		draw(latch);
 	}
 	
 	/**
@@ -42,7 +42,6 @@ public class CellMap extends Canvas {
 		this.container = container;
 		this.setWidth(this.container.getCenterPanelX());
 		this.setHeight(this.container.getCenterPanelY());
-		this.writableImage = new WritableImage((int)getWidth(), (int) getHeight());
 	}
 	
 	/**
@@ -69,7 +68,7 @@ public class CellMap extends Canvas {
 		this.xPosition = x;
 		this.yPosition = y;
 		
-		draw();
+		draw(null);
 	}
 	
 	
@@ -78,7 +77,7 @@ public class CellMap extends Canvas {
 	/**
 	 * Draw the cells considering current position
 	 */
-	private void draw() {
+	private void draw(CountDownLatch latch) {
 		if (cells != null) {
 			//Draw (x must be from minOffset to maxOffset, same y)
 			Platform.runLater(new Runnable() {			
@@ -104,13 +103,14 @@ public class CellMap extends Canvas {
 					final int minX = Math.min(xMaxOffset, cells[0].length);
 					final int minY = Math.min(yMaxOffset, cells.length);
 					
+					
 					//Create the graphics and clear the previous
 					final GraphicsContext gc = getGraphicsContext2D();
 					gc.clearRect(0, 0, getWidth(), getHeight());
 					
 					//Draw inside the limits
-					for (int i = xOffset; i < minX; i++) {
-						for (int j = yOffset; j < minY; j++) {
+					for (int i = yOffset; i < minY; i++) {
+						for (int j = xOffset; j < minX; j++) {
 							
 							//Check if cell is alive (for coloring)
 							if (cells[i][j]) {
@@ -120,9 +120,12 @@ public class CellMap extends Canvas {
 		            		}       	
 							
 		        			//Drawing
-		        			gc.fillRect((i - xOffset) * CELL_OFFSET, (j - yOffset) * CELL_OFFSET, CELL_SIZE, CELL_SIZE);		        			
+		        			gc.fillRect((j - xOffset) * CELL_OFFSET, (i - yOffset) * CELL_OFFSET, CELL_SIZE, CELL_SIZE);		        			
 						}
 					}	
+					
+					if (latch != null)
+						latch.countDown();
 				}
 				
 			});	

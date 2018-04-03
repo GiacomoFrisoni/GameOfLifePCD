@@ -96,7 +96,7 @@ public class GameControllerImpl implements GameController {
 		this.model.nextGeneration();
 		this.isMapInitialized = true;
 		this.view.reset();
-		this.view.drawCells(this.model.getCellMapStates());
+		this.view.drawCells(this.model.getCellMapStates(), null);
 	}
 	
 	
@@ -138,17 +138,6 @@ public class GameControllerImpl implements GameController {
 							public void run() {
 								if (queue.isEmpty()) {
 									view.updateProgress(model.getPercentageCompletion());
-									System.out.println(model.getPercentageCompletion());
-									
-									//TODO logic
-									/*
-									if (stopFlag.isOn()) {
-										if (model.getPercentageCompletion() >= 1 || model.getPercentageCompletion() == 0) {
-											view.setStopped();
-											view.setProgress(ProgressType.IDLE, "(Stopped) Idle");
-											updatingPool.cancel(true)
-										}
-									}*/
 								}
 							}
 						}), 0, PROGRESS_PERIOD, TimeUnit.MILLISECONDS));

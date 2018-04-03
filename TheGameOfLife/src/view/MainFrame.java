@@ -5,6 +5,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
 
 import controller.GameController;
 import javafx.application.Platform;
@@ -90,8 +91,8 @@ public class MainFrame extends BorderPane implements GameOfLifeFrame {
 	}
 
 	@Override
-	public void drawCells(final boolean[][] cells) {
-		this.cellMapViewer.drawCells(cells);
+	public void drawCells(final boolean[][] cells, CountDownLatch latch) {
+		this.cellMapViewer.drawCells(cells, latch);
 	}
 
 	@Override

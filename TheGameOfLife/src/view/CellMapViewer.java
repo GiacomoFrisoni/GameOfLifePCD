@@ -1,6 +1,8 @@
 package view;
 
 import java.awt.Dimension;
+import java.util.concurrent.CountDownLatch;
+
 import controller.GameController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -89,8 +91,8 @@ public class CellMapViewer extends BorderPane {
 	 * @param cells
 	 * 		cells to draw
 	 */
-	public void drawCells(final boolean[][] cells) {
-		this.cellMap.setCellsToDraw(cells);
+	public void drawCells(final boolean[][] cells, CountDownLatch latch) {
+		this.cellMap.setCellsToDraw(cells, latch);
 	}
 	
 	/**

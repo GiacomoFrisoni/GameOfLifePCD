@@ -2,6 +2,7 @@ package view;
 
 import java.awt.Dimension;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
 
 import controller.GameController;
 
@@ -28,7 +29,7 @@ public interface GameOfLifeFrame {
     /**
      * Updates the view and repaints the cell map panel.
      */
-    void drawCells(boolean[][] cells);
+    void drawCells(boolean[][] cells, CountDownLatch latch);
     
     /**
      * Set info about current generation
