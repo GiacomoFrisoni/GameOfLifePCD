@@ -87,8 +87,6 @@ public class CellMap extends Canvas {
 	 */
 	private void draw() {
 		if (cells != null) {
-
-	
 			//Draw (x must be from minOffset to maxOffset, same y)
 			Platform.runLater(new Runnable() {			
 				@Override
@@ -129,10 +127,11 @@ public class CellMap extends Canvas {
 		            		}       	
 							
 		        			//Drawing
-		        			gc.fillRect((i - xOffset) * CELL_OFFSET, (j - yOffset) * CELL_OFFSET, CELL_SIZE, CELL_SIZE);	
-		        			
+		        			gc.fillRect((i - xOffset) * CELL_OFFSET, (j - yOffset) * CELL_OFFSET, CELL_SIZE, CELL_SIZE);		        			
 						}
-					}	
+					}
+					
+					
 				}
 				
 			});	
