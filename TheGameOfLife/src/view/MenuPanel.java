@@ -175,12 +175,12 @@ public class MenuPanel extends VBox {
 	 * 		currently alive cells
 	 */
 	public void setGenerationInfo(final long gen, final long time, final long cells) {
-		Platform.runLater(new Runnable() {			
+		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
 				generation.setText("" + gen);
 				elapsedTime.setText("" + time + "ms");
-				cellsAlive.setText("" + cells);	
+				cellsAlive.setText("" + cells);
 			}
 		});	
 	}

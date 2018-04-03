@@ -1,6 +1,7 @@
 package controller;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 
 import model.GenerationResult;
 import view.GameOfLifeFrame;
@@ -21,6 +22,7 @@ public class GameOfLifeConsumer extends Thread {
 	
 	private final BlockingQueue<GenerationResult> queue;
 	private final GameOfLifeFrame view;
+	private CountDownLatch latch;
 	private final Flag stopFlag;
 	
 	
@@ -90,8 +92,10 @@ public class GameOfLifeConsumer extends Thread {
 				
 				// Updates view
 				this.view.setGenerationInfo(res.getGenerationNumber(), res.getComputationTime(), res.getCellsAlive());
-				this.view.drawCells(res.getCellsStates());
 				this.view.updateProgress(0);
+				this.latch = new CountDownLatch(1);
+				this.view.drawCells(res.getCellsStates(), this.latch);
+				this.latch.await();
 			} catch (InterruptedException ie) {
 				ie.printStackTrace();
 				// Stop + view notification

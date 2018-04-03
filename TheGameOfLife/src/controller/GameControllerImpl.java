@@ -197,7 +197,6 @@ public class GameControllerImpl implements GameController {
 				updatingPool = Optional.empty();
 			}
 		}).start();
-
 	}
 	
 	@Override
