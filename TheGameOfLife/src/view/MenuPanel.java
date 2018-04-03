@@ -24,7 +24,7 @@ public class MenuPanel extends VBox {
 	private MiniatureCellMap miniatureCellMap;
 	
 	@FXML
-	private Label currentPosition, viewableCells, generation, elapsedTime, cellsAlive, errorLabel, loadingLabel, sliderValue;
+	private Label currentPosition, viewableCells, generation, elapsedTime, cellsAlive, errorLabel, loadingLabel, sliderValue, avgElapsedTime;
 	
 	@FXML
 	private Button start, stop, reset;
@@ -42,6 +42,7 @@ public class MenuPanel extends VBox {
 	private Slider slider;
 	
 	private GameController controller;
+	private long avgElapsedSum = 0;
 
 	/**
 	 * Create a new menu panel
@@ -181,6 +182,13 @@ public class MenuPanel extends VBox {
 				generation.setText("" + gen);
 				elapsedTime.setText("" + time + "ms");
 				cellsAlive.setText("" + cells);
+				
+
+				avgElapsedSum += time;
+				if ((gen - 1) > 0) {
+					avgElapsedTime.setText("" + (avgElapsedSum / (gen - 1)) + "ms");
+				}
+				
 			}
 		});	
 	}
@@ -230,7 +238,8 @@ public class MenuPanel extends VBox {
 				
 				mapWidth.setDisable(false);
 				mapHeight.setDisable(false);
-				miniatureCellMap.reset();		
+				miniatureCellMap.reset();
+				avgElapsedSum = 0;
 			}
 		});	
 		

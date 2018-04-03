@@ -79,6 +79,7 @@ public class MainFrame extends BorderPane implements GameOfLifeFrame {
 		this.stage.setTitle(WINDOW_TITLE);
 		this.stage.setScene(scene);
 		this.stage.show();	
+		this.stage.setResizable(false);
 		
     	this.cellMapViewer.init(this.controller, this);
     	this.menuPanel.init(this.controller);

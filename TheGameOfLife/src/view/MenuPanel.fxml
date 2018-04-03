@@ -73,8 +73,11 @@
 		<Label text="Generation"></Label>
 		<Label fx:id="generation" id="titleLabel" text="0"></Label>
 		
-		<Label text="Time elapsed"></Label>
+		<Label text="Elapsed time"></Label>
 		<Label fx:id="elapsedTime" id="titleLabel" text="0"></Label>
+		
+		<Label text="Average elapsed time"></Label>
+		<Label fx:id="avgElapsedTime" id="titleLabel" text="0"></Label>
 		
 		<Label text="Cells alive"></Label>
 		<Label fx:id="cellsAlive" id="titleLabel" text="0"></Label>
